@@ -1,0 +1,89 @@
+/*公共样式 start*/
+*{
+	margin: 0;
+	padding: 0;
+	font-family: "Microsoft Yahei";
+	border: 0 none;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+html {
+	font-size: calc(100vw/3.75);
+}
+ul,li{
+	list-style:none;
+}
+article,form{
+	display: block;
+}
+a{
+	text-decoration: none;
+}
+table,tr,td{
+	border-collapse:collapse;
+}
+input,button{
+	border: 0 none;
+}
+.wrap{
+	position: absolute;
+  	top: 0;
+  	right: 0;
+  	bottom: 0;
+  	left: 0;
+  	overflow: auto;
+  	-webkit-overflow-scrolling: touch;
+}
+.wrap1{
+	width: 3.5rem;
+	margin: 0 auto;
+}
+/*浅绿小圆点*/
+.green-circle{
+	display: block;
+	width: 0.08rem;
+	height: 0.08rem;
+	border-radius: 50%;
+	-webkit-border-radius:50%;
+	-ms-border-radius:50%;
+	-moz-border-radius:50%;
+	background: #9cc19f;
+}
+.over{
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.clr:after,.clr:before{
+	display: block;
+	content: '';
+	width: 0;
+	height: 0;
+	clear: both;
+}
+.radius-4{
+	border-radius: 4px;
+	-webkit-border-radius:4px;
+	-ms-border-radius:4px;
+	-moz-border-radius:4px;
+}
+.radius-10{
+	border-radius: 10px;
+	-webkit-border-radius:10px;
+	-ms-border-radius:10px;
+	-moz-border-radius:10px;
+}
+.radius-50{
+	border-radius: 50%;
+	-webkit-border-radius:50%;
+	-ms-border-radius:50%;
+	-moz-border-radius:50%;
+}
+/*input框右侧的删除按钮*/
+.clear{
+	display: none;
+	width: 0.15rem;
+	height: 0.15rem;
+	background: url(../img/close.png);
+	background-size: 100% 100%;
+	position: absolute;
+}

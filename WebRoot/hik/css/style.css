@@ -1,0 +1,313 @@
+/*index.html css start*/
+.depot-show-list{
+	/*border: 1px solid #d9d9d9;*/
+	box-shadow:0 2px 20px 1px rgba(0,0,0,0.15);
+	overflow: hidden;
+	margin-top: 0.15rem;
+}
+.depot-show-list div{
+	overflow: hidden;
+}
+.list-left{
+	float: left;
+	width: 2.6rem;
+	margin: 0.15rem 0 0.05rem 0.1rem;
+}
+.depot-name{
+	display: block;
+	font-size: 0.18rem;
+	color: #9cc19f;
+	line-height: 0.2rem;
+}
+.depot-name .green-circle{
+	float: left;
+	margin: 0.1rem 0.05rem 0 0;
+}
+.depot-info{
+	display: block;
+	font-size: 0.15rem;
+	color: #8c8c8c;
+	overflow: hidden;
+}
+.list-right{
+	float: right;
+	width: 0.6rem;
+	margin: 0.15rem 0.1rem 0.05rem 0;
+	overflow: hidden;
+}
+.list-right span{
+	display: block;
+	text-align: center;
+	line-height: 0.24rem;
+}
+.list-right span:first-child{
+	margin-top: 0.05rem;
+}
+.depot-num{
+	font-size: 0.15rem;
+	color: #fd8f8f;
+}
+.surplus-depot{
+	font-size: 0.13rem;
+	color: #b5b5b5;
+}
+.list-left span {
+	line-height: 0.28rem;
+}
+.depot-address{
+	overflow: hidden;
+	margin:0 0.1rem 0.1rem 0.1rem;
+}
+.address-pic{
+	display: block;
+	width: 0.16rem;
+	height: 0.2rem;
+	background: url(../img/address.png) no-repeat;
+	background-size: 100% 100%;
+	float: left;
+	margin-right: 0.1rem;
+}
+.depot-address span{
+	display: block;
+	float: left;
+	color: #9d9d9d;
+	font-size: 0.14rem;
+	line-height: 0.2rem;
+}
+.depot-btn{
+	display: block;
+	height: 0.45rem;
+	font-size: 0.15rem;
+	color: #fcfcfc;
+	text-align: center;
+	line-height: 0.45rem;
+	background: #8de575;
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	background: #9cc19f;
+}
+.depot-btn-bg1{
+	background: #93ac95;
+}
+/*index.html css end*/
+
+/*search.html css start*/
+.search-box{
+	padding-top: 0.1rem;
+}
+.search-form{
+	width: 3.5rem;
+	height: 0.4rem;
+	margin: 0 auto;
+	overflow: hidden;
+	border: 1px solid #dfe1e2;
+	position: relative;
+}
+#search-text{
+	display: block;
+	width: 2.6rem;
+	padding: 0.1rem 0.3rem 0.1rem 0.1rem;
+	font-size: 0.15rem;
+	height: 0.2rem;
+	line-height: 0.2rem;
+	border-bottom-left-radius: 4px;
+	border-top-left-radius: 4px;
+	float: left;
+}
+.search-close{
+	top: 0.13rem;
+	right: 0.6rem;
+}
+#search-text::-ms-clear{ 
+	display: none;
+}
+#search-text:valid + .clear{ 
+	display: inline; 
+}
+.search-btn{
+	display: block;
+	width: 0.5rem;
+	height: 0.4rem;
+	float: left;
+	background: url(../img/search.png);
+	background-size: 100% 100%;
+	border-bottom-right-radius: 4px;
+	border-top-right-radius: 4px;
+}
+.search-reminder{
+	width: 3.2rem;
+	height: 1rem;
+	border: 1px solid #dedede;
+	margin: 0.1rem auto 0 auto;
+	padding: 0.3rem 0.15rem;
+	overflow: hidden;
+}
+.search-reminder img{
+	display: block;
+	float: left;
+	width: 1.07rem;
+	height: 0.94rem;
+	margin-right: 0.1rem;
+}
+.search-reminder>p{
+	width: 1.5rem;
+	font-size: 0.14rem;
+	line-height: 0.3rem;
+	color: #8e8e8e;
+	float: right;
+}
+.search-reminder .reminder-title{
+	color:#f1be65;
+	font-size: 0.2rem;
+}
+.search-result,.search-success{
+	width: 3.3rem;
+	border: 1px solid #dddddd;
+	margin: 0.1rem auto 0 auto;
+	padding: 0.2rem 0.1rem;
+	display: none;
+}
+.search-result li{
+	font-size: 0.14rem;
+	color: #a2a2a2;
+	line-height: 0.3rem;
+	border-bottom: 1px solid #dddddd;
+}
+.search-result li a{
+	font-size: 0.14rem;
+	color: #a2a2a2;
+}
+.search-result li span:first-child{
+	padding-right: 0.1rem;
+}
+.search-fail{
+	width: 2.8rem;
+	border: 1px solid #dddddd;
+	margin: 0.1rem auto 0 auto;
+	padding: 0.2rem 0 0.4rem 0.7rem;
+	overflow: hidden;
+	display: none;
+}
+.search-fail-pic{
+	display: block;
+	width: 0.72rem;
+	height: 0.72rem;
+	float: left;
+}
+.fail-title{
+	width:1rem;
+	color: #f4928f;
+	font-size: 0.18rem;
+	float: left;
+	line-height: 0.72rem;
+	margin-left: 0.15rem;
+}
+.fail-reminder{
+	font-size: 0.14rem;
+	color: #8e8e8e;
+	float: left;
+	margin-top: 0.1rem;
+}
+.margin-one{
+	margin-top: 0.2rem;
+}
+.search-success>p{
+	font-size:0.14rem;
+	color: #7a7575;
+	line-height: 0.25rem;
+}
+.search-success>p i{
+	font-style: normal;
+	color: #9f9f9f;
+}
+.search-success-pic{
+	width: 3.2rem;
+	height: 1.9rem;
+	border: 3px solid #dedede;
+	margin:0.25rem auto 0 auto;
+}
+/*search.html css end*/
+/*depot-details.html css start*/
+.depot-pic-box{
+	width: 100%;
+	height: 2rem;
+	position: relative;
+}
+.depot-pic-box img{
+	width: 100%;
+	height: 2rem;
+}
+.depot-pic-box p{
+	width: 100%;
+	height: 0.4rem;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	background: rgba(189,190,181,.7);
+	font-size: 0.16rem;
+	color: #4b4b4b;
+	line-height: 0.4rem;
+	text-indent: 1em;
+}
+.tablelist{
+	display: block;
+	width: 3.5rem;
+	border: 1px solid #e3e3e3;
+	margin: 0.15rem auto 0 auto;
+}
+.tablelist tr{
+	display: block;
+	width:3.5rem;
+	overflow: hidden;
+	border-bottom: 1px solid #e3e3e3;
+}
+.tablelist td{
+	display: block;
+	width: 1.73rem;
+	height: 0.35rem;
+	font-size: 0.15rem;
+	text-align: center;
+	line-height: 0.35rem;
+	float: left;
+	border-right: 1px solid #e3e3e3;
+	color: #717070;
+}
+.tablelist td:nth-child(even){
+	border-right: 0 none;
+}
+.go-here{
+	display: block;
+	width: 100%;
+	height: 0.4rem;
+	line-height: 0.4rem;
+	text-align: center;
+	color: #fff;
+	font-size: 0.15rem;
+	background: #8de575;
+	border: 1px solid #8de575;
+}
+/*depot-details.html css end*/
+/*提示弹出框  start*/
+.test-hint{
+	/*width: 1.2rem;
+	height: 1rem;*/
+	background: rgba(0,0,0,.5);
+	position: fixed;
+	/*top: 50%;
+	left: 50%;
+	margin: -0.5rem 0 0 -0.5rem;*/
+	display: none;
+}
+.test-hint img{
+	display: block;
+	width: 0.4rem;
+	height: 0.4rem;
+	margin: 0.1rem auto 0 auto;
+}
+.test-hint-word{
+	padding: 0.1rem;
+	color: #fff;
+	font-size: 0.14rem;
+	line-height: 0.2rem;
+}
+/*提示弹出框  end*/

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="msapplication-tap-highlight" content="no" />
+		<title>地图</title>
+		<link rel="stylesheet" href="css/common.css">
+		<link rel="stylesheet" type="text/css" href="swiper/idangerous.swiper.css"/>
+		<link rel="stylesheet" type="text/css" href="css/jiucheng-common.css"/>
+		<link rel="stylesheet" href="css/map.css">
+		<script src="js/jquery.min.js"></script>
+	</head>
+	<body>
+		<div class="map-box f14">
+				<!--搜索-->
+				<div class="search-box posit-AB">
+					<div class="posit-RE">
+						<input type="text" name="" id="search" value="" />
+						<button class="search-btn"></button>
+						<div class="search_del"></div>
+					</div>
+					
+					<ul class="search-result">
+						<div class="search-result2">
+							<ul class="result-list">
+								<li>
+									<span class="floor-mesg">1F-222</span><span class="floor-status">空闲</span>
+								</li>
+								<li>
+									<span class="floor-mesg">1F-222</span><span class="floor-status">空闲</span>
+								</li>
+								<li>
+									<span class="floor-mesg">1F-222</span><span class="floor-status">空闲</span>
+								</li>
+								<li>
+									<span class="floor-mesg">1F-222</span><span class="floor-status">空闲</span>
+								</li>
+								<li>
+									<span class="floor-mesg">1F-222</span><span class="floor-status">空闲</span>
+								</li>
+								<li>
+									<span class="floor-mesg">1F-222</span><span class="floor-status">空闲</span>
+								</li>
+							</ul>
+						</div>
+						
+					</ul>
+					
+				</div>
+				
+				<!--选择车辆-->
+				<div class="select-car-shadow"></div>
+				<div class="select-car">
+					<p class="select-car-tit">选择车辆</p>
+					<ul>
+						<li class="car"><span>川E.12345</span></li>
+						<li class="car"><span>川E.12345</span></li>
+						<li class="car"><span>川E.12345</span></li>
+					</ul>
+				</div>
+				
+				<!--导航-->
+				<div class="navigation" id="navigation">
+					<p class="navigation-total posit-RE" id="navigation_total">
+						<span class="time"><em>17</em>分钟</span><span class="distance"><em>1.3</em>公里</span>
+						<div class="slideTopBot posit-AB"></div>
+					</p>
+					<ul class="route-list">
+						<li>
+							<div class="direction-img">
+								<img src="img/qd.png" alt="" />
+							</div>
+							<p class="direction-mesg"><span class="start-position">从我的位置</span><span class="position">白招牌停车场，向北出发</span></p>
+						</li>
+						<li>
+							<div class="direction-img">
+								<img src="img/zx.png" alt="" />
+							</div>
+							<p class="direction-mesg"><span class="direction">直行</span><span class="meter">200米</span></p>
+						</li>
+						<li>
+							<div class="direction-img">
+								<img src="img/zz.png" alt="" />
+							</div>
+							<p class="direction-mesg"><span class="meter">50米后</span><span class="direction">左转</span></p>
+						</li>
+						<li>
+							<div class="direction-img">
+								<img src="img/yz.png" alt="" />
+							</div>
+							<p class="direction-mesg"><span class="meter">500米后</span><span class="direction">右转</span></p>
+						</li>
+						<li>
+							<div class="direction-img">
+								<img src="img/zd.png" alt="" />
+							</div>
+							<p class="direction-mesg"><span class="start-position">到达</span><span class="position">白招牌停车场，向北出发</span></p>
+						</li>
+					</ul>
+				</div>
+				
+				<!--楼层切换-->
+				<div class="map-floor">
+					<div class="swiper-container map-floor-box posit-RE">
+						<!--前一楼层-->
+						<div class="button-prev"></div>
+						<!--楼层切换-->
+						<div class="map-container">
+						    <div class="swiper-wrapper">
+						      <div class="swiper-slide floor-now">
+						        <div class="title">1F</div>
+						      </div>
+						      <div class="swiper-slide">
+						        <div class="title">2F</div>
+						      </div>
+						      <div class="swiper-slide">
+						        <div class="title">3F</div>
+						      </div>
+						      <div class="swiper-slide">
+						        <div class="title">4F</div>
+						      </div>
+						      <div class="swiper-slide">
+						        <div class="title">5F</div>
+						      </div>
+						      <div class="swiper-slide">
+						        <div class="title">6F</div>
+						      </div>
+						      <div class="swiper-slide">
+						        <div class="title">7F</div>
+						      </div>
+						      <div class="swiper-slide">
+						        <div class="title">8F</div>
+						      </div>
+						      <div class="swiper-slide">
+						        <div class="title">9F</div>
+						      </div>
+						      <div class="swiper-slide">
+						        <div class="title">10F</div>
+						      </div>
+						      <div class="swiper-slide">
+						        <div class="title">11F</div>
+						      </div>
+						      <div class="swiper-slide">
+						        <div class="title">12F</div>
+						      </div>
+						    </div>
+						
+						  </div>
+						  <!--下一楼层-->
+		    			<div class="button-next"></div>
+					</div>
+			</div>
+		  	
+		  	<!--地图-->
+		  	<div id="map-box">
+		  		
+		  	</div>
+		</div>
+		
+    
+	</body>
+	 <script src="swiper/idangerous.swiper.min.js"></script>
+	 <!--<script src="js/touch.js"></script>-->
+	 <script src="js/map.js"></script>
+</html>

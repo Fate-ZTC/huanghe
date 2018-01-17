@@ -1,0 +1,47 @@
+
+.monthlyRentTitReamind{padding: 0 0.13rem;background: #F6F6F6;line-height: 0.35rem;font-size: 0.12rem;color: #B3B3B3;border-bottom: 1px solid #F0F0F0;overflow: hidden;height: 0.35rem;}
+.batchOperation{color: #7C7C7C;}
+.parkingList{line-height: 0.45rem;}
+.parkingList>li{padding: 0 0.13rem;border-bottom: 1px solid #F4F4F4;}
+.parkingLogo{width: 0.2rem;height: 0.2rem;margin: 0.12rem 0.07rem 0 0;background: url(../img/parking.png) center no-repeat;background-size: 100%;float: left;}
+.operationBtn{width: 0.6rem;height: 0.22rem;line-height: 0.19rem;color: #5BBFFF;text-align: center;border: 1px solid #E6E6E6;border-radius: 0.03rem;font-size: 0.12rem;margin-top: 0.1rem;}
+
+/*月租续费*/
+.renewList>.renew-li{padding: 0 0.14rem;border-bottom: 1px solid #E1E1E1;border-top: 1px solid #F4F4F4;margin-bottom: 0.1rem;}
+.renewCarNum{color: #12B7F5;line-height: 0.34rem;}
+.renewMesg{line-height: 0.22rem;font-size: 0.12rem;}
+.renewNowStatus-box{border-top: 1px solid #E9E9E9;overflow: hidden;line-height: 0.42rem;height: 0.42rem;color: #666;font-size: 0.12rem;margin-top: 0.1rem;}
+.renewNowStatus{font-size: 0.14rem;}
+
+.overdue{color: #FFA841;}
+.effective{color: #FF3434;}
+
+.renewList>.rent-li{padding: 0 0.14rem;height: 0.62rem;line-height: 0.62rem;border-bottom: 1px solid #E1E1E1;border-top: 1px solid #F4F4F4;}
+.rentCarNum{color: #12B7F5;}
+.rentNowStatus-box .operationBtn{margin-top: 0.2rem;}
+
+.toAddCar-box{padding: 0.3rem 0.18rem;}
+.toAddCar{width: 100%;height: 1.12rem;background: #F0F0F0;border-radius: 0.05rem;display: block;padding-top: 0.13rem;}
+.addCar{padding-left: 0.44rem;line-height: 0.59rem;width: 1.1rem;margin: 0 auto;color: #3A5959;background: url(../img/add.png) no-repeat left center;background-size: 0.31rem;}
+.addCarReamind{text-align: center;color: #949494;}
+
+.monthlyRenew-top{padding-top: 0.98rem;height: 1.52rem;background: url(../img/top.png) no-repeat;background-size: 100%;}
+.monthlyRenew-cost{text-align: center;color: #fff;}
+.monthlyRenew-cost span{padding: 0 0.08rem;font-size: 0.12rem;}
+
+.renewOperationList{line-height: 0.45rem;}
+.renewOperationList>li{width: 100%;height: 0.45rem;padding: 0 0.14rem 0 0.16rem;border-bottom: 1px solid #E9E9E9;}
+.renewOperationList .car-optipn-tit{float: left;display: block;width: 0.8rem;}
+.renewOperationList .car-option-right{float: right;color: #B4B4B4;font-size: 0.12rem;}
+.renewTime{margin-left: 0.03rem;font-size: 0.12rem;}
+.car-option-right-text{float: right;color: #515151;font-size: 0.12rem;padding-right: 0.2rem;}
+.jianYou{width: 0.2rem;height: 0.45rem;background: url(../img/jianYou.png) no-repeat center;float: right;background-size: 0.16rem;}
+
+.submit-btn{width: 1.34rem;height: 0.32rem;background: #12B7F5;color: #fff;border-radius: 0.04rem;margin: 0.4rem auto;display: block;outline: 0;}
+
+
+/*月租续费成功*/
+.monthlyRenewSuccess-top{padding-top: 1.39rem;text-align: center;font-weight: bold;height: 2.12rem;background: url(../img/success.png) center 0.5rem no-repeat;background-size: 0.67rem;}
+.renewSuccess-mesg{border-bottom: 1px solid #eee;}
+.renewSuccess-mesg>li{height: 0.42rem;line-height: 0.42rem;color: #707070;border-top: 1px solid #F3F3F3;padding: 0 0.14rem;}
+

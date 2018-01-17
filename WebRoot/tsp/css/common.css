@@ -1,0 +1,116 @@
+/*通用样式*/
+*{
+	margin:0;
+	padding:0;
+	font-family: "Microsoft Yahei";
+	border: 0;
+	box-sizing:border-box;
+}
+html{font-size: calc(100vw/3.2);}
+html,body{
+	height: 100%;
+}
+ul,li,a,img,span,p{
+	list-style: none;
+	text-decoration: none;
+	margin:0;
+	padding:0;
+}
+img{
+	display: block;
+}
+span{
+	width: auto;
+	height: auto;
+}
+em,i{font-style: normal;}
+input{outline: 0;margin: 0;border: 0;-webkit-appearance: none;}
+a{color: #333;-webkit-tap-highlight-color:transparent}
+/*页面位置样式*/
+.margin-M{
+	margin-left: auto;
+	margin-right: auto;
+}
+.posit-AB{
+	position: absolute;
+}
+.posit-RE{
+	position: relative;
+}
+.text-CENT{
+	text-align: center;
+}
+.text-R{
+	text-align: right;
+}
+.float-L{
+	float: left;
+}
+.float-R{
+	float: right;
+}
+.img-H{
+	height: 100%;
+}
+.img-w{
+	width: 100%;
+}
+.img-IN{
+	display: inline;
+}
+/*字体*/
+.f18{
+	font-size: 0.18rem;
+}
+.f22{
+	font-size: 22px;
+}
+.f20{
+	font-size: .2rem;
+}
+.f12{
+	font-size: 0.12rem;
+}
+.f18{
+	font-size: 0.18rem;
+}
+.f16{
+	font-size: 0.16rem;
+}
+.f14{
+	font-size: 0.14rem;
+}
+.f13{
+	font-size: 0.13rem;
+}
+.f5{
+	font-size: 0.05rem;
+}
+/*字体加粗*/
+.f-W{
+	font-weight: bold;
+}
+/*字体颜色*/
+.color-W{
+	color: #fff;
+}
+.color-B{
+	color: #000;
+}
+.color-9{
+	color: #999;
+}
+.color-R{
+	color: red;
+}
+.color-F3{
+	color: #F34E4E;
+}
+.color-2886EF{
+	color: #2886EF;
+}
+.color-fd9{color: #FD911B;}
+
+.pd-lr12{padding: 0 .06rem;}
+
+.ovell{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}

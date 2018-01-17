@@ -1,0 +1,23 @@
+.box{padding: 0 50px;}
+.company-tab{overflow: hidden;padding: 20px 0;margin-left: -50px;}
+.company-tab li{width: 280px;float: left;}
+.company-tab select,.company-tab input{width: 173px;border: 1px solid #AAA;height: 26px;}
+.company-tab label{width: 100px;text-align: right;}
+
+.time-btn{width: 54px;height: 26px;border: 1px solid #85D2F1;border-radius: 4px;background: #fff;cursor: pointer;margin-right: 10px;}
+.time-act{background: #4FC2F0;color: #fff;}
+.submit-btn{width: 90px;height: 30px;background: #3AA1E2;color: #fff;border-radius: 5px;margin-left: 25px;}
+
+.title-p{background: #4FC2F0;color: #fff;font-size: 16px;overflow: hidden;}
+.carClass{height: 50px;line-height: 50px;float: left;color: #fff;cursor: pointer;padding: 0 25px;}
+/*.carClass p{padding: 0 25px;border-left: 1px solid #9fdeff;}*/
+.carAct{background: #ff7c7c;}
+
+/*峰谷图页*/
+.sign-fengGu{border: 1px solid #DCDCDC;width: 1010px;box-shadow: 0px 3px 3px #EBEBEB;}
+.check-btn,.rate-btn{width: 65px;height: 30px;border: 1px solid #2EACDE;background: #83DDFE;color: #fff;border-radius: 5px;line-height: 30px;margin: 9px 0 0 35px;}
+.check-btn a{color: #fff;}
+.title-p i{color: #FFD386;font-weight: bold;font-size: 18px;margin: 0 10px;}
+.fengGu-tu{height: 724px;}
+#fengGu{width: 1010px;height: 724px;}
+

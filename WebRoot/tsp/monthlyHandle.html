@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>月租办理</title>
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="msapplication-tap-highlight" content="no" />
+		<link rel="stylesheet" type="text/css" href="css/common.css"/>
+		<link rel="stylesheet" type="text/css" href="css/monthly.css"/>
+		<link rel="stylesheet" type="text/css" href="css/select-bottom.css"/>
+		<script src="js/jquery.min.js"></script>
+		<script src="layer_mobile/layer.js"></script>
+	</head>
+	<body>
+		<div class="jiucheng-box monthlyRenew-box f14">
+			<div class="monthlyRenew-top">
+				<p class="monthlyRenew-cost"><span>包全天：<i>660/月</i></span><span>包白天：<i>660/月</i></span><span>包夜晚：<i>660/月</i></span></p>
+			</div>
+			<ul class="renewOperationList">
+				<li class="parkingSelect">
+					<span class="car-optipn-tit">停车场</span>
+					<div class="jianYou"></div>
+					<span class="car-option-right" id="parkingSelectResult">选择停车场</span>
+					<input type="hidden" id="parkingSelectInput" />
+				</li>
+				<li class="carNumSelect">
+					<span class="car-optipn-tit">车牌号</span>
+					<div class="jianYou"></div>
+					<span class="car-option-right" id="carNumSelectResult">选择车牌号</span>
+					<input type="hidden" id="carNumSelectInput" />
+				</li>
+				<li class="carTypeSelect">
+					<span class="car-optipn-tit">包月类型</span>
+					<div class="jianYou"></div>
+					<span class="car-option-right" id="carTypeSelectResult">选择包月类型</span>
+					<input type="hidden" id="carTypeSelectInput" />
+				</li>
+				<li class="longTimeSelect">
+					<span class="car-optipn-tit">办理时长</span>
+					<div class="jianYou"></div>
+					<span class="float-R renewTime">月</span>
+					<span class="car-option-right" id="longTimeSelectResult">点击选择</span>
+					<input type="hidden" id="longTimeSelectInput" />
+				</li>
+				<li class="carCost">
+					<span class="car-optipn-tit">费用</span>
+					<span class="car-option-right-text" id="carCostResult">0.00元</span>
+					<input type="hidden" id="carCostInput" />
+				</li>
+			</ul>
+			
+			<button class="submit-btn">提交</button>
+		</div>
+		<div class="select-bottom">
+			<p class="select-title">选择操作</p>
+			<ul class="select-ul">
+				<li>发布</li>
+				<li>编辑</li>
+				<li>删除</li>
+			</ul>
+			<div class="cancel-select">取消</div>
+		</div>
+		<div id="selectMask"></div>
+		<script src="js/monthlyHandle.js"></script>
+	</body>
+</html>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="profiler.settings.instrument.empty.methods">true</entry>
+<entry key="ProfilerCPUSettings_profile_runnables">true</entry>
+<entry key="ProfilerCPUSettings_filter_type">2</entry>
+<entry key="ProfilerMemorySettings_track_every">10</entry>
+<entry key="ProfilerMemorySettings_mode">4</entry>
+<entry key="ProfilerCPUSettings_root_classes">com.alipay.config.**
+com.alipay.sign.**
+com.alipay.util.**
+com.bbtc.groundlock.service.**
+com.igetui.util.**
+com.parkbobo.action.**
+com.parkbobo.dao.**
+com.parkbobo.manager.dao.**
+com.parkbobo.manager.model.**
+com.parkbobo.manager.service.**
+com.parkbobo.map.action.**
+com.parkbobo.map.data.**
+com.parkbobo.map.service.**
+com.parkbobo.map.utils.**
+com.parkbobo.model.**
+com.parkbobo.myinterceptor.**
+com.parkbobo.port.action.**
+com.parkbobo.port.aspect.**
+com.parkbobo.port.helper.**
+com.parkbobo.quartz.task.**
+com.parkbobo.service.**
+com.parkbobo.utils.**
+com.parkbobo.weixin.action.**
+com.parkbobo.work.action.**
+com.pay.pingpg.**
+com.test.**
+</entry>
+<entry key="ProfilerCPUSettings_filter_value">com.alipay.config.*,
+com.alipay.sign.*,
+com.alipay.util.*,
+com.bbtc.groundlock.service.*,
+com.igetui.util.*,
+com.parkbobo.action.*,
+com.parkbobo.dao.*,
+com.parkbobo.manager.dao.*,
+com.parkbobo.manager.model.*,
+com.parkbobo.manager.service.*,
+com.parkbobo.map.action.*,
+com.parkbobo.map.data.*,
+com.parkbobo.map.service.*,
+com.parkbobo.map.utils.*,
+com.parkbobo.model.*,
+com.parkbobo.myinterceptor.*,
+com.parkbobo.port.action.*,
+com.parkbobo.port.aspect.*,
+com.parkbobo.port.helper.*,
+com.parkbobo.quartz.task.*,
+com.parkbobo.service.*,
+com.parkbobo.utils.*,
+com.parkbobo.weixin.action.*,
+com.parkbobo.work.action.*,
+com.pay.pingpg.*,
+com.test.*</entry>
+<entry key="profiler.settings.istrument.getter.setter.methods">true</entry>
+<entry key="myeclipse.profiling.mode">0</entry>
+<entry key="ProfilerMemorySettings_stacktraces">-1</entry>
+</properties>

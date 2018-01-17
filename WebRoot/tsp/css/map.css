@@ -1,0 +1,108 @@
+/*地图*/
+.map-box{width: 100%;height: 100%;}
+#map-box{width: 100%;height: 100%;background: orange;}
+
+.preloader {
+  position: absolute;
+  left: 0;
+  top: -20px;
+  z-index: 0;
+  color: #fff;
+  text-align: center;
+  line-height: 25px;
+  height: 25px;
+  width: 100%;
+  opacity: 0;
+  font-size: 25px;
+  -webkit-transition: 300ms;
+  -moz-transition: 300ms;
+  -ms-transition: 300ms;
+  -o-transition: 300ms;
+  transition: 300ms;
+  background: rgba(0,0,0,0.1);
+}
+.preloader.visible {
+  top: 0;
+  opacity: 1;
+}
+.map-container {
+  width: 35px;
+  height: 100px;
+  color: #000;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+.red-slide {
+  background: #ca4040;
+}
+.blue-slide {
+  background: #4390ee;
+}
+.orange-slide {
+  background: #ff8604;
+}
+.green-slide {
+  background: #49a430;
+}
+.pink-slide {
+  background: #973e76;
+}
+.swiper-slide {
+  height: 25px;
+  width: 100%;
+  line-height: 25px;
+  /*opacity: 0.2;*/
+  -webkit-transition: 300ms;
+  -moz-transition: 300ms;
+  -ms-transition: 300ms;
+  -o-transition: 300ms;
+  transition: 300ms;
+}
+.swiper-slide-visible {
+  opacity: 1;
+}
+.swiper-slide .title {
+  font-size: 12px;
+  color: #6A6A6A;
+}
+.map-floor{position: absolute;left: 0.2rem;bottom: 0.5rem;z-index: 999;border-radius: 3px;overflow: hidden;}
+.map-floor-box{width: 35px;height: 150px;background: #fff;font-size: 12px;}
+.button-prev,.button-next{width: 35px;height: 25px;}
+.button-prev{background: url(../img/s-fh.png) no-repeat center;}
+.button-next{background: url(../img/x-fh.png) no-repeat center;}
+.floor-now .title{color: #2C80F3;background: url(../img/border.png) no-repeat center;background-size: 33px 16px;}
+
+.search-box{width: 3rem;top: 0.1rem;left: 50%;margin-left: -1.5rem;}
+.search-box>div{overflow: hidden;border-radius: 0.04rem;height: 0.4rem;}
+#search{width: 2.52rem;height: 0.4rem;padding: 0 0.3rem 0 0.06rem;float: left;}
+.search-btn{width: 0.48rem;height: 0.4rem;background: #12B7F5 url(../img/search.png) no-repeat center;background-size: 0.28rem;}
+.search_del{display: none;position: absolute;right: 0.5rem;top: 0;background: url(../img/search-close.png) no-repeat center;background-size: 0.18rem 0.18rem;width: 0.28rem;height: 0.4rem;}
+
+.search-result{display: none;width: 3rem;height: 1.8rem;background: #fff;padding: 0.1rem 0;margin-top: 0.1rem;}
+.search-result2{overflow-y: auto;height: 1.6rem;padding: 0 0.14rem;}
+.result-list>li{height: 0.32rem;line-height: 0.32rem;border-bottom: 1px solid #E5E5E5;background: url(../img/location.png) no-repeat right center;background-size: 0.13rem 0.18rem;}
+.result-list span{display: block;width: 50%;float: left;font-size: 0.12rem;}
+.floor-mesg{color: #484747;}
+.floor-status{color: #B8B8B8;}
+
+.navigation{width: 100%;z-index: 1003; background: #fff;position: fixed;left: 0;bottom: 0;}
+.navigation-total{line-height: 0.45rem;font-size: 0.16rem;padding: 0 0.2rem;}
+.slideTopBot{width: 0.45rem;height: 0.44rem;right: 0rem;top: 0rem;background: #fff url(../img/slide_top.png) no-repeat center;}
+.slideTopBot-act{background-image: url(../img/slide_bot.png);}
+.time{margin-right: 0.2rem;}
+.navigation-total em{font-weight: bold;}
+.route-list{border-top: 1px solid #E3E3E3;display: none;}
+.route-list>li{padding-left: 0.08rem;line-height: 0.48rem;}
+.direction-img{width: 0.4rem;height: 0.48rem;float: left;text-align: center;}
+.direction-img img{height: 0.22rem;display: inline-block;margin-top: 0.14rem;}
+.direction-mesg{width: 2.72rem;border-bottom: 1px solid #E3E3E3;float: right;}
+.direction-mesg span{margin-right: 0.1rem;}
+.direction-mesg .meter,.start-position{color: #616161;}
+.direction-mesg .direction,.position{color: #5D5D5D;font-weight: bold;}
+
+.select-car-shadow{width: 100%;height: 100%;background: #333;opacity: 0.5;position: absolute;top: 0;left: 0;z-index: 1001;display: none;}
+.select-car{width: 2.64rem;height: 1.64rem;overflow: hidden; background: #fff;border-radius: 0.05rem;position: absolute;left: 50%;top: 50%;margin: -0.82rem 0 0 -1.32rem;z-index: 1002;display: none;}
+.select-car-tit{line-height: 0.4rem;background: #12B7F5;color: #fff;text-align: center;font-size: 0.16rem;}
+.car{line-height: 0.41rem;height: 0.41rem;padding: 0 0.21rem;border-bottom: 1px solid #E5E5E5;background: url(../img/dh.png) no-repeat 2.25rem center;background-size: 0.2rem;}

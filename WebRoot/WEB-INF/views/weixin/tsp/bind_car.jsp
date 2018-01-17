@@ -1,0 +1,82 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<title>添加车牌</title>
+	<link rel="stylesheet" href="<%=basePath %>/tsp/css/common.css">
+	<link rel="stylesheet" href="<%=basePath %>/tsp/css/jiucheng.css">
+	<script src="<%=basePath %>/tsp/js/jquery.min.js"></script>
+	<script type="text/javascript">
+		var the_host = '<%=basePath %>';
+		var kid = 0;
+		var mobile = '${mobile}';
+	</script>
+</head>
+<body>
+	<div class="box box-vehicle posit-RE f14">
+		<div class="vehicle-top">
+			<div class="vehicle-add-btn"></div>
+			<p>您当前还可以添加：<span class="vehicle-num">3</span>辆</p>
+			
+		</div>
+		<ul class="vehicle-list">
+			<c:forEach items="${carList}" var="cr">
+				<li class="vehicle-li">
+					<span class="car-num">${cr.carPlate}</span>
+					<div class="operation-box float-R">
+						<button class="edit-btn" rel="${cr.kid}">编辑</button>
+						<button class="del-btn" rel="${cr.kid}">删除</button>
+					</div>
+				</li>
+			</c:forEach>
+		</ul>
+	</div>
+	<div class="box box-num-select posit-RE">
+		<div class="num-select">
+			<p class="select-title f12">请绑定真实有效车牌，否则无法进行电子支付。</p>
+			<div class="input-box f14"><div class="province select" index="1"></div><div class="select" index="2"></div><div class="black float-L"></div><div class="select" index="3"></div><div class="select" index="4"></div><div class="select" index="5"></div><div class="select" index="6"></div><div class="select" index="7"></div></div>
+			<input class="complet" type="button" value="完成">
+		</div>	
+		<div class="value-sel-bg posit-AB f14">
+			<div class="option-box">
+				<div class="option" style="margin-left:0.04rem;">京</div><div class="option">津</div><div class="option">冀</div><div class="option">鲁</div><div class="option">晋</div><div class="option">蒙</div><div class="option">辽</div><div class="option">吉</div><div class="option">黑</div><div class="option" style="margin-right:0.03rem;">沪</div>
+			</div>
+			<div class="option-box">
+				<div class="option" style="margin-left:0.04rem;">苏</div><div class="option">浙</div><div class="option">皖</div><div class="option">闽</div><div class="option">赣</div><div class="option">豫</div><div class="option">鄂</div><div class="option">湘</div><div class="option">粤</div><div class="option" style="margin-right:0.03rem;">桂</div>
+			</div>
+			<div class="option-box" style="width:2.63rem;">
+				<div class="option" style="margin-left:0.07rem;">渝</div><div class="option">川</div><div class="option">贵</div><div class="option">云</div><div class="option">藏</div><div class="option">陕</div><div class="option">甘</div><div class="option">青</div>
+			</div>
+			<div class="option-box" style="width:1.98rem;">
+				<div class="option" style="margin-left:0.06rem;">琼</div><div class="option">新</div><div class="option">港</div><div class="option">澳</div><div class="option">台</div><div class="option">宁</div>
+			</div>
+		</div>
+		<div class="value-letter-bg posit-AB f14">
+			<div class="option-box">
+				<div class="option" style="margin-left:0.04rem;">1</div><div class="option">2</div><div class="option">3</div><div class="option">4</div><div class="option">5</div><div class="option">6</div><div class="option">7</div><div class="option">8</div><div class="option">9</div><div class="option" style="margin-right:0.03rem;">0</div>
+			</div>
+			<div class="option-box">
+				<div class="option" style="margin-left:0.04rem;">港</div><div class="option">Q</div><div class="option">W</div><div class="option">E</div><div class="option">R</div><div class="option">T</div><div class="option">Y</div><div class="option">U</div><div class="option">P</div><div class="option" style="margin-right:0.03rem;">澳</div>
+			</div>
+			<div class="option-box" style="width:2.95rem;">
+				<div class="option" style="margin-left:0.07rem;">A</div><div class="option">S</div><div class="option">D</div><div class="option">F</div><div class="option">G</div><div class="option">H</div><div class="option">J</div><div class="option">K</div><div class="option">L</div>
+			</div>
+			<div class="option-box float-R" style="width:2.73rem;">
+				<div class="option" style="margin-left:0.06rem;">Z</div><div class="option">X</div><div class="option">C</div><div class="option">V</div><div class="option">B</div><div class="option">N</div><div class="option">M</div><div class="del"></div>
+			</div>
+		</div>
+	</div>
+	<script src="<%=basePath %>/layer_mobile/layer.js"></script>
+	<script src="<%=basePath %>/tsp/js/carNumSelect.js"></script>
+	<script src="<%=basePath %>/tsp/js/carNumEdit.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+	"status":"success",
+	"info":[
+		{
+			"address":"白招牌",
+			"num":"45%"
+		},
+		{
+			"address":"龙马广场",
+			"num":"55%"
+		},
+		{
+			"address":"龙驰路",
+			"num":"100%"
+		},
+		{
+			"address":"陶然路",
+			"num":"65%"
+		},
+		{
+			"address":"中心广场",
+			"num":"50%"
+		}
+	]
+}

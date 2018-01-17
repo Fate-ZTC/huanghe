@@ -1,0 +1,92 @@
+/*通用样式*/
+*{
+	margin:0;
+	padding:0;
+	font-family: "Microsoft Yahei";
+	border: 0;
+}
+html,body{
+	margin: 0;
+	padding: 0;
+	min-height: 100%;
+}
+ul,li,a,img,span,p{
+	list-style: none;
+	text-decoration: none;
+}
+a{
+	display: block;
+	color: #000;
+}
+em,i{
+	font-style:normal;
+}
+img{
+	display: block;
+}
+span{
+	width: auto;
+}
+input,textarea,button{outline: 0;padding: 0 8px;}
+label{display: inline-block;}
+.ovfl{overflow: hidden;}
+.dis-none{display: none;}
+/*页面位置样式*/
+
+.margin-M{
+	margin-left: auto;
+	margin-right: auto;
+}
+.posit-AB{
+	position: absolute;
+}
+.posit-RE{
+	position: relative;
+}
+.text-CENT{
+	text-align: center;
+}
+.text-R{
+	text-align: right;
+}
+.float-L{
+	float: left;
+}
+.float-R{
+	float: right;
+}
+/*字体*/
+.f18{
+	font-size: 18px;
+}
+.f22{
+	font-size: 22px;
+}
+.f12{
+	font-size: 12px;
+}
+.f13{
+	font-size: 13px;
+}
+.f18{
+	font-size: 18px;
+}
+.f20{
+	font-size: 20px;
+}
+.f16{
+	font-size: 16px;
+}
+.f15{
+	font-size: 15px;
+}
+.f14{
+	font-size: 14px;
+}
+.bold{
+	font-weight: bold;
+}
+.cursor{
+	cursor:pointer;
+}
+

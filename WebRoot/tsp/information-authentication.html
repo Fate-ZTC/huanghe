@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>信息认证</title>
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="msapplication-tap-highlight" content="no" />
+		<link rel="stylesheet" type="text/css" href="css/common.css"/>
+		<link rel="stylesheet" type="text/css" href="css/driving.css"/>
+		<script src="js/jquery.min.js"></script>
+		<script src="layer_mobile/layer.js"></script>
+	</head>
+	<body>
+		<div class="jiucheng-box informationAuthentication-box f14">
+			<div class="driver-license-box">
+				<div class="driver-license-upload">
+					<p class="license-title">驾驶证</p>
+					<a href="add-driver.html" class="license-a"><p class="driverLicense">添加驾驶证</p></a>
+					<div class="read-picture-box">
+						<img src="img/balance.png" class="read-picture" alt="" id="ImgPr" />
+					</div>
+				</div>
+				<p class="auditStatus inAudit pd-lr14">审核中...</p>
+				<div class="auditStatus auditAdopt pd-lr14"><span class="float-L">审核通过</span><a class="modifyBtn float-R">修改</a></div>
+				<div class="auditStatus notPass">
+					<p class="ovell pd-lr14"><span class="float-L">审核未通过</span><a class="modifyBtn float-R">修改</a></p>
+					<p class="notPassReason">未通过原因：您上传的图片不够清晰，请上传完整的驾驶证图片</p>
+				</div>
+			</div>
+			<div class="driving-license-box">
+				<p class="license-title pd-lr14">行驶证及相关信息</p>
+				<div class="driving-license">
+					<div class="driving-license-ipload pd-lr14">
+						<h2 class="upload-car-num f16">川A.12345</h2>
+						<a href="add-driving.html" class="license-a"><p class="driverLicense">添加行驶证</p></a>
+						<div class="read-picture-box">
+							<img src="img/balance.png" class="read-picture" alt="" id="ImgPr" />
+						</div>
+					</div>
+					<p class="auditStatus statusNow inAudit pd-lr14">审核中...</p>
+					<!--<div class="auditStatus statusNow auditAdopt pd-lr14"><span class="float-L">审核通过</span><a class="modifyBtn float-R">修改</a></div>-->
+					<div class="auditStatus notPass">
+						<p class="ovell pd-lr14"><span class="float-L">审核未通过</span><a class="modifyBtn float-R">修改</a></p>
+						<p class="notPassReason">未通过原因：您上传的图片不够清晰，请上传完整的驾驶证图片</p>
+					</div>
+				</div>
+				<p class="driverLicense-upload f12">最多可添加三个行驶证</p>
+				<a href="add-driving.html"><button class="continueAddBtn">继续添加</button></a>
+			</div>
+			<p class="picture-reamind text-CENT f12">为避免重复提交，请上传清晰图片</p>
+		</div>
+	</body>
+</html>
