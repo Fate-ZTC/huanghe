@@ -84,7 +84,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.springframework.test-3.0.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.springframework.transaction-3.0.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/pingpp-java-2.0.10.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/poi-3.7.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/postgis-1.5.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/postgresql-9.0-802.jdbc4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protobuf-java-2.4.1.jar"/>
@@ -117,9 +116,56 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/fastjson-1.2.9.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/okhttp-3.4.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/okio-1.11.0.jar"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/wxpay-sdk-0.0.3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/httpclient-4.5.3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/httpcore-4.4.6.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jsf-api-1.2_12.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/poi-3.17.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/poi-ooxml-3.17.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/poi-ooxml-schemas-3.17.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/poi-examples-3.17.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/poi-excelant-3.17.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/poi-scratchpad-3.17.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-api-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-coverage-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-cql-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-data-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-epsg-hsql-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-geotiff-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-graph-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-gtopo30-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-image-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-imagemosaic-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-jdbc-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-jdbc-postgis-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-main-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-metadata-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-opengis-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-property-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-referencing-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-render-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-shapefile-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-shapefile-renderer-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-svg-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-validation-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-wfs-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-wms-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xml-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xsd-core-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xsd-fes-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xsd-filter-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xsd-gml2-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xsd-gml3-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xsd-ows-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xsd-sld-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xsd-wcs-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xsd-wfs-8.4.jar"/>
+	<classpathentry kind="con" path="com.genuitec.runtime.library/com.genuitec.jstl_1.2">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="WEB-INF/lib"/>
+			<attribute name="owner.project.facets" value="jst.web.jstl"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>

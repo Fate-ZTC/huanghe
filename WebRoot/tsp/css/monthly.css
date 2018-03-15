@@ -4,7 +4,7 @@
 .parkingList{line-height: 0.45rem;}
 .parkingList>li{padding: 0 0.13rem;border-bottom: 1px solid #F4F4F4;}
 .parkingLogo{width: 0.2rem;height: 0.2rem;margin: 0.12rem 0.07rem 0 0;background: url(../img/parking.png) center no-repeat;background-size: 100%;float: left;}
-.operationBtn{width: 0.6rem;height: 0.22rem;line-height: 0.19rem;color: #5BBFFF;text-align: center;border: 1px solid #E6E6E6;border-radius: 0.03rem;font-size: 0.12rem;margin-top: 0.1rem;}
+.operationBtn{width: 0.6rem;height: 0.22rem;line-height: 0.19rem;color: #5BBFFF;text-align: center;border: 1px solid #E6E6E6;border-radius: 0.03rem;font-size: 0.12rem;margin-top: 0.13rem;}
 
 /*月租续费*/
 .renewList>.renew-li{padding: 0 0.14rem;border-bottom: 1px solid #E1E1E1;border-top: 1px solid #F4F4F4;margin-bottom: 0.1rem;}

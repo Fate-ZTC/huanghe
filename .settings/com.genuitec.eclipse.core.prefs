@@ -1,7 +1,8 @@
-#Thu Feb 12 20:24:50 CST 2015
 clsCnt=264
 eclipse.preferences.version=1
 locCnt=27088
 pkgCnt=21
 sTime=2015\u5E742\u670812\u65E5 \u661F\u671F\u56DB \u4E0B\u534808\u65F624\u520650\u79D2 CST
 srcCnt=1
+validator.Checked=WebRoot/page/js,WebRoot/WEB-INF
+validator.Unchecked=

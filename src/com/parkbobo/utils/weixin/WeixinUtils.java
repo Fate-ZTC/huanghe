@@ -20,6 +20,7 @@ public class WeixinUtils {
 	public final static String TEMPLATE_ID_ENTER = "m8qIf-HfByqt4D-LVHCvBOh2IiMf39U5C7RiYQHnABk";//入场通知模板
 	public final static String TEMPLATE_ID_OVERTIME = "zePV9B3RIG2OberCEuLYRNlFIXE-A09pVUsrEegPTqc";//超时离场模板
 	public final static String TEMPLATE_ID_PAYMENT = "V_DWSEw9tf90ctsaoliDd0QIaeLmSF38gIRDdlMobwM";//缴费成功通知
+	public final static String TEMPLATE_ID_AUTH = "AlJWWKAIfD-ioFiNaKsQXjHGLpLQIGgi5bYSOav5kBo";//认证审核通知
 	
 	/**
 	 * 获取openid
@@ -246,6 +247,84 @@ public class WeixinUtils {
                    "}"+
            "}"+
        "}");
+		try {
+			String sendPost = HttpRequest.sendPost(url, sb.toString());
+			System.out.println(sendPost);
+			return sendPost;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	/**
+	 * 发送模板消息-认证审核通过通知模板
+	 * https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN
+	 * */
+	public static String authSuccessNotice(String openid,String token,String authResult,String authTime){
+		String url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+token;
+		StringBuffer sb = new StringBuffer();
+		sb.append("{"+
+				"\"touser\":\""+openid+"\","+
+				"\"template_id\":\""+TEMPLATE_ID_AUTH+"\","+
+				"\"url\":\"\","+            
+				"\"data\":{"+
+				"\"first\": {"+
+				"\"value\":\"信息认证审核结果通知。\","+
+				"\"color\":\"#173177\""+
+				"},"+
+				"\"keyword1\":{"+
+				"\"value\":\""+authResult+"\","+//审核结果
+				"\"color\":\"#173177\""+
+				"},"+
+				"\"keyword2\": {"+
+				"\"value\":\""+authTime+"\","+//审核时间
+				"\"color\":\"#173177\""+
+				"},"+
+				"\"remark\":{"+
+				"\"value\":\"您上传的证件信息认证已通过审核。\","+
+				"\"color\":\"#173177\""+
+				"}"+
+				"}"+
+		"}");
+		try {
+			String sendPost = HttpRequest.sendPost(url, sb.toString());
+			System.out.println(sendPost);
+			return sendPost;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	/**
+	 * 发送模板消息-认证审核未通过通知模板
+	 * https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN
+	 * */
+	public static String authFailNotice(String openid,String token,String authResult,String authTime,String authReason){
+		String url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+token;
+		StringBuffer sb = new StringBuffer();
+		sb.append("{"+
+				"\"touser\":\""+openid+"\","+
+				"\"template_id\":\""+TEMPLATE_ID_AUTH+"\","+
+				"\"url\":\"\","+            
+				"\"data\":{"+
+				"\"first\": {"+
+				"\"value\":\"信息认证审核结果通知。\","+
+				"\"color\":\"#173177\""+
+				"},"+
+				"\"keyword1\":{"+
+				"\"value\":\""+authResult+"\","+//审核结果
+				"\"color\":\"#173177\""+
+				"},"+
+				"\"keyword2\": {"+
+				"\"value\":\""+authTime+"\","+//审核时间
+				"\"color\":\"#173177\""+
+				"},"+
+				"\"remark\":{"+
+				"\"value\":\""+authReason+"\","+//未通过原因
+				"\"color\":\"#173177\""+
+				"}"+
+				"}"+
+		"}");
 		try {
 			String sendPost = HttpRequest.sendPost(url, sb.toString());
 			System.out.println(sendPost);

@@ -14,7 +14,7 @@
            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 	
 	<!--   微信凭证获取，每隔一小时执行一次        -->
-	<bean id="getTokenTicketTask" class="com.parkbobo.quartz.task.GetTokenTicketTask"></bean>
+	<!-- <bean id="getTokenTicketTask" class="com.parkbobo.quartz.task.GetTokenTicketTask"></bean>
 	<bean id="getTokenTicketTaskWork" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
 			<ref bean="getTokenTicketTask"/>
@@ -32,12 +32,12 @@
 		</property>
 		<property name="cronExpression">
 			<value>0 0 */1 * * ?</value>
-<!--			<value>0 * * * * ?</value>-->
+			<value>0 * * * * ?</value>
 		</property>
-	</bean>
+	</bean> -->
 	
 	<!--   获取停车场信息，每隔1分钟执行一次        -->
-	<bean id="getThreeParkingTask" class="com.parkbobo.quartz.task.GetThreeParkingTask"></bean>
+	<!-- <bean id="getThreeParkingTask" class="com.parkbobo.quartz.task.GetThreeParkingTask"></bean>
 	<bean id="getThreeParkingTaskWork" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
 			<ref bean="getThreeParkingTask"/>
@@ -56,7 +56,7 @@
 		<property name="cronExpression">
 			<value>0 * * * * ?</value>
 		</property>
-	</bean>
+	</bean> -->
 	
 	<bean id="JobSchedule" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">

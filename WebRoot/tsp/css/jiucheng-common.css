@@ -23,11 +23,11 @@
 	margin: 0;
 	padding: 0;
 }
-.swiper-img{height: 100%;border: none;display: inline-block;margin: 0;padding: 0;}
+.swiper-img{height: 90%;width: 100%;border: none;display: inline-block;margin: 0;padding: 0;}
 
 
 
-/*下拉刷新，上拉加载*/
+/*涓嬫媺鍒锋柊锛屼笂鎷夊姞杞�*/
 #wrapper {position:absolute;z-index:1;top:0.11rem;bottom:0.02rem;left:0;width:100%;overflow:auto;}
 #myFrame {position:absolute;top:0;left:0;}
 .pullUpLabel,.pullDownLabel {font-size:0.14rem;white-space: nowrap;text-align: center;}

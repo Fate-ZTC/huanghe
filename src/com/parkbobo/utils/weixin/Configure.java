@@ -1,7 +1,6 @@
 package com.parkbobo.utils.weixin;
 
 import com.parkbobo.utils.Configuration;
-import com.sun.faces.config.ConfigureListener;
 
 /**
  * User: rizenguo

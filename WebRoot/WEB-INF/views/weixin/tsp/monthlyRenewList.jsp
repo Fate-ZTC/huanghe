@@ -41,7 +41,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<c:forEach items="${carList}" var="c">
 					<li class="rent-li">
 						<div class="rentNowStatus-box">
-							<span class="float-L rentCarNum">${c.carPlate}</span><a class="operationBtn float-R">月租办理</a>
+							<span class="float-L rentCarNum">${c.carPlate}</span>
+					     	<c:if test="${c.authStatus==1}">
+							<a class="operationBtn float-R" href="<%=basePath%>monthlyHandle?plateNo=${c.carPlate}&kid=${c.kid}">月租办理</a>
+							</c:if>
 						</div>
 					</li>
 				</c:forEach>

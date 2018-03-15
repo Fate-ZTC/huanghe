@@ -23,10 +23,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<body>
 		<div class="jiucheng-box monthlyRenew-box f14">
 			<div class="monthlyRenew-top">
+				<img class="top-img" src="<%=basePath%>tsp/img/top1.png" alt="" />
 				<p class="monthlyRenew-cost">
 				<c:forEach items="${monthlypaymentRule}" var="m">
 					<span>${m.ruleName}：<i>${m.payPee/100}/<c:if test="${m.ruleType==1}">月</c:if><c:if test="${m.ruleType==2}">年</c:if></i></span>
 				</c:forEach>
+				<div class="top-bottom-img"></div>
 			</div>
 			<ul class="renewOperationList">
 				<li class="parkingSelect">

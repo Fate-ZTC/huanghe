@@ -36,11 +36,17 @@ input,textarea {
 .check{width: 0.52rem;}
 
 /*我的地盘*/
-.function{width: 100%;box-shadow: 0 0 2px #ccc;overflow: hidden;}
-.function-btn{width: 33.333%;height: 0.88rem;float: left;border-bottom: 1px solid #eee;border-right: 1px solid #eee;text-align: center;color: #575757;font-size: 0.12rem;}
+.function{width: 96%;box-shadow: 0 0 2px #ccc;overflow: hidden; margin-left: 6px;margin-bottom: .1rem;background-color: #FFFFFF;}
+.function-btn{width: 33.333%;height: 0.88rem;float: left;/* border-bottom: 1px solid #eee;border-right: 1px solid #eee; */text-align: center;color: #575757;font-size: 0.12rem;}
 .function-btn img{height: 0.5rem;margin: 0.09rem auto 0;}
-.person-link{height: 0.6rem;line-height: 0.6rem;display: block;border: 1px solid #eee;background: url(../img/fh.png) no-repeat 95% center;background-size: 0.07rem 0.14rem;}
-.person-link img{width: 0.25rem;height: 0.25rem;margin: 0.17rem 0.06rem 0.17rem 0.25rem;float: left;}
+.person-link{height: 0.6rem;line-height: 0.6rem;display: block;border: 1px solid #eee;background:url(../img/user_head.png) no-repeat 95% center;background-size: 0.25rem 0.25rem;background-color: #FFFFFF;}
+.car-status{
+	margin-left: 6px;
+    width:96%;
+    background:  url(../img/fh.png) no-repeat 95% center;
+    height: 0.6rem;line-height: 0.6rem;display: block;border: 1px solid #eee;
+    background-size: 0.07rem 0.14rem;background-color: #FFFFFF;}
+.person-link img{width: 0.35rem;height: 0.38rem;margin: 0.13rem 0.06rem 0.17rem 0.25rem;float: left;}
 .function-btnAct{background: #e5e5e5;}
 
 /*个人中心*/
@@ -52,7 +58,36 @@ input,textarea {
 .account-mesg{height: 0.5rem;border-bottom: 1px solid #eee;display: block;background: url(../img/fh.png) no-repeat right center;background-size: 0.07rem 0.14rem;line-height: 0.5rem;}
 .account-mesg img,.balance-mesg img{width: 0.24rem;height: 0.24rem;float: left;margin-top: 0.13rem;margin-right: 0.06rem;}
 .log-out{width: 2.22rem;height: 0.38rem;background: #12B7F5;color: #fff;font-size: 0.16rem;margin: 0.7rem auto 0;display: block;border-radius: 0.03rem;outline: 0;}
-
+.center-head {
+    height: 0.8rem;
+    line-height: 0.8rem;
+    display: block;
+    border: 1px solid #eee;
+    background-size: 0.25rem 0.25rem;
+    background-color: #FFFFFF;
+    margin-bottom: .3rem;
+}
+.center-head img {
+    width: 0.5rem;
+    height: 0.5rem;
+    margin: 0.13rem 0.06rem 0.17rem 0.25rem;
+    float: left;
+}
+.center-list img {
+    width: 0.35rem;
+    margin: 0.12rem 0.15rem 0.12rem 0.1rem;
+    float: left;
+}
+.center-list {
+    width: 100%;
+    height: 0.6rem;
+    display: block;
+    border: 1px solid #eee;
+    background-size: 0.07rem 0.14rem;
+    background-color: #FFFFFF;
+    line-height: .6rem;
+    background: url(../img/fh.png) no-repeat 95% center;
+}
 /*支付成功*/
 .pay-success{width: 2.98rem;height: 2.78rem;background: #F1F1F1;border:1px solid #E2E2E2;margin: 0 auto;font-size: .15rem;border-radius: .05rem;}
 .pay-success-title{/*width: 1.42rem;margin: .3rem auto;*/}

@@ -27,7 +27,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			<ul class="renewSuccess-mesg">
 				<li><span class="float-L">车牌号：</span><span class="float-R">${hmv.carPlate}</span></li>
 				<li><span class="float-L">停车场：</span><span class="float-R">${hmv.carpark.name}</span></li>
-				<li><span class="float-L">到期时间：</span><span class="float-R">${hmv.endTime}</span></li>
+				<li><span class="float-L">到期时间：</span><span class="float-R">${hmv.formatEndTime}</span></li>
 			</ul>
 		</div>
 		<script type="text/javascript">

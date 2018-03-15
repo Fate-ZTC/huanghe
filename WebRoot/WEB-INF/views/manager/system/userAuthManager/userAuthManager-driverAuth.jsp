@@ -53,7 +53,7 @@ $(function(){
 				<li class="picture-li">
 					<label for="" class="title-label">驾驶证</label>
 					<div class="picture-box">
-						<img class="driving-picture" src="<%=path %>/${users.driverUrl}"/>
+						<img class="driving-picture" <c:if test="${users.driverUrl==null}">src="<%=path %>/page/images/topright.jpg"</c:if>src="<%=path %>/${users.driverUrl}"/>
 						<img 
 						<c:if test="${users.authStatus==null}">src=""</c:if>
 						<c:if test="${users.authStatus==0}">src="<%=path %>/page/images/dengdai.png"</c:if>
