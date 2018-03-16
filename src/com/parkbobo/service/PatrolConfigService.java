@@ -17,27 +17,21 @@ public class PatrolConfigService {
 	 * @param patrolConfig 管理员端选择配置信息
 	 * @return 数据库对应配置信息
 	 */
-	public PatrolConfig getConfig(PatrolConfig patrolConfig){
-		PatrolConfig pc = this.patrolConfigDao.getUniqueByPropertys(new String[]{"uploadTime","leaveRegionDistance","startPatroltime","campusNum"},
-				new Object[]{patrolConfig.getUploadTime(),patrolConfig.getLeaveRegionDistance(),patrolConfig.getStartPatrolTime(),patrolConfig.getCampusNum()});
-		if(pc == null){
-			pc = this.patrolConfigDao.add(patrolConfig);
-		}
+	public PatrolConfig getConfig(Integer configId){
+		PatrolConfig pc = this.patrolConfigDao.get(configId);
 		return pc;
 	}
 	/**
 	 * 更新配置信息
 	 * @param patrolConfig
-	 * @return
 	 */
-	public PatrolConfig updateConfig(PatrolConfig patrolConfig){
+	public void updateConfig(PatrolConfig patrolConfig){
 		this.patrolConfigDao.update(patrolConfig);
-		return patrolConfig;
 	}
 	/**
 	 * 根据id查询
 	 */
 	public PatrolConfig getById(Integer id){
-		return this.patrolConfigDao.getUniqueByProperty("id", id);
+		return this.patrolConfigDao.get(id);
 	}
 }

@@ -41,7 +41,7 @@ public class PatrolRegion implements Serializable{
 	/**
 	 * 创建时间
 	 */
-	private Date createTime;
+	private Date createtime;
 	
 	/**
 	 * 空间几何信息
@@ -74,15 +74,15 @@ public class PatrolRegion implements Serializable{
 	public void setCampusNum(Integer campusNum) {
 		this.campusNum = campusNum;
 	}
-	@Column(name="create_time")
-	public Date getCreateTime() {
-		return createTime;
+	@Column(name="createtime")
+	public Date getCreatetime() {
+		return createtime;
 	}
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
+	public void setCreatetime(Date createtime) {
+		this.createtime = createtime;
 	}
-	@Column(name="geom")
+	@Column(name="region_location")
     @Type(type="org.hibernatespatial.GeometryUserType",parameters ={
     		@Parameter(name="dialect",value="postgis")
     		})

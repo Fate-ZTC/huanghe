@@ -1,7 +1,5 @@
 package com.parkbobo.service;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -27,32 +25,28 @@ public class PatrolLocationInfoService {
 		}
 	}
 	/**
-	 * 判断是否在原地五分钟未动
-	 * @param uploadTime 上传频率  单位秒 5既 5秒一次
-	 * @param userId  用户id
-	 * @param lon 经度
-	 * @param lat 纬度
-	 * @param usregId 区域id
-	 * @return  true 未动   false 动了
+	 * 获取当前位置信息
+	 * @param userid
+	 * @param usregId
+	 * @param campusNum
+	 * @return
 	 */
-	public boolean isLazy(Integer uploadTime,Integer userId,double lon,double lat,Integer usregId){
-		Calendar oldtime = Calendar.getInstance();
-		oldtime.add(Calendar.MINUTE, -5);
-		String starttime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(oldtime.getTime());
-		Calendar newtime = Calendar.getInstance();
-		String endtime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(newtime.getTime());
-		String hql = "from PatrolLocationInfo where userId ="+userId+" and lon = "+lon+" and lat="+lat
-				+" and usregId="+usregId+"and timestamp between '"+starttime+"' and '"+endtime+"'";
+	public PatrolLocationInfo getLocation(String jobNum,Integer usregId,Integer campusNum){
+		String hql = "from PatrolLocationInfo where jobNum = '"+jobNum+"' and usregId="+usregId+
+				" and campusNum = "+campusNum +" order by timestamp desc limit 1";
 		List<PatrolLocationInfo> list = this.patrolLocationInfoDao.getByHQL(hql);
-		if(list.size()>=(300/uploadTime)){
-			return true;
+		if(list.size()>0&&list!=null){
+			return list.get(0);
 		}
-		return false;
+		return null;
 	}
 	public List<PatrolLocationInfo> getByProperty(String propertyName,Object value){
 		return this.patrolLocationInfoDao.getByProperty(propertyName, value);
 	}
 	public List<PatrolLocationInfo> getByProperty(String propertyName ,Object value ,String orderBy,boolean isAsc){
 		return this.patrolLocationInfoDao.getByProperty(propertyName, value, orderBy, isAsc);
+	}
+	public PatrolLocationInfo add(PatrolLocationInfo patrolLocationInfo){
+		return patrolLocationInfoDao.add(patrolLocationInfo);
 	}
 }

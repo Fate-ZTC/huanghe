@@ -42,11 +42,11 @@ public class PatrolLocationInfo implements Serializable{
 	/**
 	 * 纬度
 	 */
-	private double lat;
+	private Double lat;
 	/**
 	 * 经度
 	 */
-	private double lon;
+	private Double lon;
 	/**
 	 * 学校id
 	 */
@@ -95,17 +95,17 @@ public class PatrolLocationInfo implements Serializable{
 		this.username = username;
 	}
 	@Column(name="lat")
-	public double getLat() {
+	public Double getLat() {
 		return lat;
 	}
-	public void setLat(double lat) {
+	public void setLat(Double lat) {
 		this.lat = lat;
 	}
 	@Column(name="lon")
-	public double getLon() {
+	public Double getLon() {
 		return lon;
 	}
-	public void setLon(double lon) {
+	public void setLon(Double lon) {
 		this.lon = lon;
 	}
 	@Column(name="campus_num")

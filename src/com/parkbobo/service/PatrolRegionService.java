@@ -16,7 +16,7 @@ public class PatrolRegionService {
 	private PatrolRegionDao patrolRegionDao;
 	
 	public PatrolRegion getById(Integer id){
-		return this.patrolRegionDao.getUniqueByProperty("id", id);
+		return this.patrolRegionDao.get(id);
 	}
 	
 	public List<PatrolRegion> getByCampusNum(Integer campusNum){

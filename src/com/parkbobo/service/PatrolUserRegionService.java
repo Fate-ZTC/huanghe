@@ -35,7 +35,7 @@ public class PatrolUserRegionService {
 	 * 根据id获取信息
 	 */
 	public PatrolUserRegion getById(Integer id){
-		return this.patrolUserRegionDao.getUniqueByProperty("id", id);
+		return this.patrolUserRegionDao.get(id);
 	}
 	
 	public PatrolUserRegion getUniqueByProperty(String propertyName,Object value){
@@ -51,21 +51,26 @@ public class PatrolUserRegionService {
 		return this.patrolUserRegionDao.getByHQL(hql);
 	}
 
-	/**
-	 * 异常正常状态转换
-	 * @param patrolUserRegionId 区域表id
-	 * @return
-	 */
-	public PatrolUserRegion switchUpload(Integer patrolUserRegionId){
-		
-		PatrolUserRegion region = this.patrolUserRegionDao.getUniqueByProperty("id", patrolUserRegionId);
-		if(region.getStatus()==1){
-			this.patrolUserRegionDao.localUpdateOneFields(patrolUserRegionId, new String[]{"status","lastUpdateTime"}, new Object[]{2,new Date()});
-			region.setStatus(2);
-		}else{
-			this.patrolUserRegionDao.localUpdateOneFields(patrolUserRegionId, new String[]{"status","lastUpdateTime"}, new Object[]{1,new Date()});
-			region.setStatus(1);
+	public Long getCountTime(String jobNum){
+		String hql = "from PatrolUserRegion where jobNum = '"+jobNum+"' order by startTime desc limit 1";
+		List<PatrolUserRegion> list = this.patrolUserRegionDao.getByHQL(hql);
+		if(list!=null&&list.size()>0){
+			PatrolUserRegion patrolUserRegion = list.get(0);
+			return new Date().getTime()-patrolUserRegion.getStartTime().getTime();
 		}
-		return region;
+		return null;
+	}
+	/**
+	 * 判断是否偷懒
+	 * 
+	 */
+	public boolean isLazy(Integer userRegionId){
+		if(new Date().getTime()-this.patrolUserRegionDao.get(userRegionId).getLastUpdateTime().getTime()>=1000*300){
+			return true;
+		}
+		return false;
+	}
+	public void update(PatrolUserRegion patrolUserRegion) {
+		this.patrolUserRegionDao.update(patrolUserRegion);
 	}
 }
