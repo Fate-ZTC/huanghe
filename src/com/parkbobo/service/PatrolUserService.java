@@ -25,7 +25,19 @@ public class PatrolUserService {
 		PatrolUser patrolUser = this.patrolUserDao.getUniqueByPropertys(new String[]{"jobNum","password"}, new Object[]{jobNum,password});
 		return patrolUser;
 	}
-
+	/**
+	 * 获取所有用户信息
+	 * @return 用户信息集合
+	 */
+	public List<PatrolUser> getAllUser(){
+		return this.patrolUserDao.getAll();
+	}
+	/**
+	 * 根据id删除巡查员
+	 */
+	public void deleteById(Integer id){
+		this.patrolUserDao.delete(id);
+	}
 	/**
 	 * 新增用户 
 	 * @return  0 工号已存在  1成功   2未知错误
@@ -64,6 +76,12 @@ public class PatrolUserService {
 	 * 根据id获取用户信息
 	 */
 	public PatrolUser getById(Integer id){
-		return this.patrolUserDao.getUniqueByProperty("id", id);
+		return this.patrolUserDao.get(id);
+	}
+	/**
+	 * 根据jobNum 获取用户
+	 */
+	public PatrolUser getByJobNum(String jobNum){
+		return this.patrolUserDao.getUniqueByProperty("jobNum", jobNum);
 	}
 }

@@ -3,11 +3,14 @@ package com.parkbobo.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -52,7 +55,7 @@ public class PatrolUserRegion implements Serializable{
 	/**
 	 * 异常类型
 	 */
-	private Integer exceptionType;
+	private PatrolException patrolException;
 	/**
 	 * 最后更新时间
 	 */
@@ -109,12 +112,13 @@ public class PatrolUserRegion implements Serializable{
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	@Column(name="exception_type")
-	public Integer getExceptionType() {
-		return exceptionType;
+	@ManyToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name="exception_type")
+	public PatrolException getPatrolException() {
+		return patrolException;
 	}
-	public void setExceptionType(Integer exceptionType) {
-		this.exceptionType = exceptionType;
+	public void setPatrolException(PatrolException patrolException) {
+		this.patrolException = patrolException;
 	}
 	@Column(name="last_update_time")
 	public Date getLastUpdateTime() {
