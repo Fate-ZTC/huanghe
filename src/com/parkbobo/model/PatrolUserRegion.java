@@ -1,15 +1,22 @@
 package com.parkbobo.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="patrol_user_region")
@@ -52,7 +59,7 @@ public class PatrolUserRegion implements Serializable{
 	/**
 	 * 异常类型
 	 */
-	private Integer exceptionType;
+	private PatrolException patrolException;
 	/**
 	 * 最后更新时间
 	 */
@@ -109,13 +116,6 @@ public class PatrolUserRegion implements Serializable{
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	@Column(name="exception_type")
-	public Integer getExceptionType() {
-		return exceptionType;
-	}
-	public void setExceptionType(Integer exceptionType) {
-		this.exceptionType = exceptionType;
-	}
 	@Column(name="last_update_time")
 	public Date getLastUpdateTime() {
 		return lastUpdateTime;
@@ -123,7 +123,27 @@ public class PatrolUserRegion implements Serializable{
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
-	
-	
+	@ManyToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name="exception_type")
+	public PatrolException getPatrolException() {
+		return patrolException;
+	}
+	public void setPatrolException(PatrolException patrolException) {
+		this.patrolException = patrolException;
+	}
+	@Transient
+	public String formatStartTime(){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		if(startTime != null)
+			return sdf.format(startTime);
+		return "";
+	}
+	@Transient
+	public String formatEndTime(){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		if(endTime != null)
+			return sdf.format(endTime);
+		return "";
+	}
 	
 }

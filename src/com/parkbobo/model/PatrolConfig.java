@@ -11,7 +11,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table
+@Table(name="patrol_config")
 @SequenceGenerator(name="generator", sequenceName="patrol_config_id_seq", allocationSize = 1)
 public class PatrolConfig implements Serializable {
 

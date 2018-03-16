@@ -3,11 +3,14 @@ package com.parkbobo.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -29,9 +32,9 @@ public class PatrolLocationInfo implements Serializable{
 	 */
 	private Integer usregId;
 	/**
-	 * 用户id
+	 * 用户工号
 	 */
-	private Integer userId;
+	private String jobNum;
 	/**
 	 * 用户姓名
 	 */
@@ -55,7 +58,7 @@ public class PatrolLocationInfo implements Serializable{
 	/**
 	 * 异常类型
 	 */
-	private Integer exceptionType;
+	private PatrolException patrolException;
 	/**
 	 * 是否异常   1正常  2异常
 	 */
@@ -77,12 +80,12 @@ public class PatrolLocationInfo implements Serializable{
 	public void setUsregId(Integer usregId) {
 		this.usregId = usregId;
 	}
-	@Column(name="user_id")
-	public Integer getUserId() {
-		return userId;
+	@Column(name="job_num")
+	public String getJobNum() {
+		return jobNum;
 	}
-	public void setUserId(Integer userId) {
-		this.userId = userId;
+	public void setJobNum(String jobNum) {
+		this.jobNum = jobNum;
 	}
 	@Column(name="username")
 	public String getUsername() {
@@ -119,12 +122,13 @@ public class PatrolLocationInfo implements Serializable{
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
-	@Column(name="exception_type")
-	public Integer getExceptionType() {
-		return exceptionType;
+	@ManyToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name="exception_type")
+	public PatrolException getPatrolException() {
+		return patrolException;
 	}
-	public void setExceptionType(Integer exceptionType) {
-		this.exceptionType = exceptionType;
+	public void setPatrolException(PatrolException patrolException) {
+		this.patrolException = patrolException;
 	}
 	@Column(name="status")
 	public Integer getStatus() {

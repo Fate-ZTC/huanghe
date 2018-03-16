@@ -4,16 +4,20 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.parkbobo.model.PatrolConfig;
 import com.parkbobo.model.PatrolLocationInfo;
 import com.parkbobo.model.PatrolRegion;
@@ -49,7 +53,10 @@ public class PatrolUserController {
 
 	@Resource
 	private PatrolLocationInfoService patrolLocationInfoService;
-
+	/**
+	 * 格式化json
+	 */
+	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect};
 	/**
 	 * 登录
 	 * @param jobNum 工号
@@ -206,6 +213,32 @@ public class PatrolUserController {
 		PrintWriter out = response.getWriter();
 		List<PatrolRegion> list = this.patrolRegionService.getByCampusNum(campusNum);
 		out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(list)+"}"); 
+	}
+	/**
+	 * 获取签到时间集合
+	 * @param startDate 日历第一天
+	 * @param endDate 日历最后天
+	 * @param jobNum 工号
+	 * @param response 
+	 * @throws IOException 
+	 */
+	@RequestMapping("getCalendar")
+	public void getCalendar(String startDate, String endDate, String jobNum,HttpServletResponse response) throws IOException{
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate) && StringUtils.isNotBlank(jobNum)) {
+			String hql = "from PatrolUserRegion where jobNum = '"+ jobNum +"' and startTime >= '"+ startDate +" 00:00:00' and endTime < '"+ endDate +" 00:00:00'";
+			List<PatrolUserRegion> patrolUserRegions = patrolUserRegionService.getByHQL(hql);
+			if (patrolUserRegions!=null && patrolUserRegions.size()>0) {
+				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolUserRegions,features)+"}"); 
+			}else{
+				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"暂无数据\"}"); 
+			}
+		}else{
+			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"参数不完整\"}"); 
+		}
+		out.flush();
+		out.close();
 	}
 	
 }

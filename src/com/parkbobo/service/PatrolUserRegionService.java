@@ -1,6 +1,7 @@
 package com.parkbobo.service;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -35,6 +36,19 @@ public class PatrolUserRegionService {
 	 */
 	public PatrolUserRegion getById(Integer id){
 		return this.patrolUserRegionDao.getUniqueByProperty("id", id);
+	}
+	
+	public PatrolUserRegion getUniqueByProperty(String propertyName,Object value){
+		return this.patrolUserRegionDao.getUniqueByProperty(propertyName, value);
+	}
+	public List<PatrolUserRegion> getByProperty(String propertyName,Object value){
+		return this.patrolUserRegionDao.getByProperty(propertyName, value);
+	}
+	public List<PatrolUserRegion> getByProperty(String propertyName ,Object value ,String orderBy,boolean isAsc){
+		return this.patrolUserRegionDao.getByProperty(propertyName, value, orderBy, isAsc);
+	}
+	public List<PatrolUserRegion> getByHQL(String hql){
+		return this.patrolUserRegionDao.getByHQL(hql);
 	}
 
 	/**

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.parkbobo.dao.PatrolLocationInfoDao;
 import com.parkbobo.model.PatrolLocationInfo;
+import com.parkbobo.model.PatrolUserRegion;
 
 @Service
 public class PatrolLocationInfoService {
@@ -48,7 +49,10 @@ public class PatrolLocationInfoService {
 		}
 		return false;
 	}
-	public static void main(String[] args) {
-		
+	public List<PatrolLocationInfo> getByProperty(String propertyName,Object value){
+		return this.patrolLocationInfoDao.getByProperty(propertyName, value);
+	}
+	public List<PatrolLocationInfo> getByProperty(String propertyName ,Object value ,String orderBy,boolean isAsc){
+		return this.patrolLocationInfoDao.getByProperty(propertyName, value, orderBy, isAsc);
 	}
 }

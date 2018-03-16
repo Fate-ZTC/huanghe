@@ -66,4 +66,9 @@ public class PatrolUserService {
 	public PatrolUser getById(Integer id){
 		return this.patrolUserDao.getUniqueByProperty("id", id);
 	}
+	
+	public List<PatrolUser> getAll(){
+		return this.patrolUserDao.getAll();
+	}
+	
 }
