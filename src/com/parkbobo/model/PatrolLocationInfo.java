@@ -52,6 +52,14 @@ public class PatrolLocationInfo implements Serializable{
 	 * 时间戳
 	 */
 	private Date timestamp;
+	/**
+	 * 异常类型
+	 */
+	private Integer exceptionType;
+	/**
+	 * 是否异常   1正常  2异常
+	 */
+	private Integer status;
 	
 	@Id
 	@Column(name="id",unique=true,nullable=false)
@@ -110,6 +118,20 @@ public class PatrolLocationInfo implements Serializable{
 	}
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+	@Column(name="exception_type")
+	public Integer getExceptionType() {
+		return exceptionType;
+	}
+	public void setExceptionType(Integer exceptionType) {
+		this.exceptionType = exceptionType;
+	}
+	@Column(name="status")
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 	
 	

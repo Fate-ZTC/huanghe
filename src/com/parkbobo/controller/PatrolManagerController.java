@@ -7,13 +7,15 @@ import java.net.URLEncoder;
 import java.util.Date;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.alibaba.fastjson.JSONObject;
+import com.parkbobo.model.PatrolConfig;
 import com.parkbobo.model.PatrolUser;
+import com.parkbobo.service.PatrolConfigService;
 import com.parkbobo.service.PatrolUserService;
 
 @Controller
@@ -22,8 +24,11 @@ public class PatrolManagerController {
 	@Resource
 	private PatrolUserService patrolUserService;
 
+	@Resource
+	private PatrolConfigService patrolConfigService;
+
 	@RequestMapping("addUser")
-	public void addUser(String jobNum,String password,String username,Integer campusNum,HttpServletResponse response,HttpServletRequest request) throws IOException{
+	public void addUser(String jobNum,String password,String username,Integer campusNum,HttpServletResponse response) throws IOException{
 		PrintWriter out = null;
 		try {
 			response.setCharacterEncoding("UTF-8");
@@ -58,7 +63,7 @@ public class PatrolManagerController {
 	@RequestMapping("updateUser")
 	public void updateUser(Integer id,String username,String password,String jobNum,Integer campusNum,HttpServletResponse response) throws IOException{
 		PrintWriter out = null;
-//		try {
+		try {
 			response.setCharacterEncoding("UTF-8");
 			out = response.getWriter();
 			PatrolUser patrolUser = new PatrolUser();
@@ -83,12 +88,43 @@ public class PatrolManagerController {
 			if (flag == 1) {
 				out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"修改成功\"}");
 			} 
-//		} catch (Exception e) {
-//			out.print("{\"status\":\"false\",\"Code\":0,\"errorMsg\":\"未知异常\"}");
-//		}finally {
+		} catch (Exception e) {
+			out.print("{\"status\":\"false\",\"Code\":0,\"errorMsg\":\"未知异常\"}");
+		}finally {
 			out.flush();
 			out.close();
-//		}
-
+		}
 	}
+	/**
+	 * 启动紧急状态
+	 * @throws IOException 
+	 */
+	@RequestMapping("startEmergency")
+	public void startEmergency(Integer configId,HttpServletResponse response) throws IOException{
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		PatrolConfig config = this.patrolConfigService.getById(configId);
+		config.setIsEmergency(1);
+		out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(config)+"}");
+	}
+	/**
+	 * 取消紧急状态
+	 * @throws IOException 
+	 */
+	@RequestMapping("endEmergency")
+	public void endEmergency(Integer configId,HttpServletResponse response) throws IOException{
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		PatrolConfig config = this.patrolConfigService.getById(configId);
+		config.setIsEmergency(0);
+		out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(config)+"}");
+	}
+	/**
+	 * 实时获取安防人员轨迹
+	 * 
+	 */
+	public void getLocation(Integer campusNum,Integer jobNum){
+		
+	}
+
 }
