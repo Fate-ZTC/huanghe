@@ -28,4 +28,13 @@ public class FireFightEquipmentService {
 		return fireFightEquipmentDao.getByPropertys(propertyNames, values);
 	}
 	
+	
+	public FireFightEquipment getById(Integer id){
+		return this.fireFightEquipmentDao.get(id);
+	}
+
+	public void update(FireFightEquipment fireFightEquipment) {
+		this.fireFightEquipmentDao.update(fireFightEquipment);
+	}
+
 }

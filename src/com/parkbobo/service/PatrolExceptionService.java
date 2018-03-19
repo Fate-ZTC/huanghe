@@ -23,4 +23,10 @@ public class PatrolExceptionService {
 	public List<PatrolException> getByHQL(String hql) {
 		return patrolExceptionDao.getByHQL(hql);
 	}
+
+
+	public List<PatrolException> getAllFireExceptions() {
+		String hql = "from PatrolException where id >=3 ";
+		return this.patrolExceptionDao.getByHQL(hql);
+	}
 }

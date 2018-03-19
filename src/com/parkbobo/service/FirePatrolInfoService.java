@@ -22,4 +22,8 @@ public class FirePatrolInfoService {
 		return firePatrolInfoDao.get(entityid);
 	}
 	
+
+	public FirePatrolInfo add(FirePatrolInfo firePatrolInfo) {
+		return this.firePatrolInfoDao.add(firePatrolInfo);
+	}
 }
