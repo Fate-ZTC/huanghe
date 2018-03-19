@@ -47,7 +47,7 @@ public class FirePatrolInfo implements Serializable{
 	 */
 	private Integer patrolStatus;
 	/**
-	 * 异常码
+	 * 异常码 格式(1,2,3,)
 	 */
 	private String excptionTypes;
 	/**
