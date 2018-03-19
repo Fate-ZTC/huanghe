@@ -64,13 +64,17 @@ public class PatrolUserRegionService {
 	 * 判断是否偷懒
 	 * 
 	 */
-	public boolean isLazy(Integer userRegionId){
-		if(new Date().getTime()-this.patrolUserRegionDao.get(userRegionId).getLastUpdateTime().getTime()>=1000*300){
+	public boolean isLazy(PatrolUserRegion patrolUserRegion){
+		if(new Date().getTime()-patrolUserRegion.getLastUpdateTime().getTime()>=1000*300){
 			return true;
 		}
 		return false;
 	}
-	public void update(PatrolUserRegion patrolUserRegion) {
-		this.patrolUserRegionDao.update(patrolUserRegion);
+	public void merge(PatrolUserRegion patrolUserRegion) {
+		this.patrolUserRegionDao.merge(patrolUserRegion);
+	}
+	public List<PatrolUserRegion> getAbnormal() {
+		String hql = "from PatrolUserRegion where endTime is null and status = 2";
+		return this.patrolUserRegionDao.getByHQL(hql);
 	}
 }

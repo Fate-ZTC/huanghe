@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.parkbobo.model.PatrolConfig;
@@ -35,13 +33,13 @@ public class PatrolManagerController {
 
 	@Resource
 	private PatrolConfigService patrolConfigService;
-	
+
 	@Resource
 	private PatrolUserRegionService patrolUserRegionService;
-	
+
 	@Resource
 	private PatrolLocationInfoService patrolLocationInfoService;
-	
+
 	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect};
 	/**
 	 * 获取所有巡查员
@@ -287,7 +285,7 @@ public class PatrolManagerController {
 			out.close();
 		}
 	}
-	
+
 	/**
 	 * 根据区域查询相关人员
 	 * @param regionId 区域id
@@ -334,7 +332,7 @@ public class PatrolManagerController {
 					patrolLocationInfos.add(patrolLocationInfo.get(0));
 				}
 			}
-			
+
 			if (patrolLocationInfos != null && patrolLocationInfos.size()>0) {
 				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolLocationInfos,features)+"}");
 			}else{
@@ -346,7 +344,13 @@ public class PatrolManagerController {
 		out.flush();
 		out.close();
 	}
-	
+
+	/**
+	 * 获取用户区域表
+	 * @param usregId
+	 * @param response
+	 * @throws IOException
+	 */
 	@RequestMapping("getUserRegion")
 	public void getUserRegion(Integer usregId,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
@@ -360,5 +364,24 @@ public class PatrolManagerController {
 		out.flush();
 		out.close();
 	}
-	
+	/**
+	 *异常报警
+	 * @throws IOException 
+	 */
+	@RequestMapping("abnormalAlarm")
+	public void abnormalAlarm(HttpServletResponse response) throws IOException{
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			List<PatrolUserRegion> list = this.patrolUserRegionService.getAbnormal();
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":\""+JSONObject.toJSONString(list,features)+"}");
+		} catch (IOException e) {
+			if(out==null){
+				out=response.getWriter();
+			}
+			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
+		}
+	}
+
 }

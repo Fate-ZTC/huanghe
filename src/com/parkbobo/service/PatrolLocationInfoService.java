@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.parkbobo.dao.PatrolLocationInfoDao;
 import com.parkbobo.model.PatrolLocationInfo;
-import com.parkbobo.model.PatrolUserRegion;
 
 @Service
 public class PatrolLocationInfoService {
