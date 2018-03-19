@@ -88,5 +88,9 @@ public class PatrolUserService {
 	public List<PatrolUser> getAll(){
 		return this.patrolUserDao.getAll();
 	}
+		
+	public void update(PatrolUser patrolUser) {
+		this.patrolUserDao.update(patrolUser);
+	}
 	
 }

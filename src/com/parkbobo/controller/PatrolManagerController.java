@@ -87,6 +87,7 @@ public class PatrolManagerController {
 			patrolUser.setCampusNum(campusNum);
 			patrolUser.setJobNum(jobNum);
 			patrolUser.setPassword(password);
+			patrolUser.setIsDel((short)0);
 			//patrolUser.setUsername(new String(username.getBytes("ISO-8859-1"),"utf-8"));
 			if (username != null) {
 				patrolUser.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
@@ -193,7 +194,8 @@ public class PatrolManagerController {
 				out.print("{\"status\":\"false\",\"Code\":-1,\"Msg\":\"用户不存在\"}");
 				return;
 			}else{
-				this.patrolUserService.deleteById(id);
+				patrolUser.setIsDel((short)1);
+				this.patrolUserService.update(patrolUser);
 			}
 			out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"删除成功\"}");
 		} catch (IOException e) {

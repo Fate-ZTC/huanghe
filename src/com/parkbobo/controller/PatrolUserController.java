@@ -76,6 +76,10 @@ public class PatrolUserController {
 			out = response.getWriter();
 			PatrolUser patrolUser = this.patrolUserService.userLogin(jobNum, password);
 			if(patrolUser != null){
+				if(patrolUser.getIsDel()==1){
+					out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账户已删除\"}");
+					return;
+				}
 				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolUser)+"}");
 			}else{
 				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账号密码错误\"}");
