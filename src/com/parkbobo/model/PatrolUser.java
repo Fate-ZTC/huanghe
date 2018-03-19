@@ -39,7 +39,7 @@ public class PatrolUser implements Serializable{
 	/**
 	 * 创建时间
 	 */
-	private Date createTime;
+	private Date createtime;
 	/**
 	 * 校区编号
 	 */
@@ -82,12 +82,12 @@ public class PatrolUser implements Serializable{
 	public void setJobNum(String jobNum) {
 		this.jobNum = jobNum;
 	}
-	@Column(name="create_time")
-	public Date getCreateTime() {
-		return createTime;
+	@Column(name="createtime")
+	public Date getCreatetime() {
+		return createtime;
 	}
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
+	public void setCreatetime(Date createtime) {
+		this.createtime = createtime;
 	}
 	@Column(name="campus_num")
 	public Integer getCampusNum() {

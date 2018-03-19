@@ -25,6 +25,11 @@ import com.parkbobo.service.PatrolLocationInfoService;
 import com.parkbobo.service.PatrolUserRegionService;
 import com.parkbobo.service.PatrolUserService;
 
+/**
+ * 安防管理端接口
+ * @author zj
+ *@version 1.0
+ */
 @Controller
 public class PatrolManagerController {
 
@@ -59,7 +64,6 @@ public class PatrolManagerController {
 				out=response.getWriter();
 			}
 			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
-
 		}finally{
 			out.flush();
 			out.close();
@@ -83,7 +87,7 @@ public class PatrolManagerController {
 			response.setCharacterEncoding("UTF-8");
 			out = response.getWriter();
 			PatrolUser patrolUser = new PatrolUser();
-			patrolUser.setCreateTime(new Date());
+			patrolUser.setCreatetime(new Date());
 			patrolUser.setCampusNum(campusNum);
 			patrolUser.setJobNum(jobNum);
 			patrolUser.setPassword(password);
@@ -154,7 +158,7 @@ public class PatrolManagerController {
 			patrolUser.setCampusNum(campusNum);
 			patrolUser.setJobNum(jobNum);
 			patrolUser.setPassword(password);
-			patrolUser.setCreateTime(this.patrolUserService.getById(id).getCreateTime());
+			patrolUser.setCreatetime(this.patrolUserService.getById(id).getCreatetime());
 			if(username!=null){
 				patrolUser.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
 			}else{

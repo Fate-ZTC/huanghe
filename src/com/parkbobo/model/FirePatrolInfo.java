@@ -49,7 +49,7 @@ public class FirePatrolInfo implements Serializable{
 	/**
 	 * 异常码 格式(1,2,3,)
 	 */
-	private String excptionTypes;
+	private String exceptionTypes;
 	/**
 	 * 设备id
 	 */
@@ -104,12 +104,12 @@ public class FirePatrolInfo implements Serializable{
 	public void setPatrolStatus(Integer patrolStatus) {
 		this.patrolStatus = patrolStatus;
 	}
-	@Column(name="excption_types")
-	public String getExcptionTypes() {
-		return excptionTypes;
+	@Column(name="exception_types")
+	public String getExceptionTypes() {
+		return exceptionTypes;
 	}
-	public void setExcptionTypes(String excptionTypes) {
-		this.excptionTypes = excptionTypes;
+	public void setExceptionTypes(String exceptionTypes) {
+		this.exceptionTypes = exceptionTypes;
 	}
 	@OneToOne
 	@JoinColumn(name="equipment_id")
