@@ -53,7 +53,7 @@ public class FirePatrolInfo implements Serializable{
 	/**
 	 * 设备id
 	 */
-	private Integer equipmentId;
+	private FireFightEquipment equipmentId;
 	/**
 	 * 异常描述
 	 */
@@ -111,11 +111,12 @@ public class FirePatrolInfo implements Serializable{
 	public void setExcptionTypes(String excptionTypes) {
 		this.excptionTypes = excptionTypes;
 	}
-	@Column(name="equipment_id")
-	public Integer getEquipmentId() {
+	@OneToOne
+	@JoinColumn(name="equipment_id")
+	public FireFightEquipment getEquipmentId() {
 		return equipmentId;
 	}
-	public void setEquipmentId(Integer equipmentId) {
+	public void setEquipmentId(FireFightEquipment equipmentId) {
 		this.equipmentId = equipmentId;
 	}
 	@Column(name="description")

@@ -44,6 +44,14 @@ public class PatrolUser implements Serializable{
 	 * 校区编号
 	 */
 	private Integer campusNum;
+	/**
+	 * 个推id
+	 */
+	private String clientId;
+	/**
+	 * 是否删除
+	 */
+	private Short isDel;
 	@Id
 	@Column(name="id",unique=true,nullable=false)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -87,6 +95,20 @@ public class PatrolUser implements Serializable{
 	}
 	public void setCampusNum(Integer campusNum) {
 		this.campusNum = campusNum;
+	}
+	@Column(name="client_id")
+	public String getClientId() {
+		return clientId;
+	}
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
+	@Column(name="is_del")
+	public Short getIsDel() {
+		return isDel;
+	}
+	public void setIsDel(Short isDel) {
+		this.isDel = isDel;
 	}
 	
 }
