@@ -41,7 +41,7 @@ public class FireFightEquipment implements Serializable{
 	 */
 	private Float lat;
 	/**
-	 * 异常名称
+	 * 巡查状态 0未检查 1已检查
 	 */
 	private Short checkStatus;
 	/**

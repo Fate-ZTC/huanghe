@@ -1,5 +1,7 @@
 package com.parkbobo.service;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -16,5 +18,9 @@ public class PatrolExceptionService {
 	
 	public PatrolException get(Integer entityid) {
 		return patrolExceptionDao.get(entityid);
+	}
+	
+	public List<PatrolException> getByHQL(String hql) {
+		return patrolExceptionDao.getByHQL(hql);
 	}
 }
