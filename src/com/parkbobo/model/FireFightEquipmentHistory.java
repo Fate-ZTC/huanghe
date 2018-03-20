@@ -26,6 +26,10 @@ public class FireFightEquipmentHistory implements Serializable{
 	 */
 	private Integer id;
 	/**
+	 * 设备原来的id
+	 */
+	private Integer oldId;
+	/**
 	 * 设备状态 1正常 0异常
 	 */
 	private Short status;
@@ -61,6 +65,13 @@ public class FireFightEquipmentHistory implements Serializable{
 	}
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	@Column(name="old_id")
+	public Integer getOldId() {
+		return oldId;
+	}
+	public void setOldId(Integer oldId) {
+		this.oldId = oldId;
 	}
 	@Column(name="status")
 	public Short getStatus() {
