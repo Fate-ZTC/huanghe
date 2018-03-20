@@ -66,13 +66,6 @@ public class FireFightEquipmentHistory implements Serializable{
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	@Column(name="old_id")
-	public Integer getOldId() {
-		return oldId;
-	}
-	public void setOldId(Integer oldId) {
-		this.oldId = oldId;
-	}
 	@Column(name="status")
 	public Short getStatus() {
 		return status;
@@ -122,4 +115,12 @@ public class FireFightEquipmentHistory implements Serializable{
 	public void setCampusNum(Integer campusNum) {
 		this.campusNum = campusNum;
 	}
+	@Column(name="old_id")
+	public Integer getOldId() {
+		return oldId;
+	}
+	public void setOldId(Integer oldId) {
+		this.oldId = oldId;
+	}
+	
 }
