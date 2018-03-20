@@ -2,6 +2,8 @@ package com.parkbobo.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -64,7 +66,7 @@ public class FirePatrolUserController {
 			if(list!=null&&list.size()>0){
 				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(list,features)+"}");
 			}else{
-				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"无数据\"}");
+				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"无数据\"}");
 			}
 		}catch(Exception e){
 			if(out==null){
@@ -99,7 +101,6 @@ public class FirePatrolUserController {
 			FireFightEquipment fireFightEquipment = this.fireFightEquipmentService.getById(equipmentId);
 			if(patrolUser!=null){
 				if(fireFightEquipment!=null){
-					FirePatrolImg firePatrolImg = new FirePatrolImg();
 					FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
 					FireFightEquipmentHistory equipmentHistory = new FireFightEquipmentHistory();
 					equipmentHistory.setCampusNum(fireFightEquipment.getCampusNum());
@@ -109,6 +110,7 @@ public class FirePatrolUserController {
 					equipmentHistory.setLon(fireFightEquipment.getLon());
 					equipmentHistory.setName(fireFightEquipment.getName());
 					equipmentHistory.setStatus((short)1);
+					equipmentHistory.setOldId(fireFightEquipment.getId());
 					firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
 					firePatrolInfo.setPatrolUser(patrolUser);
 					firePatrolInfo.setDescription("正常");
@@ -120,13 +122,14 @@ public class FirePatrolUserController {
 					fireFightEquipment.setCheckStatus((short)1);
 					fireFightEquipment.setStatus((short)1);
 					fireFightEquipment.setLastUpdateTime(date);
-					firePatrolImg.setFireFightEquipment(fireFightEquipment);
 					List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
 					this.fireFightEquipmentHistoryService.add(equipmentHistory);
 					this.firePatrolInfoService.add(firePatrolInfo);
 					this.fireFightEquipmentService.update(fireFightEquipment);
 					if(imgUrls!=null&&imgUrls.length>0){
 						for(int i = 0;i<imgUrls.length;i++){
+							FirePatrolImg firePatrolImg = new FirePatrolImg();
+							firePatrolImg.setFireFightEquipment(fireFightEquipment);
 							firePatrolImg.setImgUrl(imgUrls[i]);
 							firePatrolImg.setPatrolUser(patrolUser);
 							firePatrolImg.setUploadTIme(date);
@@ -137,18 +140,18 @@ public class FirePatrolUserController {
 					}
 					out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"imgList\":111,\"firePatrolInfo\":"+JSONObject.toJSONString(firePatrolInfo,features)+"}}");
 				}else{
-					out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"设备不存在\"}");
+					out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"设备不存在\"}");
 					return;
 				}
 			}else{
-				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户不存在\"}");
+				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"用户不存在\"}");
 				return;
 			}
 		}catch(Exception e){
 			if(out==null){
 				out=response.getWriter();
 			}
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
+			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"未知异常,请技术人员\"}");
 		}finally{
 			out.flush();
 			out.close();
@@ -181,7 +184,6 @@ public class FirePatrolUserController {
 			FireFightEquipment fireFightEquipment = this.fireFightEquipmentService.getById(equipmentId);
 			if(patrolUser!=null){
 				if(fireFightEquipment!=null){
-					FirePatrolImg firePatrolImg = new FirePatrolImg();
 					FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
 					FireFightEquipmentHistory equipmentHistory = new FireFightEquipmentHistory();
 					equipmentHistory.setCampusNum(fireFightEquipment.getCampusNum());
@@ -190,26 +192,32 @@ public class FirePatrolUserController {
 					equipmentHistory.setLat(fireFightEquipment.getLat());
 					equipmentHistory.setLon(fireFightEquipment.getLon());
 					equipmentHistory.setName(fireFightEquipment.getName());
+					equipmentHistory.setOldId(fireFightEquipment.getId());
 					equipmentHistory.setStatus((short)0);
 					firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
 					firePatrolInfo.setPatrolUser(patrolUser);
 					firePatrolInfo.setFireFightEquipment(fireFightEquipment);
-					firePatrolInfo.setDescription(description);
+					if (description != null) {
+						firePatrolInfo.setDescription(URLDecoder.decode(URLEncoder.encode(description, "ISO8859_1"), "UTF-8"));
+					}else{
+						firePatrolInfo.setDescription(description);
+					}
 					firePatrolInfo.setExceptionTypes(exceptionTypes);
-					firePatrolInfo.setPatrolStatus(2);
+					firePatrolInfo.setPatrolStatus(0);
 					firePatrolInfo.setIsNewest((short)1);
 					firePatrolInfo.setTimestamp(date);
 					firePatrolInfo.setUserName(patrolUser.getUsername());
 					fireFightEquipment.setCheckStatus((short)1);
 					fireFightEquipment.setStatus((short)0);
 					fireFightEquipment.setLastUpdateTime(date);
-					firePatrolImg.setFireFightEquipment(fireFightEquipment);
 					List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
 					this.firePatrolInfoService.add(firePatrolInfo);
 					this.fireFightEquipmentHistoryService.add(equipmentHistory);
 					this.fireFightEquipmentService.update(fireFightEquipment);
 					if(imgUrls!=null&&imgUrls.length>0){
 						for(int i = 0;i<imgUrls.length;i++){
+							FirePatrolImg firePatrolImg = new FirePatrolImg();
+							firePatrolImg.setFireFightEquipment(fireFightEquipment);
 							firePatrolImg.setImgUrl(imgUrls[i]);
 							firePatrolImg.setPatrolUser(patrolUser);
 							firePatrolImg.setUploadTIme(date);
@@ -219,20 +227,19 @@ public class FirePatrolUserController {
 						return;
 					}
 					out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"imgList\":111,\"firePatrolInfo\":"+JSONObject.toJSONString(firePatrolInfo,features)+"}}");
-
 				}else{
-					out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"设备不存在\"}");
+					out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"设备不存在\"}");
 					return;
 				}
 			}else{
-				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户不存在\"}");
+				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"用户不存在\"}");
 				return;
 			}
 		}catch(Exception e){
 			if(out==null){
 				out=response.getWriter();
 			}
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
+			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"未知异常,请技术人员\"}");
 		}finally{
 			out.flush();
 			out.close();
@@ -253,11 +260,11 @@ public class FirePatrolUserController {
 	 * @param date2
 	 * @return
 	 */
-	 public boolean isEquals(Date date1, Date date2) {
-        Calendar calendar1 = Calendar.getInstance();
-        calendar1.setTime(date1);
-        Calendar calendar2 = Calendar.getInstance();
-        calendar2.setTime(date2);
-        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) && calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH);
-    } 
+	public boolean isEquals(Date date1, Date date2) {
+		Calendar calendar1 = Calendar.getInstance();
+		calendar1.setTime(date1);
+		Calendar calendar2 = Calendar.getInstance();
+		calendar2.setTime(date2);
+		return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) && calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH);
+	} 
 }

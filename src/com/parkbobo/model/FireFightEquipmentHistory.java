@@ -53,6 +53,11 @@ public class FireFightEquipmentHistory implements Serializable{
 	 * 校区
 	 */
 	private Integer campusNum;
+	/**
+	 * 设备id
+	 * @return
+	 */
+	private Integer oldId;
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -111,4 +116,12 @@ public class FireFightEquipmentHistory implements Serializable{
 	public void setCampusNum(Integer campusNum) {
 		this.campusNum = campusNum;
 	}
+	@Column(name="old_id")
+	public Integer getOldId() {
+		return oldId;
+	}
+	public void setOldId(Integer oldId) {
+		this.oldId = oldId;
+	}
+	
 }
