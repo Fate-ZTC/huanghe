@@ -58,7 +58,10 @@ public class FirePatrolInfo implements Serializable{
 	 * 异常描述
 	 */
 	private String description;
-	
+	/**
+	 * 是否是最新的一条
+	 */
+	private Short isNewest;
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -125,6 +128,13 @@ public class FirePatrolInfo implements Serializable{
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	@Column(name="is_newest")
+	public Short getIsNewest() {
+		return isNewest;
+	}
+	public void setIsNewest(Short isNewest) {
+		this.isNewest = isNewest;
 	}
 	
 }
