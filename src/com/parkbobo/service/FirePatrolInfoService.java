@@ -18,6 +18,9 @@ public class FirePatrolInfoService {
 	public List<FirePatrolInfo> getByProperty(String propertyName ,Object value ,String orderBy,boolean isAsc){
 		return firePatrolInfoDao.getByProperty(propertyName, value, orderBy, isAsc);
 	}
+	public List<FirePatrolInfo> getByProperty(String propertyName ,Object value){
+		return firePatrolInfoDao.getByProperty(propertyName, value);
+	}
 	public FirePatrolInfo get(Integer entityid){
 		return firePatrolInfoDao.get(entityid);
 	}

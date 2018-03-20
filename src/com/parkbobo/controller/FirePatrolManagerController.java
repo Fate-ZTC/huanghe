@@ -118,6 +118,7 @@ public class FirePatrolManagerController {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		List<FireFightEquipment> fireFightEquipments = fireFightEquipmentService.getAll();
+		List<FirePatrolInfo> firePatrolInfos = firePatrolInfoService.getByProperty("isNewest", (short)1);
 		int excEqu=0;
 		int patrolEqu=0;
 		for (FireFightEquipment fireFightEquipment : fireFightEquipments) {
@@ -128,41 +129,22 @@ public class FirePatrolManagerController {
 				patrolEqu++;
 			}
 		}
-		List<FirePatrolInfo> firePatrolInfos = new ArrayList<FirePatrolInfo>();
-		if (fireFightEquipments!=null && fireFightEquipments.size()>0) {
-			for (FireFightEquipment fireFightEquipment : fireFightEquipments) {
-				List<FirePatrolInfo> firePatrolInfo = firePatrolInfoService.getByProperty("equipmentId.id", fireFightEquipment.getId(), "timestamp", false);
-				if (firePatrolInfo!=null && firePatrolInfo.size()>0) {
-					firePatrolInfos.add(firePatrolInfo.get(0));
-				}
-			}
-		}
-		if (firePatrolInfos != null && firePatrolInfos.size()>0) {
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(firePatrolInfos,features)+"}");
-		}else{
-			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"暂无该区域消防设备信息\"}");
-		}
+//		List<FirePatrolInfo> firePatrolInfos = new ArrayList<FirePatrolInfo>();
+//		if (fireFightEquipments!=null && fireFightEquipments.size()>0) {
+//			for (FireFightEquipment fireFightEquipment : fireFightEquipments) {
+//				List<FirePatrolInfo> firePatrolInfo = firePatrolInfoService.getByProperty("equipmentId.id", fireFightEquipment.getId(), "timestamp", false);
+//				if (firePatrolInfo!=null && firePatrolInfo.size()>0) {
+//					firePatrolInfos.add(firePatrolInfo.get(0));
+//				}
+//			}
+//		}
+//		if (firePatrolInfos != null && firePatrolInfos.size()>0) {
+//			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(firePatrolInfos,features)+"}");
+//		}else{
+//			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"暂无该区域消防设备信息\"}");
+//		}
 		out.flush();
 		out.close();
 	}
-	/**
-	 * 判断两个日期是否在同一个月
-	 * @param date1
-	 * @param date2
-	 * @return
-	 */
-	 public boolean isEquals(Date date1, Date date2) {
-        Calendar calendar1 = Calendar.getInstance();
-        calendar1.setTime(date1);
-        Calendar calendar2 = Calendar.getInstance();
-        calendar2.setTime(date2);
-        int year1 = calendar1.get(Calendar.YEAR);
-        int year2 = calendar2.get(Calendar.YEAR);
-        int month1 = calendar1.get(Calendar.MONTH);
-        int month2 = calendar2.get(Calendar.MONTH);
-        System.out.println(year1 + "  " + month1);
-        System.out.println(year2 + "  " + month2);
-        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) && calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH);
-    } 
 	
 }

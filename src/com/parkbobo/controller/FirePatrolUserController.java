@@ -3,6 +3,7 @@ package com.parkbobo.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -211,4 +212,23 @@ public class FirePatrolUserController {
 	 */
 	public void setUnchecked(HttpServletResponse response){
 	}
+	/**
+	 * 判断两个日期是否在同一个月
+	 * @param date1
+	 * @param date2
+	 * @return
+	 */
+	 public boolean isEquals(Date date1, Date date2) {
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.setTime(date1);
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.setTime(date2);
+        int year1 = calendar1.get(Calendar.YEAR);
+        int year2 = calendar2.get(Calendar.YEAR);
+        int month1 = calendar1.get(Calendar.MONTH);
+        int month2 = calendar2.get(Calendar.MONTH);
+        System.out.println(year1 + "  " + month1);
+        System.out.println(year2 + "  " + month2);
+        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) && calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH);
+    } 
 }
