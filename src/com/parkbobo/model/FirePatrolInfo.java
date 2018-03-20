@@ -29,7 +29,7 @@ public class FirePatrolInfo implements Serializable{
 	/**
 	 * 用户区域
 	 */
-	private PatrolUser userId;
+	private PatrolUser patrolUser;
 	/**
 	 * 用户名
 	 */
@@ -53,7 +53,7 @@ public class FirePatrolInfo implements Serializable{
 	/**
 	 * 设备id
 	 */
-	private FireFightEquipment equipmentId;
+	private FireFightEquipment fireFightEquipment;
 	/**
 	 * 异常描述
 	 */
@@ -73,11 +73,11 @@ public class FirePatrolInfo implements Serializable{
 	}
 	@OneToOne
 	@JoinColumn(name="user_id")
-	public PatrolUser getUserId() {
-		return userId;
+	public PatrolUser getPatrolUser() {
+		return patrolUser;
 	}
-	public void setUserId(PatrolUser userId) {
-		this.userId = userId;
+	public void setPatrolUser(PatrolUser patrolUser) {
+		this.patrolUser = patrolUser;
 	}
 	@Column(name="username")
 	public String getUserName() {
@@ -116,11 +116,11 @@ public class FirePatrolInfo implements Serializable{
 	}
 	@OneToOne
 	@JoinColumn(name="equipment_id")
-	public FireFightEquipment getEquipmentId() {
-		return equipmentId;
+	public FireFightEquipment getFireFightEquipment() {
+		return fireFightEquipment;
 	}
-	public void setEquipmentId(FireFightEquipment equipmentId) {
-		this.equipmentId = equipmentId;
+	public void setFireFightEquipment(FireFightEquipment fireFightEquipment) {
+		this.fireFightEquipment = fireFightEquipment;
 	}
 	@Column(name="description")
 	public String getDescription() {

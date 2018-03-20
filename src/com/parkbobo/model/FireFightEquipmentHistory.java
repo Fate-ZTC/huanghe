@@ -12,14 +12,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="fire_fight_equipment")
-@SequenceGenerator(name="generator", sequenceName="fire_fight_equipment_id_seq", allocationSize = 1)
-public class FireFightEquipment implements Serializable{
+@Table(name="fire_fight_equipment_history")
+@SequenceGenerator(name="generator", sequenceName="fire_fight_equipment_history_id_seq", allocationSize = 1)
+public class FireFightEquipmentHistory implements Serializable{
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3369331990416418104L;
+	private static final long serialVersionUID = -8256001129924164070L;
+	
 	/**
 	 * id
 	 */

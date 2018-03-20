@@ -215,10 +215,10 @@ public class PatrolUserController {
 			out.close();
 			return;
 		}else{
-			if(date.getTime()-patrolUserRegion.getStartTime().getTime()>=1*60*1000){
+			if(date.getTime()-patrolUserRegion.getStartTime().getTime()>=patrolConfig.getStartPatrolTime()*60*1000){
 				//非紧急状态
 				MultiPolygon regionLocation = patrolRegionService.getById(regionId).getRegionLocation();
-				Polygon polygon  = GisUtils.createCircle(lon, lat,2, 50);
+				Polygon polygon  = GisUtils.createCircle(lon, lat,patrolConfig.getLeaveRegionDistance(), 50);
 				if(regionLocation.contains(polygon)){
 					//在巡逻区域内
 					if(this.patrolUserRegionService.isLazy(patrolUserRegion)){

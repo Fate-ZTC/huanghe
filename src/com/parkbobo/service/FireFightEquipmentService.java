@@ -36,5 +36,7 @@ public class FireFightEquipmentService {
 	public void update(FireFightEquipment fireFightEquipment) {
 		this.fireFightEquipmentDao.update(fireFightEquipment);
 	}
-
+	public void updateAll(){
+		this.fireFightEquipmentDao.bulkUpdate("update FireFightEquipment set checkStatus = ", new Object[]{1});
+	}
 }

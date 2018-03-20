@@ -29,4 +29,16 @@ public class FirePatrolInfoService {
 	public FirePatrolInfo add(FirePatrolInfo firePatrolInfo) {
 		return this.firePatrolInfoDao.add(firePatrolInfo);
 	}
+	
+	public FirePatrolInfo getNewest(Integer equipmentId){
+		String hql = " from FirePatrolInfo where equipmentId = "+equipmentId+" order by timestamp desc limit 1";
+		List<FirePatrolInfo> list = this.firePatrolInfoDao.getByHQL(hql);
+		if(list!=null&&list.size()>0){
+			return list.get(0);
+		}
+		return null;
+	}
+	public void update(FirePatrolInfo firePatrolInfo){
+		this.firePatrolInfoDao.update(firePatrolInfo);
+	}
 }
