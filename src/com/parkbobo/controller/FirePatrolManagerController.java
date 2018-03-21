@@ -2,6 +2,8 @@ package com.parkbobo.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,21 +24,22 @@ import com.parkbobo.model.FireFightEquipment;
 import com.parkbobo.model.FireFightEquipmentHistory;
 import com.parkbobo.model.FirePatrolInfo;
 import com.parkbobo.model.PatrolException;
+import com.parkbobo.model.FirePatrolUser;
 import com.parkbobo.service.FireFightEquipmentHistoryService;
 import com.parkbobo.service.FireFightEquipmentService;
 import com.parkbobo.service.FirePatrolInfoService;
+import com.parkbobo.service.FirePatrolUserService;
 import com.parkbobo.service.PatrolConfigService;
 import com.parkbobo.service.PatrolExceptionService;
 import com.parkbobo.service.PatrolLocationInfoService;
 import com.parkbobo.service.PatrolUserRegionService;
-import com.parkbobo.service.PatrolUserService;
 import com.parkbobo.utils.PageBean;
 
 @Controller
 public class FirePatrolManagerController {
 
 	@Resource
-	private PatrolUserService patrolUserService;
+	private FirePatrolUserService firePatrolUserService;
 
 	@Resource
 	private PatrolConfigService patrolConfigService;
@@ -46,21 +49,185 @@ public class FirePatrolManagerController {
 
 	@Resource
 	private PatrolLocationInfoService patrolLocationInfoService;
-	
+
 	@Resource
 	private FireFightEquipmentService fireFightEquipmentService;
-	
+
 	@Resource
 	private FireFightEquipmentHistoryService fireFightEquipmentHistoryService;
-	
+
 	@Resource
 	private FirePatrolInfoService firePatrolInfoService;
-	
+
 	@Resource
 	private PatrolExceptionService patrolExceptionService;
 
 	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect};
+	/**
+	 * 获取所有巡查员
+	 * @param response
+	 * @throws IOException 
+	 */
+	@RequestMapping("getAllFirePatrolUser")
+	public void getAllUser(Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			List<FirePatrolUser> allUser = this.firePatrolUserService.getAllUser();
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(allUser,features)+"}");
+		} catch (IOException e) {
+			if(out==null){
+				out=response.getWriter();
+			}
+			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
+		}finally{
+			out.flush();
+			out.close();
+		}
+	}
+	
+	/**
+	 * 新增消防巡查员
+	 * @param jobNum 工号
+	 * @param password 密码
+	 * @param username 用户名
+	 * @param campusNum 
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping("addFirePatrolUser")
+	public void addUser(String jobNum,String password,String username,Integer campusNum,HttpServletResponse response) throws IOException{
+		PrintWriter out = null;
+		try {
+			response.setCharacterEncoding("UTF-8");
+			out = response.getWriter();
+			FirePatrolUser patrolUser = new FirePatrolUser();
+			patrolUser.setCreatetime(new Date());
+			patrolUser.setCampusNum(campusNum);
+			patrolUser.setJobNum(jobNum);
+			patrolUser.setPassword(password);
+			patrolUser.setIsDel((short)0);
+			//patrolUser.setUsername(new String(username.getBytes("ISO-8859-1"),"utf-8"));
+			if (username != null) {
+				patrolUser.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
+			} else {
+				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户名不能为空\"}");
+				return;
+			}
+			int flag = this.firePatrolUserService.addUser(patrolUser);
+			if (flag == 2) {
+				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"新增出错\"}");
+			}
+			if (flag == 0) {
+				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账号已存在\"}");
+			}
+			if (flag == 1) {
+				out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"新增成功\"}");
+			} 
+		} catch (Exception e) {
+			out.print("{\"status\":\"false\",\"Code\":0,\"errorMsg\":\"未知异常\"}");
+		}
+	}
 
+	/**
+	 *返显巡查员信息 
+	 *@param id 巡查员id
+	 * @throws IOException 
+	 */
+	@RequestMapping("getFirePatrolUserById")
+	public void getUserById(Integer id,HttpServletResponse response) throws IOException{
+		PrintWriter out = null;
+		try {
+			response.setCharacterEncoding("UTF-8");
+			out = response.getWriter();
+			FirePatrolUser patrolUser = this.firePatrolUserService.getById(id);
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolUser,features)+"}");
+		}catch(Exception e){
+			if(out==null){
+				out=response.getWriter();
+			}
+			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
+		}finally{
+			out.flush();
+			out.close();
+		}
+	}
+	/**
+	 * 更新巡查员
+	 * @param id 巡查员id
+	 * @param username 用户名
+	 * @param password 密码
+	 * @param jobNum 工号
+	 * @param campusNum 校区id
+	 * @param response 
+	 * @throws IOException
+	 */
+	@RequestMapping("updateFirePatrolUser")
+	public void updateUser(Integer id,String username,String password,String jobNum,Integer campusNum,HttpServletResponse response) throws IOException{
+		PrintWriter out = null;
+		try {
+			response.setCharacterEncoding("UTF-8");
+			out = response.getWriter();
+			FirePatrolUser patrolUser = new FirePatrolUser();
+			patrolUser.setId(id);
+			patrolUser.setCampusNum(campusNum);
+			patrolUser.setJobNum(jobNum);
+			patrolUser.setPassword(password);
+			patrolUser.setCreatetime(this.firePatrolUserService.getById(id).getCreatetime());
+			if(username!=null){
+				patrolUser.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
+			}else{
+				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户名不能为空\"}");
+				return;
+			}
+			int flag = this.firePatrolUserService.updateUser(patrolUser);
+			if (flag == 2) {
+				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"修改出错\"}");
+			}
+			if (flag == 0) {
+				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账号已存在\"}");
+			}
+			if (flag == 1) {
+				out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"修改成功\"}");
+			} 
+		} catch (Exception e) {
+			out.print("{\"status\":\"false\",\"Code\":0,\"errorMsg\":\"未知异常\"}");
+		}finally {
+			out.flush();
+			out.close();
+		}
+	}
+	/**
+	 * 删除用户
+	 * @param 巡查员id
+	 * @throws IOException 
+	 */
+	@RequestMapping("deleteFirePatrolUser")
+	public void deleteUser(HttpServletResponse response,Integer id) throws IOException{
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			FirePatrolUser patrolUser = this.firePatrolUserService.getById(id);
+			if(patrolUser == null){
+				out.print("{\"status\":\"false\",\"Code\":-1,\"Msg\":\"用户不存在\"}");
+				return;
+			}else{
+				patrolUser.setIsDel((short)1);
+				this.firePatrolUserService.update(patrolUser);
+			}
+			out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"删除成功\"}");
+		} catch (IOException e) {
+			if(out==null){
+				out=response.getWriter();
+			}
+			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
+		}finally {
+			out.flush();
+			out.close();
+		}
+	}
 	/**
 	 * 查看设备
 	 * @param checkExp 是否查看异常设备   0 否  1 是

@@ -22,13 +22,13 @@ import com.parkbobo.model.FireFightEquipmentHistory;
 import com.parkbobo.model.FirePatrolImg;
 import com.parkbobo.model.FirePatrolInfo;
 import com.parkbobo.model.PatrolException;
-import com.parkbobo.model.PatrolUser;
+import com.parkbobo.model.FirePatrolUser;
 import com.parkbobo.service.FireFightEquipmentHistoryService;
 import com.parkbobo.service.FireFightEquipmentService;
 import com.parkbobo.service.FirePatrolImgService;
 import com.parkbobo.service.FirePatrolInfoService;
+import com.parkbobo.service.FirePatrolUserService;
 import com.parkbobo.service.PatrolExceptionService;
-import com.parkbobo.service.PatrolUserService;
 
 /**
  * 消防使用端接口
@@ -49,9 +49,47 @@ public class FirePatrolUserController {
 	@Resource
 	private PatrolExceptionService patrolExceptionService;
 	@Resource
-	private PatrolUserService patrolUserService;
+	private FirePatrolUserService firePatrolUserService;
 	@Resource
 	private FireFightEquipmentHistoryService fireFightEquipmentHistoryService;
+	/**
+	 * 登录
+	 * @param jobNum 工号
+	 * @param password 密码
+	 * @return json
+	 * @throws IOException 
+	 */
+	@RequestMapping("firePatrolUserLogin")
+	public void userLogin(HttpServletResponse response,String jobNum,String password) throws IOException{
+		PrintWriter out = null;
+		try {
+			response.setCharacterEncoding("UTF-8");
+			out = response.getWriter();
+			FirePatrolUser patrolUser = this.firePatrolUserService.userLogin(jobNum, password);
+			if(patrolUser != null){
+				if(patrolUser.getIsDel()==1){
+					out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账户已删除\"}");
+					return;
+				}
+				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolUser,features)+"}");
+			}else{
+				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账号密码错误\"}");
+			}
+		} catch (Exception e) {
+			if(out==null){
+				out=response.getWriter();
+			}
+			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
+		}finally{
+			out.flush();
+			out.close();
+		}
+	}
+	
+	
+	
+	
+	
 	/**
 	 * 获取所有消防异常信息
 	 * @throws IOException 
@@ -97,13 +135,13 @@ public class FirePatrolUserController {
 				newest.setIsNewest((short)0);
 				this.firePatrolInfoService.update(newest);
 			}
-			PatrolUser patrolUser = this.patrolUserService.getById(userId);
+			FirePatrolUser patrolUser = this.firePatrolUserService.getById(userId);
 			FireFightEquipment fireFightEquipment = this.fireFightEquipmentService.getById(equipmentId);
 			if(patrolUser!=null){
 				if(fireFightEquipment!=null){
 					FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
 					firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
-					firePatrolInfo.setPatrolUser(patrolUser);
+					firePatrolInfo.setFirePatrolUser(patrolUser);
 					firePatrolInfo.setDescription("正常");
 					firePatrolInfo.setFireFightEquipment(fireFightEquipment);
 					firePatrolInfo.setPatrolStatus(1);
@@ -129,7 +167,7 @@ public class FirePatrolUserController {
 							FirePatrolImg firePatrolImg = new FirePatrolImg();
 							firePatrolImg.setFireFightEquipment(fireFightEquipment);
 							firePatrolImg.setImgUrl(imgUrls[i]);
-							firePatrolImg.setPatrolUser(patrolUser);
+							firePatrolImg.setFirePatrolUser(patrolUser);
 							firePatrolImg.setUploadTIme(date);
 							list.add(this.firePatrolImgService.add(firePatrolImg));
 						}
@@ -180,13 +218,13 @@ public class FirePatrolUserController {
 				newest.setIsNewest((short)0);
 				this.firePatrolInfoService.update(newest);
 			}
-			PatrolUser patrolUser = this.patrolUserService.getById(userId);
+			FirePatrolUser patrolUser = this.firePatrolUserService.getById(userId);
 			FireFightEquipment fireFightEquipment = this.fireFightEquipmentService.getById(equipmentId);
 			if(patrolUser!=null){
 				if(fireFightEquipment!=null){
 					FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
 					firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
-					firePatrolInfo.setPatrolUser(patrolUser);
+					firePatrolInfo.setFirePatrolUser(patrolUser);
 					firePatrolInfo.setFireFightEquipment(fireFightEquipment);
 					if (description != null) {
 						firePatrolInfo.setDescription(URLDecoder.decode(URLEncoder.encode(description, "ISO8859_1"), "UTF-8"));
@@ -217,7 +255,7 @@ public class FirePatrolUserController {
 							FirePatrolImg firePatrolImg = new FirePatrolImg();
 							firePatrolImg.setFireFightEquipment(fireFightEquipment);
 							firePatrolImg.setImgUrl(imgUrls[i]);
-							firePatrolImg.setPatrolUser(patrolUser);
+							firePatrolImg.setFirePatrolUser(patrolUser);
 							firePatrolImg.setUploadTIme(date);
 							list.add(this.firePatrolImgService.add(firePatrolImg));
 						}

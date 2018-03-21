@@ -29,7 +29,7 @@ public class PatrolConfig implements Serializable {
 	 */
 	private Integer uploadTime;
 	/**
-	 * 异常报警距离
+	 * 异常报警距离 m
 	 */
 	private Integer leaveRegionDistance;
 	/**
@@ -45,6 +45,18 @@ public class PatrolConfig implements Serializable {
 	 * 是否突发紧急状态
 	 */
 	private Integer isEmergency;
+	/**
+	 * 刷新周期  单位秒
+	 */
+	private Integer refreshTime;
+	/**
+	 * 可以原地不动时间
+	 */
+	private Integer lazyTime;
+	/**
+	 * 可以离开范围时间
+	 */
+	private Integer leaveRegionTime;
 	
 	@Id
 	@Column(name="id",nullable=false,unique=true)
@@ -89,6 +101,27 @@ public class PatrolConfig implements Serializable {
 	}
 	public void setIsEmergency(Integer isEmergency) {
 		this.isEmergency = isEmergency;
+	}
+	@Column(name="refresh_time")
+	public Integer getRefreshTime() {
+		return refreshTime;
+	}
+	public void setRefreshTime(Integer refreshTime) {
+		this.refreshTime = refreshTime;
+	}
+	@Column(name="lazy_time")
+	public Integer getLazyTime() {
+		return lazyTime;
+	}
+	public void setLazyTime(Integer lazyTime) {
+		this.lazyTime = lazyTime;
+	}
+	@Column(name="leave_region_time")
+	public Integer getLeaveRegionTime() {
+		return leaveRegionTime;
+	}
+	public void setLeaveRegionTime(Integer leaveRegionTime) {
+		this.leaveRegionTime = leaveRegionTime;
 	}
 	
 	

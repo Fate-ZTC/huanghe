@@ -51,21 +51,21 @@ public class PatrolUserRegionService {
 		return this.patrolUserRegionDao.getByHQL(hql);
 	}
 
-	public Long getCountTime(String jobNum){
-		String hql = "from PatrolUserRegion where jobNum = '"+jobNum+"' order by startTime desc limit 1";
+	public long getCountTime(String jobNum){
+		String hql = "from PatrolUserRegion where endTime is null and  jobNum = '"+jobNum+"' order by startTime desc limit 1";
 		List<PatrolUserRegion> list = this.patrolUserRegionDao.getByHQL(hql);
 		if(list!=null&&list.size()>0){
 			PatrolUserRegion patrolUserRegion = list.get(0);
 			return new Date().getTime()-patrolUserRegion.getStartTime().getTime();
 		}
-		return null;
+		return 0;
 	}
 	/**
 	 * 判断是否偷懒
 	 * 
 	 */
-	public boolean isLazy(PatrolUserRegion patrolUserRegion){
-		if(new Date().getTime()-patrolUserRegion.getLastUpdateTime().getTime()>=1000*300){
+	public boolean isLazy(PatrolUserRegion patrolUserRegion,Integer lazyTime){
+		if(new Date().getTime()-patrolUserRegion.getLastUpdateTime().getTime()>=1000*60*lazyTime){
 			return true;
 		}
 		return false;

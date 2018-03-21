@@ -160,6 +160,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xsd-sld-8.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xsd-wcs-8.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gt-xsd-wfs-8.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jpush-client-3.2.3.jar"/>
 	<classpathentry kind="con" path="com.genuitec.runtime.library/com.genuitec.jstl_1.2">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="WEB-INF/lib"/>

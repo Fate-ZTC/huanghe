@@ -12,9 +12,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="patrol_user")
-@SequenceGenerator(name="generator", sequenceName="patrol_user_id_seq", allocationSize = 1)
-public class PatrolUser implements Serializable{
+@Table(name="fire_patrol_user")
+@SequenceGenerator(name="generator", sequenceName="fire_patrol_user_id_seq", allocationSize = 1)
+public class FirePatrolUser implements Serializable{
 
 	/**
 	 * 
@@ -53,7 +53,7 @@ public class PatrolUser implements Serializable{
 	 */
 	private Short isDel;
 	/**
-	 * 最后更新时间
+	 * 最后操作时间
 	 */
 	private Date lastUpdateTime;
 	@Id

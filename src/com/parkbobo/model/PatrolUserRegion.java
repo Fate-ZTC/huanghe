@@ -55,6 +55,10 @@ public class PatrolUserRegion implements Serializable{
 	 */
 	private Integer status;
 	/**
+	 * 当前连续异常次数统计
+	 */
+	private Integer abnormalCount;
+	/**
 	 * 异常类型
 	 */
 	private PatrolException patrolException;
@@ -142,6 +146,13 @@ public class PatrolUserRegion implements Serializable{
 		if(endTime != null)
 			return sdf.format(endTime);
 		return "";
+	}
+	@Column(name="abnormal_count")
+	public Integer getAbnormalCount() {
+		return abnormalCount;
+	}
+	public void setAbnormalCount(Integer abnormalCount) {
+		this.abnormalCount = abnormalCount;
 	}
 	
 }

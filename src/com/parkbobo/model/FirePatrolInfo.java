@@ -29,7 +29,7 @@ public class FirePatrolInfo implements Serializable{
 	/**
 	 * 用户区域
 	 */
-	private PatrolUser patrolUser;
+	private FirePatrolUser firePatrolUser;
 	/**
 	 * 用户名
 	 */
@@ -73,11 +73,11 @@ public class FirePatrolInfo implements Serializable{
 	}
 	@OneToOne
 	@JoinColumn(name="user_id")
-	public PatrolUser getPatrolUser() {
-		return patrolUser;
+	public FirePatrolUser getFirePatrolUser() {
+		return firePatrolUser;
 	}
-	public void setPatrolUser(PatrolUser patrolUser) {
-		this.patrolUser = patrolUser;
+	public void setFirePatrolUser(FirePatrolUser firePatrolUser) {
+		this.firePatrolUser = firePatrolUser;
 	}
 	@Column(name="username")
 	public String getUserName() {

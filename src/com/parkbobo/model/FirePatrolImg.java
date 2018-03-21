@@ -37,7 +37,7 @@ public class FirePatrolImg implements Serializable{
 	/**
 	 * 巡查员信息
 	 */
-	private PatrolUser patrolUser;
+	private FirePatrolUser firePatrolUser;
 	/**
 	 * 设备信息
 	 */
@@ -68,11 +68,11 @@ public class FirePatrolImg implements Serializable{
 	}
 	@ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name="user_id")
-	public PatrolUser getPatrolUser() {
-		return patrolUser;
+	public FirePatrolUser getFirePatrolUser() {
+		return firePatrolUser;
 	}
-	public void setPatrolUser(PatrolUser patrolUser) {
-		this.patrolUser = patrolUser;
+	public void setFirePatrolUser(FirePatrolUser firePatrolUser) {
+		this.firePatrolUser = firePatrolUser;
 	}
 	@ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name="equipment_id")
