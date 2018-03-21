@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.simple.JSONArray;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -350,10 +352,28 @@ public class PatrolUserController {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate) && StringUtils.isNotBlank(jobNum)) {
-			String hql = "from PatrolUserRegion where jobNum = '"+ jobNum +"' and startTime >= '"+ startDate +" 00:00:00' and endTime < '"+ endDate +" 00:00:00'";
-			List<PatrolUserRegion> patrolUserRegions = patrolUserRegionService.getByHQL(hql);
+			String sql = "SELECT job_num, to_char(start_time, 'yyyy-MM-dd') FROM patrol_user_region WHERE "+
+			"job_num = '"+jobNum+"' AND start_time >= '"+startDate+"' AND end_time < '"+endDate+"'"+
+			"GROUP BY job_num,to_char(start_time,'yyyy-MM-dd')";
+			List<Object[]> patrolUserRegions = patrolUserRegionService.getBySql(sql);
+			StringBuilder sb =new StringBuilder();
+			sb.append("{\"status\":\"true\",\"Code\":1,\"list\":[");
+			if(patrolUserRegions!=null && patrolUserRegions.size()>0){
+				int i = 0;
+				for (Object[] object : patrolUserRegions) {
+					sb.append("{");
+					sb.append("\"date\":\""+object[1]+"\"");
+					if(i==patrolUserRegions.size()-1){
+						sb.append("}");
+					}else{
+						sb.append("},");
+					}
+					i++;
+				}
+			}
+			sb.append("]}");
+			out.print(sb.toString()); 
 			if (patrolUserRegions!=null && patrolUserRegions.size()>0) {
-				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolUserRegions,features)+"}"); 
 			}else{
 				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"暂无数据\"}"); 
 			}

@@ -50,6 +50,9 @@ public class PatrolUserRegionService {
 	public List<PatrolUserRegion> getByHQL(String hql){
 		return this.patrolUserRegionDao.getByHQL(hql);
 	}
+	public List<Object[]> getBySql(String sql){
+		return this.patrolUserRegionDao.getBySql(sql);
+	}
 
 	public long getCountTime(String jobNum){
 		String hql = "from PatrolUserRegion where endTime is null and  jobNum = '"+jobNum+"' order by startTime desc limit 1";
