@@ -26,6 +26,10 @@ public class FireFightEquipmentHistory implements Serializable{
 	 */
 	private Integer id;
 	/**
+	 * 设备原来的id
+	 */
+	private Integer oldId;
+	/**
 	 * 设备状态 1正常 0异常
 	 */
 	private Short status;
@@ -53,11 +57,6 @@ public class FireFightEquipmentHistory implements Serializable{
 	 * 校区
 	 */
 	private Integer campusNum;
-	/**
-	 * 设备id
-	 * @return
-	 */
-	private Integer oldId;
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)

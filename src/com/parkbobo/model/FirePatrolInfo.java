@@ -43,7 +43,7 @@ public class FirePatrolInfo implements Serializable{
 	 */
 	private Date timestamp;
 	/**
-	 * 异常状态 0异常 1正常
+	 * 异常状态  1正常 0异常
 	 */
 	private Integer patrolStatus;
 	/**

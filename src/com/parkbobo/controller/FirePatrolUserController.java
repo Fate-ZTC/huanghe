@@ -102,15 +102,6 @@ public class FirePatrolUserController {
 			if(patrolUser!=null){
 				if(fireFightEquipment!=null){
 					FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
-					FireFightEquipmentHistory equipmentHistory = new FireFightEquipmentHistory();
-					equipmentHistory.setCampusNum(fireFightEquipment.getCampusNum());
-					equipmentHistory.setCheckStatus((short)1);
-					equipmentHistory.setLastUpdateTime(date);
-					equipmentHistory.setLat(fireFightEquipment.getLat());
-					equipmentHistory.setLon(fireFightEquipment.getLon());
-					equipmentHistory.setName(fireFightEquipment.getName());
-					equipmentHistory.setStatus((short)1);
-					equipmentHistory.setOldId(fireFightEquipment.getId());
 					firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
 					firePatrolInfo.setPatrolUser(patrolUser);
 					firePatrolInfo.setDescription("正常");
@@ -122,8 +113,15 @@ public class FirePatrolUserController {
 					fireFightEquipment.setCheckStatus((short)1);
 					fireFightEquipment.setStatus((short)1);
 					fireFightEquipment.setLastUpdateTime(date);
+					List<FireFightEquipmentHistory> fireFightEquiHistory = fireFightEquipmentHistoryService.getByProperty("oldId", fireFightEquipment.getId(), "lastUpdateTime", false);
+					if (fireFightEquiHistory!=null && fireFightEquiHistory.size()>0) {
+						FireFightEquipmentHistory fireFightEquipmentHistory = fireFightEquiHistory.get(0);
+						fireFightEquipmentHistory.setCheckStatus((short)1);
+						fireFightEquipmentHistory.setStatus((short)1);
+						fireFightEquipmentHistory.setLastUpdateTime(date);
+						fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
+					}
 					List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
-					this.fireFightEquipmentHistoryService.add(equipmentHistory);
 					this.firePatrolInfoService.add(firePatrolInfo);
 					this.fireFightEquipmentService.update(fireFightEquipment);
 					if(imgUrls!=null&&imgUrls.length>0){
@@ -187,15 +185,6 @@ public class FirePatrolUserController {
 			if(patrolUser!=null){
 				if(fireFightEquipment!=null){
 					FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
-					FireFightEquipmentHistory equipmentHistory = new FireFightEquipmentHistory();
-					equipmentHistory.setCampusNum(fireFightEquipment.getCampusNum());
-					equipmentHistory.setCheckStatus((short)1);
-					equipmentHistory.setLastUpdateTime(date);
-					equipmentHistory.setLat(fireFightEquipment.getLat());
-					equipmentHistory.setLon(fireFightEquipment.getLon());
-					equipmentHistory.setName(fireFightEquipment.getName());
-					equipmentHistory.setOldId(fireFightEquipment.getId());
-					equipmentHistory.setStatus((short)0);
 					firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
 					firePatrolInfo.setPatrolUser(patrolUser);
 					firePatrolInfo.setFireFightEquipment(fireFightEquipment);
@@ -212,9 +201,16 @@ public class FirePatrolUserController {
 					fireFightEquipment.setCheckStatus((short)1);
 					fireFightEquipment.setStatus((short)0);
 					fireFightEquipment.setLastUpdateTime(date);
+					List<FireFightEquipmentHistory> fireFightEquiHistory = fireFightEquipmentHistoryService.getByProperty("oldId", fireFightEquipment.getId(), "lastUpdateTime", false);
+					if (fireFightEquiHistory!=null && fireFightEquiHistory.size()>0) {
+						FireFightEquipmentHistory fireFightEquipmentHistory = fireFightEquiHistory.get(0);
+						fireFightEquipmentHistory.setCheckStatus((short)1);
+						fireFightEquipmentHistory.setStatus((short)0);
+						fireFightEquipmentHistory.setLastUpdateTime(date);
+						fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
+					}
 					List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
 					this.firePatrolInfoService.add(firePatrolInfo);
-					this.fireFightEquipmentHistoryService.add(equipmentHistory);
 					this.fireFightEquipmentService.update(fireFightEquipment);
 					if(imgUrls!=null&&imgUrls.length>0){
 						for(int i = 0;i<imgUrls.length;i++){
@@ -256,7 +252,19 @@ public class FirePatrolUserController {
 	 */
 	@RequestMapping("setUnchecked")
 	public void setUnchecked(HttpServletResponse response){
-		this.fireFightEquipmentService.updateAll();
+		List<FireFightEquipment> fireFightEquipments = fireFightEquipmentService.getAll();
+		for (FireFightEquipment fireFightEquipment: fireFightEquipments) {
+			FireFightEquipmentHistory history = new FireFightEquipmentHistory();
+			history.setCampusNum(fireFightEquipment.getCampusNum());
+			history.setCheckStatus(fireFightEquipment.getCheckStatus());
+			history.setOldId(fireFightEquipment.getId());
+			history.setLastUpdateTime(fireFightEquipment.getLastUpdateTime());
+			history.setLat(fireFightEquipment.getLat());
+			history.setLon(fireFightEquipment.getLon());
+			history.setStatus(fireFightEquipment.getStatus());
+			history.setName(fireFightEquipment.getName());
+			this.fireFightEquipmentHistoryService.add(history);
+		}
 	}
 	/**
 	 * 判断两个日期是否在同一个月

@@ -13,11 +13,11 @@
            http://www.springframework.org/schema/tx 
            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 	
-	<!--   微信凭证获取，每隔一小时执行一次        -->
-	<!-- <bean id="getTokenTicketTask" class="com.parkbobo.quartz.task.GetTokenTicketTask"></bean>
-	<bean id="getTokenTicketTaskWork" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	<!--   每月一号0点重置所有消防设备的巡查状态        -->
+	<bean id="getRestCheckStatusTask" class="com.parkbobo.quartz.task.RestCheckStatusTask"></bean>
+	<bean id="getRestCheckStatusTaskWork" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
-			<ref bean="getTokenTicketTask"/>
+			<ref bean="getRestCheckStatusTask"/>
 		</property>
 		<property name="targetMethod">
 			<value>startJob</value>
@@ -26,21 +26,20 @@
 	        <value>false</value>  
 	    </property>
 	</bean>
-	<bean id="getTokenTicketTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="getRestCheckStatusTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail">
-			<ref bean="getTokenTicketTaskWork"/>
+			<ref bean="getRestCheckStatusTaskWork"/>
 		</property>
 		<property name="cronExpression">
-			<value>0 0 */1 * * ?</value>
-			<value>0 * * * * ?</value>
+			<value>0 0 2 1 * ?</value>
 		</property>
-	</bean> -->
+	</bean>
 	
-	<!--   获取停车场信息，每隔1分钟执行一次        -->
-	<!-- <bean id="getThreeParkingTask" class="com.parkbobo.quartz.task.GetThreeParkingTask"></bean>
-	<bean id="getThreeParkingTaskWork" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	<!--   每月一号0点重置所有消防设备的巡查状态        -->
+	<bean id="getCopeToHistoryTask" class="com.parkbobo.quartz.task.CopeToHistoryTask"></bean>
+	<bean id="getCopeToHistoryTaskWork" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject">
-			<ref bean="getThreeParkingTask"/>
+			<ref bean="getCopeToHistoryTask"/>
 		</property>
 		<property name="targetMethod">
 			<value>startJob</value>
@@ -49,20 +48,20 @@
 	        <value>false</value>  
 	    </property>
 	</bean>
-	<bean id="getThreeParkingTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="getCopeToHistoryTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail">
-			<ref bean="getThreeParkingTaskWork"/>
+			<ref bean="getCopeToHistoryTaskWork"/>
 		</property>
 		<property name="cronExpression">
-			<value>0 * * * * ?</value>
+			<value>0 0 2 1 * ?</value>
 		</property>
-	</bean> -->
+	</bean>
 	
 	<bean id="JobSchedule" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-<!--				<ref bean="getTokenTicketTaskTrigger"/>-->
-<!--				<ref bean="getThreeParkingTaskTrigger"/>-->
+				<ref bean="getRestCheckStatusTaskTrigger"/>
+				<ref bean="getCopeToHistoryTaskTrigger"/>
 			</list>
 		</property>
 	</bean>
