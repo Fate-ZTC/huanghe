@@ -1,5 +1,8 @@
 package com.parkbobo.service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.parkbobo.dao.PatrolUserDao;
 import com.parkbobo.model.PatrolUser;
+import com.parkbobo.utils.PageBean;
 
 @Service
 public class PatrolUserService {
@@ -31,6 +35,25 @@ public class PatrolUserService {
 	 */
 	public List<PatrolUser> getAllUser(){
 		return this.patrolUserDao.getAll();
+	}
+	/**
+	 * 分页查询
+	 * @param username 用户名
+	 * @param jobNum 工号
+	 * @param page 页码
+	 * @param pageSize 每页条数
+	 * @return
+	 * @throws UnsupportedEncodingException 
+	 */
+	public PageBean<PatrolUser> getUsers(String username,String jobNum,Integer page,Integer pageSize) throws UnsupportedEncodingException{
+		String hql = "from  PatrolUser where isDel = 0";
+		if(StringUtils.isNotBlank(username)){
+			hql += " and username like '% " +URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8")+"'%";
+		}
+		if(StringUtils.isNotBlank(jobNum)){
+			hql +=" and jobNum like '% "+jobNum+"%'";
+		}
+		return this.patrolUserDao.pageQuery(hql, pageSize, page);
 	}
 	/**
 	 * 根据id删除巡查员

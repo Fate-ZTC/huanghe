@@ -137,8 +137,10 @@ public class FirePatrolUserController {
 						}
 						out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"imgList\":"+JSONObject.toJSONString(list,features)+",\"firePatrolInfo\":"+JSONObject.toJSONString(firePatrolInfo,features)+"}}");
 						return;
+					}else{
+						out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"必须拍摄图片!!\"}");
+						return;
 					}
-					out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"imgList\":111,\"firePatrolInfo\":"+JSONObject.toJSONString(firePatrolInfo,features)+"}}");
 				}else{
 					out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"设备不存在\"}");
 					return;
@@ -225,8 +227,10 @@ public class FirePatrolUserController {
 						}
 						out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"imgList\":"+JSONObject.toJSONString(list,features)+",\"firePatrolInfo\":"+JSONObject.toJSONString(firePatrolInfo,features)+"}}");
 						return;
+					}else{
+						out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"必须拍摄图片!!\"}");
+						return;
 					}
-					out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"imgList\":111,\"firePatrolInfo\":"+JSONObject.toJSONString(firePatrolInfo,features)+"}}");
 				}else{
 					out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"设备不存在\"}");
 					return;

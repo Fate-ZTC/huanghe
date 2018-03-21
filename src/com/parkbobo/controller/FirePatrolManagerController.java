@@ -54,7 +54,7 @@ public class FirePatrolManagerController {
 
 	/**
 	 * 查看设备
-	 * @param checkExp 是否查看异常设备
+	 * @param checkExp 是否查看异常设备   0 否  1 是
 	 * @param response
 	 * @throws IOException
 	 */
@@ -65,7 +65,7 @@ public class FirePatrolManagerController {
 		List<FirePatrolInfo> firePatrolInfos = new ArrayList<FirePatrolInfo>();
 		List<FireFightEquipment> fireFightEquipments = null;
 		if (checkExp.equals(1)) {
-			fireFightEquipments = fireFightEquipmentService.getByProperty("status", (short)2);
+			fireFightEquipments = fireFightEquipmentService.getByProperty("status", (short)0);
 		}else{
 			fireFightEquipments = fireFightEquipmentService.getAll();
 		}

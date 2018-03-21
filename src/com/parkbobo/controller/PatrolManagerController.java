@@ -24,6 +24,7 @@ import com.parkbobo.service.PatrolConfigService;
 import com.parkbobo.service.PatrolLocationInfoService;
 import com.parkbobo.service.PatrolUserRegionService;
 import com.parkbobo.service.PatrolUserService;
+import com.parkbobo.utils.PageBean;
 
 /**
  * 安防管理端接口
@@ -52,7 +53,7 @@ public class PatrolManagerController {
 	 * @throws IOException 
 	 */
 	@RequestMapping("getAllPatrolUser")
-	public void getAllUser(HttpServletResponse response) throws IOException{
+	public void getAllUser(Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
 		try {
@@ -68,8 +69,32 @@ public class PatrolManagerController {
 			out.flush();
 			out.close();
 		}
-
-
+	}
+	/**
+	 * 分页查询用户
+	 * @param username (用户名)
+	 * @param jobNum  工号(账号)
+	 * @param page   页码
+	 * @param pageSize 每页条数
+	 * @throws IOException 
+	 */
+	@RequestMapping("pageQueryUsers")
+	public void pageQueryUsers(String username,String jobNum,Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			PageBean<PatrolUser> users = this.patrolUserService.getUsers(username,jobNum,page, pageSize);
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(users,features)+"}");
+		} catch (IOException e) {
+			if(out==null){
+				out=response.getWriter();
+			}
+			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
+		}finally{
+			out.flush();
+			out.close();
+		}
 	}
 	/**
 	 * 新增巡查员

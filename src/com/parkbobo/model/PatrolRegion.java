@@ -10,12 +10,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.io.WKTWriter;
 
 @Entity
 @Table(name="patrol_region")
@@ -42,19 +44,29 @@ public class PatrolRegion implements Serializable{
 	 * 创建时间
 	 */
 	private Date createtime;
-	
+
 	/**
 	 * 空间几何信息
 	 */
 	@JSONField(serialize=false)
 	private MultiPolygon regionLocation;
+
+
+	/**
+	 * 字符串类型的空间经纬度信息
+	 */
+	private String geometry;
+	/**
+	 * 面图元几何中心点
+	 */
+	private String geometryCentroid;
 	@Id
 	@Column(name="id",unique=true,nullable=false)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
 	public Integer getId() {
 		return id;
 	}
-	
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -83,9 +95,9 @@ public class PatrolRegion implements Serializable{
 		this.createtime = createtime;
 	}
 	@Column(name="region_location")
-    @Type(type="org.hibernatespatial.GeometryUserType",parameters ={
-    		@Parameter(name="dialect",value="postgis")
-    		})
+	@Type(type="org.hibernatespatial.GeometryUserType",parameters ={
+			@Parameter(name="dialect",value="postgis")
+	})
 	public MultiPolygon getRegionLocation() {
 		return regionLocation;
 	}
@@ -94,5 +106,27 @@ public class PatrolRegion implements Serializable{
 		this.regionLocation = regionLocation;
 	}
 	
+	@Transient
+	public String getGeometry() {
+		WKTWriter wr = new WKTWriter();
+   		geometry =  wr.write(this.regionLocation);
+   		if(geometry.length() > 0)
+   		{
+   			geometry = geometry.replaceAll(", ", ",");
+   		}
+		return geometry;
+	}
+
+	public void setGeometry(String geometry) {
+		this.geometry = geometry;
+	}
 	
+	@Transient
+	public String getGeometryCentroid() {
+		WKTWriter wr = new WKTWriter();
+		geometryCentroid = wr.write(this.regionLocation.getCentroid());
+		geometryCentroid = geometryCentroid.substring(geometryCentroid.indexOf("(")+1, geometryCentroid.indexOf(")")).replace(" ", ",");
+		return geometryCentroid;
+	}
+
 }
