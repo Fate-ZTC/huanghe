@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.parkbobo.dao.PatrolExceptionDao;
 import com.parkbobo.model.PatrolException;
+import com.parkbobo.utils.PageBean;
 
 @Service
 public class PatrolExceptionService {
@@ -22,6 +23,10 @@ public class PatrolExceptionService {
 	
 	public List<PatrolException> getByHQL(String hql) {
 		return patrolExceptionDao.getByHQL(hql);
+	}
+	
+	public PageBean<PatrolException> pageQuery(String hql, int pageSize,int page) {
+		return patrolExceptionDao.pageQuery(hql, pageSize, page);
 	}
 
 
