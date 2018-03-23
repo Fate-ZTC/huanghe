@@ -66,6 +66,13 @@ public class PatrolUserRegion implements Serializable{
 	 * 最后更新时间
 	 */
 	private Date lastUpdateTime;
+	/**
+	 * 巡更时长
+	 */
+	private String checkDuration;
+	private String formatStartTime;
+	private String formatEndTime;
+	private String regionName;
 	
 	@Id
 	@Column(name="id",unique=true,nullable=false)
@@ -133,6 +140,13 @@ public class PatrolUserRegion implements Serializable{
 	public void setPatrolException(PatrolException patrolException) {
 		this.patrolException = patrolException;
 	}
+	@Column(name="abnormal_count")
+	public Integer getAbnormalCount() {
+		return abnormalCount;
+	}
+	public void setAbnormalCount(Integer abnormalCount) {
+		this.abnormalCount = abnormalCount;
+	}
 	@Transient
 	public String formatStartTime(){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -147,12 +161,40 @@ public class PatrolUserRegion implements Serializable{
 			return sdf.format(endTime);
 		return "";
 	}
-	@Column(name="abnormal_count")
-	public Integer getAbnormalCount() {
-		return abnormalCount;
+	@Transient
+	public String getFormatStartTime() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		if(startTime != null)
+			return sdf.format(startTime);
+		return "";
 	}
-	public void setAbnormalCount(Integer abnormalCount) {
-		this.abnormalCount = abnormalCount;
+	@Transient
+	public String getFormatEndTime() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		if(endTime != null)
+			return sdf.format(endTime);
+		return "";
+	}
+	@Transient
+	public String getCheckDuration(){
+		String dm = null;
+		if(endTime != null && startTime != null) {
+			long second = 0l;
+			second = (endTime.getTime()-startTime.getTime())/1000;
+			long hours = second / 3600;            //转换小时
+	        second = second % 3600;                //剩余秒数
+	        long minutes = second /60;            //转换分钟
+	        second = second % 60;                //剩余秒数
+			dm=hours+"小时"+minutes+"分钟"+second+"秒";
+		}
+		return dm;
+	}
+	@Transient
+	public String getRegionName() {
+		return regionName;
+	}
+	public void setRegionName(String regionName) {
+		this.regionName = regionName;
 	}
 	
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.parkbobo.dao.PatrolUserRegionDao;
 import com.parkbobo.model.PatrolUserRegion;
+import com.parkbobo.utils.PageBean;
 
 @Service
 public class PatrolUserRegionService {
@@ -83,13 +84,19 @@ public class PatrolUserRegionService {
 		String hql = "from PatrolUserRegion where endTime is null and status = 2";
 		return this.patrolUserRegionDao.getByHQL(hql);
 	}
-	public List<PatrolUserRegion> getPatrolUserBySth(String username,Integer regionId,Integer exceptionType,Date startTime,Date endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException{
+	public PageBean<PatrolUserRegion> getPatrolUserBySth(String username,Integer regionId,Integer exceptionType,String startTime,String endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException{
 		String hql = "from PatrolUserRegion where 1=1";
-		if(StringUtils.isNotBlank(username)){
-			hql += " and username like '%"+URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8")+"%'";
+		if (StringUtils.isNotBlank(username)) {
+			hql += " and username like '%"+username+"%'";
 		}
-		if(regionId!=null&&regionId!=0){
-			hql += " and regionId =" + regionId;
+		if (StringUtils.isNotBlank(startTime)) {
+			hql += " and startTime >= '"+startTime+"'";
+		}
+		if (StringUtils.isNotBlank(endTime)) {
+			hql += " and endTime < '"+endTime+"'";
+		}
+		if (regionId!=null) {
+			hql += " and regionId = "+regionId;
 		}
 		if(exceptionType!=null){
 			if(exceptionType==1){
@@ -98,14 +105,9 @@ public class PatrolUserRegionService {
 				hql += " and exceptionType is not null";
 			}
 		}
-		if(startTime!=null){
-			hql += " and startTime > '"+ startTime + "'";
-		}
-		if(endTime!=null){
-			hql +=" and startTime < '" + endTime + "'"; 
-		}
-		hql +=" order by startTime desc";		
-		return this.patrolUserRegionDao.pageQuery(hql,pageSize,page).getList();
+		hql += "order by lastUpdateTime desc";		
+		
+		return this.patrolUserRegionDao.pageQuery(hql,pageSize==null?12:pageSize, page==null?1:page);
 	}
 
 }
