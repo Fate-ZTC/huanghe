@@ -127,4 +127,14 @@ public class FirePatrolUserService {
 	public void update(FirePatrolUser patrolUser) {
 		this.firePatrolUserDao.update(patrolUser);
 	}
+	public List<FirePatrolUser> getBySth(String username, String jobNum) throws UnsupportedEncodingException {
+		String hql = " from FirePatrolUser where 1=1";
+		if(StringUtils.isNotBlank(username)){
+			hql += " and username like '% " +URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8")+"'%";
+		}
+		if(StringUtils.isNotBlank(jobNum)){
+			hql +=" and jobNum like '% "+jobNum+"%'";
+		}
+		return this.firePatrolUserDao.getByHQL(hql);
+	}
 }

@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.parkbobo.model.PatrolConfig;
+import com.parkbobo.model.PatrolEmergency;
 import com.parkbobo.model.PatrolLocationInfo;
 import com.parkbobo.model.PatrolUser;
 import com.parkbobo.model.PatrolUserRegion;
 import com.parkbobo.service.PatrolConfigService;
+import com.parkbobo.service.PatrolEmergencyService;
 import com.parkbobo.service.PatrolLocationInfoService;
 import com.parkbobo.service.PatrolUserRegionService;
 import com.parkbobo.service.PatrolUserService;
@@ -44,6 +46,9 @@ public class PatrolManagerController {
 
 	@Resource
 	private PatrolLocationInfoService patrolLocationInfoService;
+
+	@Resource
+	private PatrolEmergencyService patrolEmergencyService;
 
 	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect};
 	/**
@@ -69,7 +74,7 @@ public class PatrolManagerController {
 			out.close();
 		}
 	}
-	
+
 	/**
 	 * 新增巡查员
 	 * @param jobNum 工号
@@ -85,9 +90,11 @@ public class PatrolManagerController {
 		try {
 			response.setCharacterEncoding("UTF-8");
 			out = response.getWriter();
+			Date date = new Date(); 
 			PatrolUser patrolUser = new PatrolUser();
-			patrolUser.setCreatetime(new Date());
+			patrolUser.setCreatetime(date);
 			patrolUser.setCampusNum(campusNum);
+			patrolUser.setLastUpdateTime(date);
 			patrolUser.setJobNum(jobNum);
 			patrolUser.setPassword(password);
 			patrolUser.setIsDel((short)0);
@@ -156,6 +163,7 @@ public class PatrolManagerController {
 			patrolUser.setId(id);
 			patrolUser.setCampusNum(campusNum);
 			patrolUser.setJobNum(jobNum);
+			patrolUser.setLastUpdateTime(new Date());
 			patrolUser.setPassword(password);
 			patrolUser.setCreatetime(this.patrolUserService.getById(id).getCreatetime());
 			if(username!=null){
@@ -198,6 +206,7 @@ public class PatrolManagerController {
 				return;
 			}else{
 				patrolUser.setIsDel((short)1);
+				patrolUser.setLastUpdateTime(new Date());
 				this.patrolUserService.update(patrolUser);
 			}
 			out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"删除成功\"}");
@@ -212,19 +221,32 @@ public class PatrolManagerController {
 		}
 	}
 	/**
-	 * 启动紧急状态
-	 * @throws IOException 
+	 * 开启紧急状态
+	 * @param configId  配置id
+	 * @param username 用户名
+	 * @param jobNum 工号
+	 * @param campusNum 校区id 
+	 * @param response
+	 * @throws IOException
 	 */
 	@RequestMapping("startEmergency")
-	public void startEmergency(Integer configId,HttpServletResponse response) throws IOException{
+	public void startEmergency(Integer configId,String username,String jobNum,Integer campusNum,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
+			PatrolEmergency patrolEmergency = new PatrolEmergency();
+			patrolEmergency.setJobNum(jobNum);
+			patrolEmergency.setStartTime(new Date());
+			if(username!=null){
+				patrolEmergency.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
+			}
+			patrolEmergency.setCampusNum(campusNum);
+			PatrolEmergency emergency = this.patrolEmergencyService.add(patrolEmergency);
 			PatrolConfig config = this.patrolConfigService.getById(configId);
 			config.setIsEmergency(1);
 			this.patrolConfigService.updateConfig(config);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(config,features)+"}");
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolEmergency\":"+JSONObject.toJSONString(emergency,features)+",\"patrolConfig\":"+JSONObject.toJSONString(config,features)+"}}");
 		} catch (Exception e) {
 			if(out==null){
 				out=response.getWriter();
@@ -237,19 +259,29 @@ public class PatrolManagerController {
 	}
 	/**
 	 * 取消紧急状态
-	 * @param 配置信息id
-	 * @throws IOException 
+	 * @param configId 配置id
+	 * @param campusNum 校区id
+	 * @param response 
+	 * @throws IOException
 	 */
 	@RequestMapping("endEmergency")
-	public void endEmergency(Integer configId,HttpServletResponse response) throws IOException{
+	public void endEmergency(Integer configId,Integer campusNum,HttpServletResponse response) throws IOException{
 		PrintWriter out = null;
 		try {
 			response.setCharacterEncoding("UTF-8");
 			out = response.getWriter();
 			PatrolConfig config = this.patrolConfigService.getById(configId);
+			PatrolEmergency patrolEmergency = this.patrolEmergencyService.getNewest(campusNum);
+			if(patrolEmergency!=null){
+				patrolEmergency.setEndTime(new Date());
+			}else{
+				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"无开始信息,请联系管理员\"}");
+				return;
+			}
 			config.setIsEmergency(0);
 			this.patrolConfigService.updateConfig(config);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(config,features)+"}");
+			this.patrolEmergencyService.update(patrolEmergency);
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolEmergency\":"+JSONObject.toJSONString(patrolEmergency,features)+",\"patrolConfig\":"+JSONObject.toJSONString(config,features)+"}}");
 		} catch (Exception e) {
 			if(out==null){
 				out=response.getWriter();
@@ -380,7 +412,7 @@ public class PatrolManagerController {
 		try {
 			out = response.getWriter();
 			List<PatrolUserRegion> list = this.patrolUserRegionService.getAbnormal();
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":\""+JSONObject.toJSONString(list,features)+"}");
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(list,features)+"}");
 		} catch (IOException e) {
 			if(out==null){
 				out=response.getWriter();

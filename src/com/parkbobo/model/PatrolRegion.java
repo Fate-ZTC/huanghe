@@ -44,13 +44,18 @@ public class PatrolRegion implements Serializable{
 	 * 创建时间
 	 */
 	private Date createtime;
+	
+	/**
+	 * 最后更新时间
+	 */
+	private Date lastUpdateTime;
 
 	/**
 	 * 空间几何信息
 	 */
 	@JSONField(serialize=false)
 	private MultiPolygon regionLocation;
-
+	
 
 	/**
 	 * 字符串类型的空间经纬度信息
@@ -128,5 +133,15 @@ public class PatrolRegion implements Serializable{
 		geometryCentroid = geometryCentroid.substring(geometryCentroid.indexOf("(")+1, geometryCentroid.indexOf(")")).replace(" ", ",");
 		return geometryCentroid;
 	}
+	@Column(name="last_update_time")
+	public Date getLastUpdateTime() {
+		return lastUpdateTime;
+	}
+
+	public void setLastUpdateTime(Date lastUpdateTime) {
+		this.lastUpdateTime = lastUpdateTime;
+	}
+	
+	
 
 }

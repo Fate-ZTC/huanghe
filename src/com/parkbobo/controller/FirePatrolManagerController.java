@@ -22,17 +22,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.parkbobo.model.FireFightEquipment;
 import com.parkbobo.model.FireFightEquipmentHistory;
+import com.parkbobo.model.FirePatrolException;
 import com.parkbobo.model.FirePatrolInfo;
-import com.parkbobo.model.PatrolException;
 import com.parkbobo.model.FirePatrolUser;
 import com.parkbobo.service.FireFightEquipmentHistoryService;
 import com.parkbobo.service.FireFightEquipmentService;
+import com.parkbobo.service.FirePatrolExceptionService;
 import com.parkbobo.service.FirePatrolInfoService;
 import com.parkbobo.service.FirePatrolUserService;
-import com.parkbobo.service.PatrolConfigService;
-import com.parkbobo.service.PatrolExceptionService;
-import com.parkbobo.service.PatrolLocationInfoService;
-import com.parkbobo.service.PatrolUserRegionService;
 import com.parkbobo.utils.PageBean;
 
 @Controller
@@ -42,14 +39,8 @@ public class FirePatrolManagerController {
 	private FirePatrolUserService firePatrolUserService;
 
 	@Resource
-	private PatrolConfigService patrolConfigService;
-
-	@Resource
-	private PatrolUserRegionService patrolUserRegionService;
-
-	@Resource
-	private PatrolLocationInfoService patrolLocationInfoService;
-
+	private FirePatrolExceptionService firePatrolExceptionService;
+	
 	@Resource
 	private FireFightEquipmentService fireFightEquipmentService;
 
@@ -58,9 +49,6 @@ public class FirePatrolManagerController {
 
 	@Resource
 	private FirePatrolInfoService firePatrolInfoService;
-
-	@Resource
-	private PatrolExceptionService patrolExceptionService;
 
 	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect};
 	/**
@@ -103,9 +91,11 @@ public class FirePatrolManagerController {
 			response.setCharacterEncoding("UTF-8");
 			out = response.getWriter();
 			FirePatrolUser patrolUser = new FirePatrolUser();
-			patrolUser.setCreatetime(new Date());
+			Date date = new Date();
+			patrolUser.setCreatetime(date);
 			patrolUser.setCampusNum(campusNum);
 			patrolUser.setJobNum(jobNum);
+			patrolUser.setLastUpdateTime(date);
 			patrolUser.setPassword(password);
 			patrolUser.setIsDel((short)0);
 			//patrolUser.setUsername(new String(username.getBytes("ISO-8859-1"),"utf-8"));
@@ -173,6 +163,7 @@ public class FirePatrolManagerController {
 			patrolUser.setId(id);
 			patrolUser.setCampusNum(campusNum);
 			patrolUser.setJobNum(jobNum);
+			patrolUser.setLastUpdateTime(new Date());
 			patrolUser.setPassword(password);
 			patrolUser.setCreatetime(this.firePatrolUserService.getById(id).getCreatetime());
 			if(username!=null){
@@ -215,6 +206,7 @@ public class FirePatrolManagerController {
 				return;
 			}else{
 				patrolUser.setIsDel((short)1);
+				patrolUser.setLastUpdateTime(new Date());
 				this.firePatrolUserService.update(patrolUser);
 			}
 			out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"删除成功\"}");
@@ -275,8 +267,8 @@ public class FirePatrolManagerController {
 		if (firePatrolInfo != null) {
 			String excptionTypes = firePatrolInfo.getExceptionTypes();
 			excptionTypes = excptionTypes.substring(0, excptionTypes.length()-1);
-			String hql = "FROM PatrolException WHERE id IN ("+ excptionTypes +")";
-			List<PatrolException> patrolExceptions = patrolExceptionService.getByHQL(hql);
+			String hql = "FROM FirePatrolException WHERE id IN ("+ excptionTypes +")";
+			List<FirePatrolException> patrolExceptions = firePatrolExceptionService.getByHQL(hql);
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(firePatrolInfo,features)+",\"excptionData\":"+JSONObject.toJSONString(patrolExceptions,features)+"}");
 		}else{
 			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"暂无该消防设备信息\"}");

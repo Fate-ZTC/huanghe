@@ -1,10 +1,14 @@
 package com.parkbobo.service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.parkbobo.dao.PatrolUserRegionDao;
@@ -37,7 +41,7 @@ public class PatrolUserRegionService {
 	public PatrolUserRegion getById(Integer id){
 		return this.patrolUserRegionDao.get(id);
 	}
-	
+
 	public PatrolUserRegion getUniqueByProperty(String propertyName,Object value){
 		return this.patrolUserRegionDao.getUniqueByProperty(propertyName, value);
 	}
@@ -54,14 +58,13 @@ public class PatrolUserRegionService {
 		return this.patrolUserRegionDao.getBySql(sql);
 	}
 
-	public long getCountTime(String jobNum){
+	public PatrolUserRegion getCountTime(String jobNum){
 		String hql = "from PatrolUserRegion where endTime is null and  jobNum = '"+jobNum+"' order by startTime desc limit 1";
 		List<PatrolUserRegion> list = this.patrolUserRegionDao.getByHQL(hql);
 		if(list!=null&&list.size()>0){
-			PatrolUserRegion patrolUserRegion = list.get(0);
-			return new Date().getTime()-patrolUserRegion.getStartTime().getTime();
+			return list.get(0);
 		}
-		return 0;
+		return null;
 	}
 	/**
 	 * 判断是否偷懒
@@ -80,4 +83,29 @@ public class PatrolUserRegionService {
 		String hql = "from PatrolUserRegion where endTime is null and status = 2";
 		return this.patrolUserRegionDao.getByHQL(hql);
 	}
+	public List<PatrolUserRegion> getPatrolUserBySth(String username,Integer regionId,Integer exceptionType,Date startTime,Date endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException{
+		String hql = "from PatrolUserRegion where 1=1";
+		if(StringUtils.isNotBlank(username)){
+			hql += " and username like '%"+URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8")+"%'";
+		}
+		if(regionId!=null&&regionId!=0){
+			hql += " and regionId =" + regionId;
+		}
+		if(exceptionType!=null){
+			if(exceptionType==1){
+				hql += " and exceptionType is null";
+			}else{
+				hql += " and exceptionType is not null";
+			}
+		}
+		if(startTime!=null){
+			hql += " and startTime > '"+ startTime + "'";
+		}
+		if(endTime!=null){
+			hql +=" and startTime < '" + endTime + "'"; 
+		}
+		hql +=" order by startTime desc";		
+		return this.patrolUserRegionDao.pageQuery(hql,pageSize,page).getList();
+	}
+
 }

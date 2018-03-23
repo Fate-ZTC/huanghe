@@ -1,10 +1,9 @@
-package com.parkbobo.controller;
+	package com.parkbobo.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +13,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.json.simple.JSONArray;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -27,6 +25,7 @@ import com.parkbobo.model.PatrolRegion;
 import com.parkbobo.model.PatrolUser;
 import com.parkbobo.model.PatrolUserRegion;
 import com.parkbobo.service.PatrolConfigService;
+import com.parkbobo.service.PatrolEmergencyService;
 import com.parkbobo.service.PatrolExceptionService;
 import com.parkbobo.service.PatrolLocationInfoService;
 import com.parkbobo.service.PatrolRegionService;
@@ -62,6 +61,9 @@ public class PatrolUserController {
 
 	@Resource
 	private PatrolExceptionService patrolExceptionService;
+
+	@Resource
+	private PatrolEmergencyService patrolEmergencyService;
 	/**
 	 * 格式化json
 	 */
@@ -221,7 +223,7 @@ public class PatrolUserController {
 		if(patrolConfig.getIsEmergency()==1){
 			patrolLocationInfo = patrolLocationInfoService.add(patrolLocationInfo);
 			//紧急状态
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolLocationInfo,features)+"}");
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+JSONObject.toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+JSONObject.toJSONString(patrolConfig,features)+"}}");
 			out.flush();
 			out.close();
 			return;
@@ -287,7 +289,7 @@ public class PatrolUserController {
 			patrolUserRegion.setLastUpdateTime(date);
 			this.patrolUserRegionService.merge(patrolUserRegion);
 			patrolLocationInfo = patrolLocationInfoService.add(patrolLocationInfo);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolLocationInfo,features)+"}");
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+JSONObject.toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+JSONObject.toJSONString(patrolConfig,features)+"}}");
 			out.flush();
 			out.close();
 		}
@@ -327,8 +329,12 @@ public class PatrolUserController {
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
-			long countTime = this.patrolUserRegionService.getCountTime(jobNum);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+countTime+"}");
+			PatrolUserRegion patrolUserRegion = this.patrolUserRegionService.getCountTime(jobNum);
+			long countTime = 0;
+			if(patrolUserRegion!=null){
+				countTime = new Date().getTime()-patrolUserRegion.getStartTime().getTime();
+			}
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"PatrolUserRegion\":"+JSONObject.toJSONString(patrolUserRegion,features)+",\"countTime\":"+countTime+"}}");
 		}catch(Exception e){
 			if(out==null){
 				out=response.getWriter();
@@ -353,8 +359,8 @@ public class PatrolUserController {
 		PrintWriter out = response.getWriter();
 		if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate) && StringUtils.isNotBlank(jobNum)) {
 			String sql = "SELECT job_num, to_char(start_time, 'yyyy-MM-dd') FROM patrol_user_region WHERE "+
-			"job_num = '"+jobNum+"' AND start_time >= '"+startDate+"' AND end_time < '"+endDate+"'"+
-			"GROUP BY job_num,to_char(start_time,'yyyy-MM-dd')";
+					"job_num = '"+jobNum+"' AND start_time >= '"+startDate+"' AND end_time < '"+endDate+"'"+
+					"GROUP BY job_num,to_char(start_time,'yyyy-MM-dd')";
 			List<Object[]> patrolUserRegions = patrolUserRegionService.getBySql(sql);
 			StringBuilder sb =new StringBuilder();
 			sb.append("{\"status\":\"true\",\"Code\":1,\"list\":[");

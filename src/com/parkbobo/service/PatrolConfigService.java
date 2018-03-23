@@ -34,4 +34,7 @@ public class PatrolConfigService {
 	public PatrolConfig getById(Integer id){
 		return this.patrolConfigDao.get(id);
 	}
+	public PatrolConfig getByP(Integer campusNum){
+		return this.patrolConfigDao.getUniqueByProperty("campusNum", campusNum);
+	}
 }

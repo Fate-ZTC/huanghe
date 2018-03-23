@@ -21,6 +21,9 @@ public class PatrolExceptionService {
 		return patrolExceptionDao.get(entityid);
 	}
 	
+	public List<PatrolException> getAll(){
+		return patrolExceptionDao.getAll();
+	}
 	public List<PatrolException> getByHQL(String hql) {
 		return patrolExceptionDao.getByHQL(hql);
 	}
@@ -29,9 +32,4 @@ public class PatrolExceptionService {
 		return patrolExceptionDao.pageQuery(hql, pageSize, page);
 	}
 
-
-	public List<PatrolException> getAllFireExceptions() {
-		String hql = "from PatrolException where id >=3 ";
-		return this.patrolExceptionDao.getByHQL(hql);
-	}
 }

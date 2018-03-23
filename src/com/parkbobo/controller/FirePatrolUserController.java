@@ -19,16 +19,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.parkbobo.model.FireFightEquipment;
 import com.parkbobo.model.FireFightEquipmentHistory;
+import com.parkbobo.model.FirePatrolException;
 import com.parkbobo.model.FirePatrolImg;
 import com.parkbobo.model.FirePatrolInfo;
-import com.parkbobo.model.PatrolException;
 import com.parkbobo.model.FirePatrolUser;
 import com.parkbobo.service.FireFightEquipmentHistoryService;
 import com.parkbobo.service.FireFightEquipmentService;
+import com.parkbobo.service.FirePatrolExceptionService;
 import com.parkbobo.service.FirePatrolImgService;
 import com.parkbobo.service.FirePatrolInfoService;
 import com.parkbobo.service.FirePatrolUserService;
-import com.parkbobo.service.PatrolExceptionService;
 
 /**
  * 消防使用端接口
@@ -47,7 +47,7 @@ public class FirePatrolUserController {
 	@Resource
 	private FirePatrolInfoService firePatrolInfoService;
 	@Resource
-	private PatrolExceptionService patrolExceptionService;
+	private FirePatrolExceptionService firePatrolExceptionService;
 	@Resource
 	private FirePatrolUserService firePatrolUserService;
 	@Resource
@@ -85,11 +85,6 @@ public class FirePatrolUserController {
 			out.close();
 		}
 	}
-	
-	
-	
-	
-	
 	/**
 	 * 获取所有消防异常信息
 	 * @throws IOException 
@@ -100,7 +95,7 @@ public class FirePatrolUserController {
 		try {
 			response.setCharacterEncoding("UTF-8");
 			out=response.getWriter();
-			List<PatrolException> list = this.patrolExceptionService.getAllFireExceptions();
+			List<FirePatrolException> list = this.firePatrolExceptionService.getAllFireExceptions();
 			if(list!=null&&list.size()>0){
 				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(list,features)+"}");
 			}else{

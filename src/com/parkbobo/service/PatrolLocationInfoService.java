@@ -1,5 +1,6 @@
 package com.parkbobo.service;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -48,4 +49,13 @@ public class PatrolLocationInfoService {
 	public PatrolLocationInfo add(PatrolLocationInfo patrolLocationInfo){
 		return patrolLocationInfoDao.add(patrolLocationInfo);
 	}
+	public List<Integer> getExceptionTypes(String jobNum,Date startTime,Date endTime){
+		String sql = "select distinct exception_type from patrol_location_info where job_num = '"+jobNum+"' and timestamp >"+startTime +"and timestamp <"+ endTime;
+		List<Integer>  list= this.patrolLocationInfoDao.getBySql(sql);
+		if(list!=null&&list.size()>0){
+			return list;
+		}
+		return null;
+	}
+	
 }
