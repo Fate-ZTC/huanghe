@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="patrol_emergency")
@@ -44,6 +45,10 @@ public class PatrolEmergency implements Serializable{
 	 * 校区id
 	 */
 	private Integer campusNum;
+	/**
+	 * 紧急事件持续时长
+	 */
+	private String checkDuration;
 	
 	@Id
 	@Column(name="id",nullable=false,unique=true)
@@ -90,5 +95,18 @@ public class PatrolEmergency implements Serializable{
 		this.campusNum = campusNum;
 	}
 	
-	
+	@Transient
+	public String getCheckDuration(){
+		String dm = null;
+		if(endTime != null && startTime != null) {
+			long second = 0l;
+			second = (endTime.getTime()-startTime.getTime())/1000;
+			long hours = second / 3600;            //转换小时
+	        second = second % 3600;                //剩余秒数
+	        long minutes = second /60;            //转换分钟
+	        second = second % 60;                //剩余秒数
+			dm=hours+"小时"+minutes+"分钟"+second+"秒";
+		}
+		return dm;
+	}
 }

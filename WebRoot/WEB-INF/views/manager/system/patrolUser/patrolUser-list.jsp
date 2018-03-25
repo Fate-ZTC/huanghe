@@ -54,7 +54,7 @@ String path = request.getContextPath();
     	<sec:authorize ifAnyGranted="patrolUser_delete">
         <li onclick="bulkDelete('<%=path %>/patrolUser_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
         </sec:authorize>
-        <sec:authorize ifAnyGranted="patrolUser_excelOut">
+        <sec:authorize ifAnyGranted="%>/patrolUser_list">
         <li onclick="forWardUrl('<%=path %>/patrolUser_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
         </sec:authorize>
         <li><span>${msg }</span></li>

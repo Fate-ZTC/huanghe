@@ -18,15 +18,16 @@ import com.system.utils.StringUtil;
 public class FirePatrolExceptionController {
 
 	private FirePatrolExceptionService firePatrolExceptionService;
-	
+
 	@RequestMapping("firePatrolExc_list")
 	public ModelAndView list(FirePatrolException firePatrolException,Integer page,Integer pageSize) throws UnsupportedEncodingException
 	{
 		ModelAndView mv = new ModelAndView();
-		
 		String hql = "from  FirePatrolException f where 1=1";
-		if(StringUtil.isNotEmpty(firePatrolException.getExceptionName())){
-			hql +=" and f.exceptionName like '% "+firePatrolException.getExceptionName()+"%'";
+		if(firePatrolException!=null){
+			if(StringUtil.isNotEmpty(firePatrolException.getExceptionName())){
+				hql +=" and f.exceptionName like '% "+firePatrolException.getExceptionName()+"%'";
+			}
 		}
 		hql += " order by f.sort";
 		PageBean<FirePatrolException> firePatrolExceptionPage = this.firePatrolExceptionService.getByHql(hql,pageSize==null?12:pageSize, page==null?1:page);
@@ -34,7 +35,7 @@ public class FirePatrolExceptionController {
 		mv.setViewName("manager/system/firePatrolExc/firePatrolExc-list");
 		return mv;
 	}
-	
+
 	@RequestMapping("firePatrolExc_add")
 	public ModelAndView add(String method,FirePatrolException firePatrolException,HttpSession session )
 	{
@@ -42,8 +43,10 @@ public class FirePatrolExceptionController {
 		//添加
 		if(StringUtil.isNotEmpty(method) && method.equals("add"))
 		{
-			firePatrolException.setUpdateTime(new Date());
-			this.firePatrolExceptionService.addRecord(firePatrolException);
+			if(firePatrolException!=null){
+				firePatrolException.setUpdateTime(new Date());
+				this.firePatrolExceptionService.addRecord(firePatrolException);
+			}
 			mv.setViewName("redirect:/firePatrolExc_list?method=addSuccess");
 		}
 		//跳转到添加页面

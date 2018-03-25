@@ -2,7 +2,6 @@ package com.parkbobo.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ import com.system.utils.StringUtil;
  */
 @Controller
 public class PatrolUserManagerController {
-	
+
 	@Resource
 	private PatrolUserService patrolUserService;
 	/**
@@ -53,14 +52,14 @@ public class PatrolUserManagerController {
 	public ModelAndView list(PatrolUser patrolUser,Integer page,Integer pageSize) throws UnsupportedEncodingException
 	{
 		ModelAndView mv = new ModelAndView();
-		
+
 		String hql = "from  PatrolUser f where isDel = 0";
 		if(patrolUser != null && StringUtil.isNotEmpty(patrolUser.getUsername()))
 		{
 			hql+=" and f.username like '%" + patrolUser.getUsername() + "%'";
 		}
-		if(StringUtil.isNotEmpty(patrolUser.getJobNum())){
-			hql +=" and f.jobNum like '% "+patrolUser.getJobNum()+"%'";
+		if(patrolUser != null && StringUtil.isNotEmpty(patrolUser.getJobNum())){
+			hql +=" and f.jobNum like '%"+patrolUser.getJobNum()+"%'";
 		}
 		hql += " order by f.id";
 		PageBean<PatrolUser> patrolUserPage = this.patrolUserService.getUsers(hql,pageSize==null?12:pageSize, page==null?1:page);
@@ -104,7 +103,12 @@ public class PatrolUserManagerController {
 		//编辑
 		if(StringUtil.isNotEmpty(method) && method.equals("edit"))
 		{
+			PatrolUser user = patrolUserService.getById(id);
 			patrolUser.setLastUpdateTime(new Date());
+			patrolUser.setCampusNum(user.getCampusNum());
+			patrolUser.setClientId(user.getClientId());
+			patrolUser.setCreatetime(user.getCreatetime());
+			patrolUser.setIsDel((short)0);
 			patrolUserService.update(patrolUser);
 			mv.setViewName("redirect:/patrolUser_list?method=editSuccess");
 		}
@@ -146,7 +150,6 @@ public class PatrolUserManagerController {
 	@RequestMapping("patrolUser_excelOut")
 	public ResponseEntity<byte[]> excelOut(PatrolUser patrolUser,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = response.getWriter();
 		Date today = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		//导出文件的标题
@@ -155,7 +158,6 @@ public class PatrolUserManagerController {
 		try {
 			list = this.patrolUserService.getBySth(patrolUser.getUsername(),patrolUser.getJobNum());
 		} catch (Exception e1) {
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"获取数据错误\"}");
 		}
 		//设置表格标题行
 		String[] headers = new String[] {"巡更人员姓名","巡更人员账号", "更新时间"};
@@ -171,7 +173,6 @@ public class PatrolUserManagerController {
 				dataList.add(objs);
 			}
 		}
-		try {
 			//防止中文乱码
 			// 第一步，创建一个webbook，对应一个Excel文件    
 			HSSFWorkbook wb = new HSSFWorkbook();
@@ -222,14 +223,6 @@ public class PatrolUserManagerController {
 			httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			wb.write(file);
 			wb.close();
-			out.print("{\"status\":\"false\",\"errorCode\":1,\"Msg\":\"导出成功\"}");
 			return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),httpHeaders, HttpStatus.CREATED);  
-		} catch (Exception e) {
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"流程错误,请联系技术人员\"}");
-			return null;
-		}finally{
-			out.flush();
-			out.close();
-		}
 	}
 }

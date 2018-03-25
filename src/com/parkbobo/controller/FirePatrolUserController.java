@@ -1,5 +1,6 @@
 package com.parkbobo.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
@@ -10,25 +11,31 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.parkbobo.model.FireFightEquipment;
 import com.parkbobo.model.FireFightEquipmentHistory;
+import com.parkbobo.model.FirePatrolConfig;
 import com.parkbobo.model.FirePatrolException;
 import com.parkbobo.model.FirePatrolImg;
 import com.parkbobo.model.FirePatrolInfo;
 import com.parkbobo.model.FirePatrolUser;
 import com.parkbobo.service.FireFightEquipmentHistoryService;
 import com.parkbobo.service.FireFightEquipmentService;
+import com.parkbobo.service.FirePatrolConfigService;
 import com.parkbobo.service.FirePatrolExceptionService;
 import com.parkbobo.service.FirePatrolImgService;
 import com.parkbobo.service.FirePatrolInfoService;
 import com.parkbobo.service.FirePatrolUserService;
+import com.parkbobo.utils.GisUtil;
 
 /**
  * 消防使用端接口
@@ -52,6 +59,8 @@ public class FirePatrolUserController {
 	private FirePatrolUserService firePatrolUserService;
 	@Resource
 	private FireFightEquipmentHistoryService fireFightEquipmentHistoryService;
+	@Resource
+	private FirePatrolConfigService firePatrolConfigService;
 	/**
 	 * 登录
 	 * @param jobNum 工号
@@ -111,6 +120,29 @@ public class FirePatrolUserController {
 			out.close();
 		}
 	}
+
+	public String upload(HttpServletRequest request,
+			@RequestParam("file") MultipartFile file) throws Exception {
+		//如果文件不为空，写入上传路径
+		if(!file.isEmpty()) {
+			//上传文件路径
+			String path = request.getServletContext().getRealPath("/images/");
+			//上传文件名
+			String filename = file.getOriginalFilename();
+			File filepath = new File(path,filename);
+			//判断路径是否存在，如果不存在就创建一个
+			if (!filepath.getParentFile().exists()) { 
+				filepath.getParentFile().mkdirs();
+			}
+			//将上传文件保存到一个目标文件当中
+			file.transferTo(new File(path + File.separator + filename));
+			return "success";
+		} else {
+			return "error";
+		}
+
+	}
+
 	/**
 	 * 正常上报
 	 * @param userId  用户id
@@ -119,11 +151,18 @@ public class FirePatrolUserController {
 	 * @throws IOException 
 	 */
 	@RequestMapping("normalUpload")
-	public void normalUpload(Integer userId,Integer equipmentId,String[] imgUrls,HttpServletResponse response) throws IOException{
+	public void normalUpload(Double lon,Double lat,Integer userId,Integer equipmentId,String[] imgUrls,HttpServletResponse response) throws IOException{
 		PrintWriter out = null;
 		try {
 			response.setCharacterEncoding("UTF-8");
 			out=response.getWriter();
+			FirePatrolConfig patrolConfig = this.firePatrolConfigService.getById(1);
+			FireFightEquipment fireFightEquipment = this.fireFightEquipmentService.getById(equipmentId);
+			GisUtil g = GisUtil.getInstance();
+			if(g.distanceByLngLat(lon, lat, (double)fireFightEquipment.getLon(), (double)fireFightEquipment.getLat())>patrolConfig.getDistance()){
+				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"请在指定区域内上传数据\"}");
+				return;
+			}
 			Date date = new Date();
 			FirePatrolInfo newest = this.firePatrolInfoService.getNewest(equipmentId);
 			if(newest!=null&&isEquals(date, newest.getTimestamp())){
@@ -131,50 +170,44 @@ public class FirePatrolUserController {
 				this.firePatrolInfoService.update(newest);
 			}
 			FirePatrolUser patrolUser = this.firePatrolUserService.getById(userId);
-			FireFightEquipment fireFightEquipment = this.fireFightEquipmentService.getById(equipmentId);
 			if(patrolUser!=null){
-				if(fireFightEquipment!=null){
-					FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
-					firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
-					firePatrolInfo.setFirePatrolUser(patrolUser);
-					firePatrolInfo.setDescription("正常");
-					firePatrolInfo.setFireFightEquipment(fireFightEquipment);
-					firePatrolInfo.setPatrolStatus(1);
-					firePatrolInfo.setIsNewest((short)1);
-					firePatrolInfo.setTimestamp(date);
-					firePatrolInfo.setUserName(patrolUser.getUsername());
-					fireFightEquipment.setCheckStatus((short)1);
-					fireFightEquipment.setStatus((short)1);
-					fireFightEquipment.setLastUpdateTime(date);
-					List<FireFightEquipmentHistory> fireFightEquiHistory = fireFightEquipmentHistoryService.getByProperty("oldId", fireFightEquipment.getId(), "lastUpdateTime", false);
-					if (fireFightEquiHistory!=null && fireFightEquiHistory.size()>0) {
-						FireFightEquipmentHistory fireFightEquipmentHistory = fireFightEquiHistory.get(0);
-						fireFightEquipmentHistory.setCheckStatus((short)1);
-						fireFightEquipmentHistory.setStatus((short)1);
-						fireFightEquipmentHistory.setLastUpdateTime(date);
-						fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
+				FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
+				firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
+				firePatrolInfo.setFirePatrolUser(patrolUser);
+				firePatrolInfo.setDescription("正常");
+				firePatrolInfo.setFireFightEquipment(fireFightEquipment);
+				firePatrolInfo.setPatrolStatus(1);
+				firePatrolInfo.setIsNewest((short)1);
+				firePatrolInfo.setTimestamp(date);
+				firePatrolInfo.setUserName(patrolUser.getUsername());
+				fireFightEquipment.setCheckStatus((short)1);
+				fireFightEquipment.setStatus((short)1);
+				fireFightEquipment.setLastUpdateTime(date);
+				List<FireFightEquipmentHistory> fireFightEquiHistory = fireFightEquipmentHistoryService.getByProperty("oldId", fireFightEquipment.getId(), "lastUpdateTime", false);
+				if (fireFightEquiHistory!=null && fireFightEquiHistory.size()>0) {
+					FireFightEquipmentHistory fireFightEquipmentHistory = fireFightEquiHistory.get(0);
+					fireFightEquipmentHistory.setCheckStatus((short)1);
+					fireFightEquipmentHistory.setStatus((short)1);
+					fireFightEquipmentHistory.setLastUpdateTime(date);
+					fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
+				}
+				List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
+				FirePatrolInfo add = this.firePatrolInfoService.add(firePatrolInfo);
+				this.fireFightEquipmentService.update(fireFightEquipment);
+				if(imgUrls!=null&&imgUrls.length>0){
+					for(int i = 0;i<imgUrls.length;i++){
+						FirePatrolImg firePatrolImg = new FirePatrolImg();
+						firePatrolImg.setFireFightEquipment(fireFightEquipment);
+						firePatrolImg.setImgUrl(imgUrls[i]);
+						firePatrolImg.setFirePatrolUser(patrolUser);
+						firePatrolImg.setUploadTIme(date);
+						firePatrolImg.setInfoId(add.getId());
+						list.add(this.firePatrolImgService.add(firePatrolImg));
 					}
-					List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
-					FirePatrolInfo add = this.firePatrolInfoService.add(firePatrolInfo);
-					this.fireFightEquipmentService.update(fireFightEquipment);
-					if(imgUrls!=null&&imgUrls.length>0){
-						for(int i = 0;i<imgUrls.length;i++){
-							FirePatrolImg firePatrolImg = new FirePatrolImg();
-							firePatrolImg.setFireFightEquipment(fireFightEquipment);
-							firePatrolImg.setImgUrl(imgUrls[i]);
-							firePatrolImg.setFirePatrolUser(patrolUser);
-							firePatrolImg.setUploadTIme(date);
-							firePatrolImg.setInfoId(add.getId());
-							list.add(this.firePatrolImgService.add(firePatrolImg));
-						}
-						out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"imgList\":"+JSONObject.toJSONString(list,features)+",\"firePatrolInfo\":"+JSONObject.toJSONString(firePatrolInfo,features)+"}}");
-						return;
-					}else{
-						out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"必须拍摄图片!!\"}");
-						return;
-					}
+					out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"imgList\":"+JSONObject.toJSONString(list,features)+",\"firePatrolInfo\":"+JSONObject.toJSONString(firePatrolInfo,features)+"}}");
+					return;
 				}else{
-					out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"设备不存在\"}");
+					out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"必须拍摄图片!!\"}");
 					return;
 				}
 			}else{
@@ -203,67 +236,68 @@ public class FirePatrolUserController {
 	 * @throws IOException
 	 */
 	@RequestMapping("abnormalUpload")
-	public void abnormalUpload(Integer userId,Integer equipmentId,String[] imgUrls,String exceptionTypes,String description,HttpServletResponse response) throws IOException{
+	public void abnormalUpload(Double lon,Double lat,Integer userId,Integer equipmentId,String[] imgUrls,String exceptionTypes,String description,HttpServletResponse response) throws IOException{
 		PrintWriter out = null;
 		try {
 			response.setCharacterEncoding("UTF-8");
 			out=response.getWriter();
 			Date date = new Date();
+			FireFightEquipment fireFightEquipment = this.fireFightEquipmentService.getById(equipmentId);
+			FirePatrolConfig patrolConfig = this.firePatrolConfigService.getById(1);
+			GisUtil g = GisUtil.getInstance();
+			if(g.distanceByLngLat(lon, lat, (double)fireFightEquipment.getLon(), (double)fireFightEquipment.getLat())>patrolConfig.getDistance()){
+				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"请在指定区域内上传数据\"}");
+				return;
+			}
 			FirePatrolInfo newest = this.firePatrolInfoService.getNewest(equipmentId);
 			if(newest!=null&&isEquals(date, newest.getTimestamp())){
 				newest.setIsNewest((short)0);
 				this.firePatrolInfoService.update(newest);
 			}
 			FirePatrolUser patrolUser = this.firePatrolUserService.getById(userId);
-			FireFightEquipment fireFightEquipment = this.fireFightEquipmentService.getById(equipmentId);
 			if(patrolUser!=null){
-				if(fireFightEquipment!=null){
-					FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
-					firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
-					firePatrolInfo.setFirePatrolUser(patrolUser);
-					firePatrolInfo.setFireFightEquipment(fireFightEquipment);
-					if (description != null) {
-						firePatrolInfo.setDescription(URLDecoder.decode(URLEncoder.encode(description, "ISO8859_1"), "UTF-8"));
-					}else{
-						firePatrolInfo.setDescription(description);
-					}
-					firePatrolInfo.setExceptionTypes(exceptionTypes);
-					firePatrolInfo.setPatrolStatus(0);
-					firePatrolInfo.setIsNewest((short)1);
-					firePatrolInfo.setTimestamp(date);
-					firePatrolInfo.setUserName(patrolUser.getUsername());
-					fireFightEquipment.setCheckStatus((short)1);
-					fireFightEquipment.setStatus((short)0);
-					fireFightEquipment.setLastUpdateTime(date);
-					List<FireFightEquipmentHistory> fireFightEquiHistory = fireFightEquipmentHistoryService.getByProperty("oldId", fireFightEquipment.getId(), "lastUpdateTime", false);
-					if (fireFightEquiHistory!=null && fireFightEquiHistory.size()>0) {
-						FireFightEquipmentHistory fireFightEquipmentHistory = fireFightEquiHistory.get(0);
-						fireFightEquipmentHistory.setCheckStatus((short)1);
-						fireFightEquipmentHistory.setStatus((short)0);
-						fireFightEquipmentHistory.setLastUpdateTime(date);
-						fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
-					}
-					List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
-					FirePatrolInfo add = this.firePatrolInfoService.add(firePatrolInfo);
-					this.fireFightEquipmentService.update(fireFightEquipment);
-					if(imgUrls!=null&&imgUrls.length>0){
-						for(int i = 0;i<imgUrls.length;i++){
-							FirePatrolImg firePatrolImg = new FirePatrolImg();
-							firePatrolImg.setFireFightEquipment(fireFightEquipment);
-							firePatrolImg.setImgUrl(imgUrls[i]);
-							firePatrolImg.setFirePatrolUser(patrolUser);
-							firePatrolImg.setUploadTIme(date);
-							firePatrolImg.setInfoId(add.getId());
-							list.add(this.firePatrolImgService.add(firePatrolImg));
-						}
-						out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"imgList\":"+JSONObject.toJSONString(list,features)+",\"firePatrolInfo\":"+JSONObject.toJSONString(firePatrolInfo,features)+"}}");
-						return;
-					}else{
-						out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"必须拍摄图片!!\"}");
-						return;
-					}
+				FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
+				firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
+				firePatrolInfo.setFirePatrolUser(patrolUser);
+				firePatrolInfo.setFireFightEquipment(fireFightEquipment);
+				if (description != null) {
+					firePatrolInfo.setDescription(URLDecoder.decode(URLEncoder.encode(description, "ISO8859_1"), "UTF-8"));
 				}else{
-					out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"设备不存在\"}");
+					firePatrolInfo.setDescription(description);
+				}
+				firePatrolInfo.setExceptionTypes(exceptionTypes);
+				firePatrolInfo.setPatrolStatus(0);
+				firePatrolInfo.setIsNewest((short)1);
+				firePatrolInfo.setTimestamp(date);
+				firePatrolInfo.setUserName(patrolUser.getUsername());
+				fireFightEquipment.setCheckStatus((short)1);
+				fireFightEquipment.setStatus((short)0);
+				fireFightEquipment.setLastUpdateTime(date);
+				List<FireFightEquipmentHistory> fireFightEquiHistory = fireFightEquipmentHistoryService.getByProperty("oldId", fireFightEquipment.getId(), "lastUpdateTime", false);
+				if (fireFightEquiHistory!=null && fireFightEquiHistory.size()>0) {
+					FireFightEquipmentHistory fireFightEquipmentHistory = fireFightEquiHistory.get(0);
+					fireFightEquipmentHistory.setCheckStatus((short)1);
+					fireFightEquipmentHistory.setStatus((short)0);
+					fireFightEquipmentHistory.setLastUpdateTime(date);
+					fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
+				}
+				List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
+				FirePatrolInfo add = this.firePatrolInfoService.add(firePatrolInfo);
+				this.fireFightEquipmentService.update(fireFightEquipment);
+				if(imgUrls!=null&&imgUrls.length>0){
+					for(int i = 0;i<imgUrls.length;i++){
+						FirePatrolImg firePatrolImg = new FirePatrolImg();
+						firePatrolImg.setFireFightEquipment(fireFightEquipment);
+						firePatrolImg.setImgUrl(imgUrls[i]);
+						firePatrolImg.setFirePatrolUser(patrolUser);
+						firePatrolImg.setUploadTIme(date);
+						firePatrolImg.setInfoId(add.getId());
+						list.add(this.firePatrolImgService.add(firePatrolImg));
+					}
+					out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"imgList\":"+JSONObject.toJSONString(list,features)+",\"firePatrolInfo\":"+JSONObject.toJSONString(firePatrolInfo,features)+"}}");
+					return;
+				}else{
+					out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"必须拍摄图片!!\"}");
 					return;
 				}
 			}else{

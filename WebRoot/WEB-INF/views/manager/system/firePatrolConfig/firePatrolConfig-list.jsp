@@ -30,7 +30,7 @@ String path = request.getContextPath();
     <span>位置：</span>
     <ul class="placeul">
     <li><a href="#">消防巡查</a></li>
-    <li><a href="<%=path %>/firePatrolUser_list">配置信息管理</a></li>
+    <li><a href="<%=path %>/firePatrolConfig_list">配置信息管理</a></li>
     </ul>
     </div>
     
@@ -40,11 +40,14 @@ String path = request.getContextPath();
         <ul>
         	<li>参数配置</li>
         </ul>
-        <ul>
+    <input type="hidden" name="id" value="${firePatrolConfig.id }"/>
+        <ul class="seachform">
         	<li>
-        	设置巡查有效距离:<input name="distance" type="text" value="${firePatrolConfig.distance }"/><span style="background-color: red">*</span>设置后在设备${firePatrolConfig.distance }米范围内可以进行巡查
+        	设置巡查有效距离:<input name="distance" type="text" value="${firePatrolConfig.distance }"/>*设置后在设备${firePatrolConfig.distance }米范围内可以进行巡查
         	</li>
-        	<li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认修改"/><input type="reset"  value="重置"/> </li>
+        </ul>
+        <ul>
+        <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认修改"/><input type="reset"  value="重置"/> </li>
         </ul>
     </table>
     </form>

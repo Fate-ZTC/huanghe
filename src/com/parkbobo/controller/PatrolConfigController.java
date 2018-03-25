@@ -32,11 +32,30 @@ public class PatrolConfigController {
 	@RequestMapping("patrolConfig_edit")
 	public ModelAndView edit(PatrolConfig patrolConfig){
 		ModelAndView mv = new ModelAndView();
-		if(patrolConfig.getDistance()==null){
-			mv.addObject("msg","请输入距离");
+		PatrolConfig config = this.patrolConfigService.getById(1);
+		mv.addObject("patrolConfig",patrolConfig);
+		if(patrolConfig.getRefreshTime()<1){
+			mv.addObject("msg","更新间隔不能小于1秒");
 			mv.setViewName("redirect:/patrolConfig_list");
 			return mv;
 		}
+		if(patrolConfig.getUploadTime()<1){
+			mv.addObject("msg","上传间隔不能小于1秒");
+			mv.setViewName("redirect:/patrolConfig_list");
+			return mv;
+		}
+		if(patrolConfig.getStartPatrolTime()<0){
+			mv.addObject("msg","允许到达巡更区域时长不能小于0");
+			mv.setViewName("redirect:/patrolConfig_list");
+			return mv;
+		}
+		if(patrolConfig.getLeaveRegionTime()<0){
+			mv.addObject("msg","允许巡更人员离开巡更范围时长不能小于0");
+			mv.setViewName("redirect:/patrolConfig_list");
+			return mv;
+		}
+		patrolConfig.setCampusNum(config.getCampusNum());
+		patrolConfig.setIsEmergency(config.getIsEmergency());
 		this.patrolConfigService.updateConfig(patrolConfig);
 		mv.setViewName("redirect:/patrolConfig_list?method=editSuccess");
 		return mv;

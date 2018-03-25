@@ -56,12 +56,13 @@ public class FireUserManagerController {
 		ModelAndView mv = new ModelAndView();
 		
 		String hql = "from  FirePatrolUser f where isDel = 0";
+		
 		if(firePatrolUser != null && StringUtil.isNotEmpty(firePatrolUser.getUsername()))
 		{
 			hql+=" and f.username like '%" + firePatrolUser.getUsername() + "%'";
 		}
-		if(StringUtil.isNotEmpty(firePatrolUser.getJobNum())){
-			hql +=" and f.jobNum like '% "+firePatrolUser.getJobNum()+"%'";
+		if(firePatrolUser!= null && StringUtil.isNotEmpty(firePatrolUser.getJobNum())){
+			hql +=" and f.jobNum like '%"+firePatrolUser.getJobNum()+"%'";
 		}
 		hql += " order by f.id";
 		PageBean<FirePatrolUser> firePatrolUserPage = this.firePatrolUserService.getUsers(hql,pageSize==null?12:pageSize, page==null?1:page);
@@ -105,6 +106,11 @@ public class FireUserManagerController {
 		//编辑
 		if(StringUtil.isNotEmpty(method) && method.equals("edit"))
 		{
+			FirePatrolUser user = this.firePatrolUserService.getById(firePatrolUser.getId());
+			firePatrolUser.setCampusNum(user.getCampusNum());
+			firePatrolUser.setClientId(user.getClientId());
+			firePatrolUser.setCreateTime(user.getCreateTime());
+			firePatrolUser.setIsDel((short)0);
 			firePatrolUser.setLastUpdateTime(new Date());
 			firePatrolUserService.update(firePatrolUser);
 			mv.setViewName("redirect:/firePatrolUserList?method=editSuccess");

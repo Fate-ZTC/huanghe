@@ -124,8 +124,8 @@ $(function(){
 	    </dd>
 	    <!-- 个人中心END -->
 	    </sec:authorize>
+	    
 	    <sec:authorize ifAnyGranted="patrolUserRegionList">
-<!-- 	    月租管理START -->
 	    <dd>
 	    <div class="title">
 	    <span><img src="<%=path %>/page/images/leftico01.png" /></span>安防巡更
@@ -134,7 +134,15 @@ $(function(){
 	    	<sec:authorize ifAnyGranted="patrolUserRegionList">
 	        <li><cite></cite><a href="<%=path %>/patrolUserRegionList" target="rightFrame">巡更记录管理</a><i></i></li>
 	    	</sec:authorize>
-	    	
+	    	<sec:authorize ifAnyGranted="patrolEmergency_list,patrolEmergency_delete">
+	        <li><cite></cite><a href="<%=path %>/patrolEmergency_list" target="rightFrame">突发事件管理</a><i></i></li>
+	    	</sec:authorize>
+	    	<sec:authorize ifAnyGranted="patrolUser_list,patrolUser_edit,patrolUser_add,patrolUser_delete">
+	        <li><cite></cite><a href="<%=path %>/patrolUser_list" target="rightFrame">巡更人员管理</a><i></i></li>
+	    	</sec:authorize>
+	    	<sec:authorize ifAnyGranted="patrolConfig_list,patrolConfig_edit">
+	        <li><cite></cite><a href="<%=path %>/patrolConfig_list" target="rightFrame">巡查参数配置</a><i></i></li>
+	    	</sec:authorize>
 	        </ul>    
 	    </dd>
 <!-- 	    月租管理END -->
@@ -149,9 +157,12 @@ $(function(){
 	    	<sec:authorize ifAnyGranted="firePatrolUserList,firePatrolUser_add,firePatrolUser_edit,firePatrolUser_delete">
 	        <li><cite></cite><a href="<%=path %>/firePatrolUserList" target="rightFrame">消防人员管理</a><i></i></li>
 	    	</sec:authorize>
-	    	
-	    	
-	    	
+	    	<sec:authorize ifAnyGranted="firePatrolConfig_list,firePatrolConfig_edit">
+	        <li><cite></cite><a href="<%=path %>/firePatrolConfig_list" target="rightFrame">巡查参数配置</a><i></i></li>
+	    	</sec:authorize>
+	    	<sec:authorize ifAnyGranted="firePatrolExc_list,firePatrolExc_add,firePatrolExc_edit,firePatrolExc_delete">
+	        <li><cite></cite><a href="<%=path %>/firePatrolExc_list" target="rightFrame">异常描述</a><i></i></li>
+	    	</sec:authorize>
 	    	
 	        </ul>    
 	    </dd>

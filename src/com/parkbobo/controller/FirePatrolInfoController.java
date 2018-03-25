@@ -45,28 +45,30 @@ import com.system.utils.StringUtil;
  */
 @Controller
 public class FirePatrolInfoController {
-	
+
 	@Resource
 	private FirePatrolInfoService firePatrolInfoService;
 	@Resource
 	private FirePatrolExceptionService firePatrolExceptionService;
 	@Resource
 	private FirePatrolImgService firePatrolImgService; 
-	
+
 	@RequestMapping("firePatrolInfo_list")
 	public ModelAndView list(FirePatrolInfo firePatrolInfo,Date startTime,Date endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException
 	{
 		ModelAndView mv = new ModelAndView();
-		
-		String hql = "from  FirePatrolException f where 1=1";
-		if(StringUtil.isNotEmpty(firePatrolInfo.getFireFightEquipment().getName())){
-			hql +=" and f.fireFightEquipment.name like '% "+firePatrolInfo.getFireFightEquipment().getName()+"%'";
-		}
-		if(StringUtils.isNotBlank(firePatrolInfo.getFirePatrolUser().getUsername())){
-			hql += " and f.firePatrolUser.username like '%" + firePatrolInfo.getFirePatrolUser().getUsername()+"%'";
-		}
-		if(firePatrolInfo.getPatrolStatus()!=-1){
-			hql += " and patrolStatus ="+firePatrolInfo.getPatrolStatus();
+
+		String hql = "from  FirePatrolInfo f where 1=1";
+		if(firePatrolInfo!=null){
+			if(StringUtil.isNotEmpty(firePatrolInfo.getFireFightEquipment().getName())){
+				hql +=" and f.fireFightEquipment.name like '% "+firePatrolInfo.getFireFightEquipment().getName()+"%'";
+			}
+			if(StringUtils.isNotBlank(firePatrolInfo.getFirePatrolUser().getUsername())){
+				hql += " and f.firePatrolUser.username like '%" + firePatrolInfo.getFirePatrolUser().getUsername()+"%'";
+			}
+			if(firePatrolInfo.getPatrolStatus()!=-1){
+				hql += " and patrolStatus ="+firePatrolInfo.getPatrolStatus();
+			}
 		}
 		if(startTime!=null){
 			hql += " and timestamp > '"+startTime+"'";
@@ -74,7 +76,7 @@ public class FirePatrolInfoController {
 		if(endTime!=null){
 			hql += " and timestamp < '"+endTime+"'";
 		}
-		hql += " order by startTime desc";
+		hql += " order by timestamp desc";
 		PageBean<FirePatrolInfo> firePatrolInfoPage = this.firePatrolInfoService.getByHql(hql,pageSize==null?12:pageSize, page==null?1:page);
 		mv.addObject("firePatrolInfoPage", firePatrolInfoPage);
 		mv.addObject("firePatrolInfo",firePatrolInfo);
@@ -93,7 +95,7 @@ public class FirePatrolInfoController {
 		mv.setViewName("redirect:/firePatrolExc_list?method=deleteSuccess");
 		return mv;
 	}
-	
+
 	/**
 	 * 显示所有异常信息
 	 */

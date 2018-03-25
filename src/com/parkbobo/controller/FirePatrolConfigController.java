@@ -17,23 +17,25 @@ import com.parkbobo.service.FirePatrolConfigService;
 public class FirePatrolConfigController {
 	@Resource
 	private FirePatrolConfigService firePatrolConfigService;
-	
+
 	@RequestMapping("firePatrolConfig_list")
 	public ModelAndView list()
 	{
 		ModelAndView mv = new ModelAndView();
 		FirePatrolConfig patrolConfig = this.firePatrolConfigService.getById(1);
 		mv.addObject("firePatrolConfig", patrolConfig);
-		mv.setViewName("manager/system/firePatrolConfig/patrolConfig-list");
+		mv.setViewName("manager/system/firePatrolConfig/firePatrolConfig-list");
 		return mv;
 	}
 	@RequestMapping("firePatrolConfig_edit")
 	public ModelAndView edit(FirePatrolConfig firePatrolConfig){
 		ModelAndView mv = new ModelAndView();
-		if(firePatrolConfig.getDistance()==null){
-			mv.addObject("msg","请输入距离");
-			mv.setViewName("redirect:/firePatrolConfig_list");
-			return mv;
+		if(firePatrolConfig!=null){
+			if(firePatrolConfig.getDistance()==null){
+				mv.addObject("msg","请输入距离");
+				mv.setViewName("redirect:/firePatrolConfig_list");
+				return mv;
+			}
 		}
 		this.firePatrolConfigService.updateConfig(firePatrolConfig);
 		mv.setViewName("redirect:/firePatrolConfig_list?method=editSuccess");
