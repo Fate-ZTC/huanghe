@@ -65,14 +65,14 @@ public class FirePatrolInfoController {
 	 * 删除异常信息
 	 * @return
 	 */
-	@RequestMapping("firePatrolExc_delete")
-	public ModelAndView delete(String ids,HttpSession session)
-	{
-		ModelAndView mv = new ModelAndView();
-		this.firePatrolInfoService.bulkDelete(ids);
-		mv.setViewName("redirect:/firePatrolExc_list?method=deleteSuccess");
-		return mv;
-	}
+//	@RequestMapping("firePatrolExc_delete")
+//	public ModelAndView delete(String ids,HttpSession session)
+//	{
+//		ModelAndView mv = new ModelAndView();
+//		this.firePatrolInfoService.bulkDelete(ids);
+//		mv.setViewName("redirect:/firePatrolExc_list?method=deleteSuccess");
+//		return mv;
+//	}
 	
 	/**
 	 * 显示所有异常信息

@@ -124,8 +124,8 @@ $(function(){
 	    </dd>
 	    <!-- 个人中心END -->
 	    </sec:authorize>
+	    <!-- 安防巡查管理START -->
 	    <sec:authorize ifAnyGranted="patrolUserRegionList">
-<!-- 	    月租管理START -->
 	    <dd>
 	    <div class="title">
 	    <span><img src="<%=path %>/page/images/leftico01.png" /></span>安防巡更
@@ -134,13 +134,16 @@ $(function(){
 	    	<sec:authorize ifAnyGranted="patrolUserRegionList">
 	        <li><cite></cite><a href="<%=path %>/patrolUserRegionList" target="rightFrame">巡更记录管理</a><i></i></li>
 	    	</sec:authorize>
+	    	<sec:authorize ifAnyGranted="patrolRegList">
+	        <li><cite></cite><a href="<%=path %>/patrolRegList" target="rightFrame">巡更区域管理</a><i></i></li>
+	    	</sec:authorize>
 	    	
 	        </ul>    
 	    </dd>
-<!-- 	    月租管理END -->
  		</sec:authorize>
-	    <sec:authorize ifAnyGranted="monthlyHandleManage,monthlyRenewManage">
+ 		<!-- 安防巡查管理END -->
 	    <!-- 消防巡查管理START -->
+	    <sec:authorize ifAnyGranted="monthlyHandleManage,monthlyRenewManage">
 	    <dd>
 	    <div class="title">
 	    <span><img src="<%=path %>/page/images/leftico01.png" /></span>消防巡查

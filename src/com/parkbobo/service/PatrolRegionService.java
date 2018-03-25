@@ -26,7 +26,7 @@ public class PatrolRegionService {
 	public void deleteById(Integer id){
 		this.patrolRegionDao.delete(id);
 	}
-	public void bulkDelete(String[] idStr){
+	public void bulkDelete(Integer[] idStr){
 		this.patrolRegionDao.bulkDelete(idStr);
 	}
 	public List<PatrolRegion> getByCampusNum(Integer campusNum){
@@ -35,21 +35,21 @@ public class PatrolRegionService {
 	public List<PatrolRegion> getAll(){
 		return this.patrolRegionDao.getAll();
 	}
+	public List<PatrolRegion> getByHQL(String hql){
+		return this.patrolRegionDao.getByHQL(hql);
+	}
 	
-	public List<PatrolRegion> getBySth(String regionName,Integer campusNum,Integer page,Integer pageSize) throws UnsupportedEncodingException{
+	public PageBean<PatrolRegion> getBySth(Integer regionId,Integer campusNum,Integer pageSize,Integer page){
 		String hql = "from PatrolRegion where 1= 1";
-		if(StringUtils.isNotBlank(regionName)){
-			hql += " and regionName like '%"+URLDecoder.decode(URLEncoder.encode(regionName, "ISO8859_1"), "UTF-8")+"%'";
+		if(regionId!=null){
+			hql += " and id = "+regionId;
 		}
 		if(campusNum!=null){
 			hql +=" and campusNum = "+campusNum;
 		}
-		PageBean<PatrolRegion> query = this.patrolRegionDao.pageQuery(hql, pageSize, page);
-		List<PatrolRegion> list = null;
-		if(query!=null){
-			list = query.getList();
-		}
-		return list;
+		hql +=" order by lastUpdateTime desc";
+		PageBean<PatrolRegion> pageList = this.patrolRegionDao.pageQuery(hql,pageSize==null?12:pageSize, page==null?1:page);
+		return pageList;
 	}
 	public void update(PatrolRegion patrolRegion){
 		this.patrolRegionDao.update(patrolRegion);
