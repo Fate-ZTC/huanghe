@@ -56,8 +56,20 @@ public class FirePatrolExceptionService {
 	public void deleteById(Integer id) {
 		this.firePatrolExceptionDao.delete(id);
 	}
-	public void bulkDelete(String[] idArr) {
-		this.firePatrolExceptionDao.bulkDelete(idArr);
+	public void bulkDelete(String ids) {
+		if(ids.length() > 0){
+			String[] strs = ids.split(",");
+			Integer[] idArr = new Integer[strs.length];
+			for (int i=0; i< strs.length; i++) {
+				idArr[i] = Integer.parseInt(strs[i]);
+			}
+			this.firePatrolExceptionDao.bulkDelete(idArr);
+		}
 	}
+	public PageBean<FirePatrolException> getByHql(String hql, int pageSize, int page) {
+
+		return this.firePatrolExceptionDao.pageQuery(hql, pageSize, page);
+	}
+
 
 }

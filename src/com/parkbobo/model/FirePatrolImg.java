@@ -42,7 +42,10 @@ public class FirePatrolImg implements Serializable{
 	 * 设备信息
 	 */
 	private FireFightEquipment fireFightEquipment;
-	
+	/**
+	 * 信息id
+	 */
+	private Integer infoId;
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -82,7 +85,13 @@ public class FirePatrolImg implements Serializable{
 	public void setFireFightEquipment(FireFightEquipment fireFightEquipment) {
 		this.fireFightEquipment = fireFightEquipment;
 	}
-	
+	@Column(name="info_id")
+	public Integer getInfoId() {
+		return infoId;
+	}
+	public void setInfoId(Integer infoId) {
+		this.infoId = infoId;
+	}
 	
 	
 }

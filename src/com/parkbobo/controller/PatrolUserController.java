@@ -151,13 +151,13 @@ public class PatrolUserController {
 	 * @throws IOException 
 	 */
 	@RequestMapping("endPatrol")
-	public void endPatrol(Integer userRegionId,HttpServletResponse response) throws IOException{
+	public void endPatrol(String jobNum,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
 			Date date = new Date();
-			PatrolUserRegion patrolUserRegion = this.patrolUserRegionService.getById(userRegionId);
+			PatrolUserRegion patrolUserRegion = this.patrolUserRegionService.getByJobNum(jobNum);
 			patrolUserRegion.setLastUpdateTime(date);
 			patrolUserRegion.setEndTime(date);
 			this.patrolUserRegionService.updateRecord(patrolUserRegion);
@@ -203,7 +203,7 @@ public class PatrolUserController {
 		}
 		if(lon==null||lat==null){
 			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"此人已关闭定位\"}");
-			JPushClientExample push = new JPushClientExample("005", "123456");
+			JPushClientExample push = new JPushClientExample("4636b7d218171e7cf4a89e5c", "b4d131ecf1c2438fb492feac");
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("type", "1");
 			map.put("content","异常报告");
@@ -246,7 +246,7 @@ public class PatrolUserController {
 						patrolLocationInfo.setPatrolException(patrolE2);
 						patrolUserRegion.setPatrolException(patrolE1);
 						patrolLocationInfo.setStatus(2);
-						JPushClientExample push = new JPushClientExample("005", "123456");
+						JPushClientExample push = new JPushClientExample("4636b7d218171e7cf4a89e5c", "b4d131ecf1c2438fb492feac");
 						Map<String, String> map = new HashMap<String, String>();
 						map.put("type", "1");
 						map.put("content","异常报告");
@@ -271,7 +271,7 @@ public class PatrolUserController {
 						patrolUserRegion.setPatrolException(patrolE1);
 						patrolLocationInfo.setPatrolException(patrolE1);
 						patrolLocationInfo.setStatus(2);
-						JPushClientExample push = new JPushClientExample("005", "123456");
+						JPushClientExample push = new JPushClientExample("4636b7d218171e7cf4a89e5c", "b4d131ecf1c2438fb492feac");
 						Map<String, String> map = new HashMap<String, String>();
 						map.put("type", "1");
 						map.put("content","异常报告");

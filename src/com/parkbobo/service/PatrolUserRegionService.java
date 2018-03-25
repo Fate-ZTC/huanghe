@@ -109,5 +109,13 @@ public class PatrolUserRegionService {
 		
 		return this.patrolUserRegionDao.pageQuery(hql,pageSize==null?12:pageSize, page==null?1:page);
 	}
+	public PatrolUserRegion getByJobNum(String jobNum) {
+		String hql = "from PatrolUserRegion where jobNum ='"+ jobNum +"' and endTime is null order by createTime desc limit 1";
+		List<PatrolUserRegion> list = this.patrolUserRegionDao.getByHQL(hql);
+		if(list!=null&&list.size()>0){
+			return list.get(0);
+		}
+		return null;
+	}
 
 }

@@ -92,7 +92,7 @@ public class FirePatrolManagerController {
 			out = response.getWriter();
 			FirePatrolUser patrolUser = new FirePatrolUser();
 			Date date = new Date();
-			patrolUser.setCreatetime(date);
+			patrolUser.setCreateTime(date);
 			patrolUser.setCampusNum(campusNum);
 			patrolUser.setJobNum(jobNum);
 			patrolUser.setLastUpdateTime(date);
@@ -165,7 +165,7 @@ public class FirePatrolManagerController {
 			patrolUser.setJobNum(jobNum);
 			patrolUser.setLastUpdateTime(new Date());
 			patrolUser.setPassword(password);
-			patrolUser.setCreatetime(this.firePatrolUserService.getById(id).getCreatetime());
+			patrolUser.setCreateTime(this.firePatrolUserService.getById(id).getCreateTime());
 			if(username!=null){
 				patrolUser.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
 			}else{
