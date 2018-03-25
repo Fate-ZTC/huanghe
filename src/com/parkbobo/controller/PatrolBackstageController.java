@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -29,6 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -82,7 +84,7 @@ public class PatrolBackstageController {
 	 * @param pageSize 每页条数
 	 * @throws IOException 
 	 */
-	@RequestMapping("patrolUserQuery")
+	@RequestMapping("pageQueryPatrolUsers")
 	public void pageQueryUsers(String username,String jobNum,Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -180,7 +182,7 @@ public class PatrolBackstageController {
 	 * @return
 	 * @throws IOException
 	 */
-	@RequestMapping("excelOutPatrolUser")
+	@RequestMapping("patrolUserExcelOut")
 	public ResponseEntity<byte[]> excelOut(String username,String jobNum,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
@@ -281,53 +283,57 @@ public class PatrolBackstageController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping("patrolUserRegionQuery")
-	public void getPatrolUserRegionsBySth(String username,Integer regionId,Integer exceptionType,Date startTime,Date endTime,Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
-		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = response.getWriter();
-		List<PatrolUserRegion> list = this.patrolUserRegionService.getPatrolUserBySth(username, regionId, exceptionType, startTime, endTime, page, pageSize);
-		List<PatrolUserRegionShow> list1 = new ArrayList<PatrolUserRegionShow>();
-		Map<Integer,String> map = new HashMap<Integer, String>();
-		List<PatrolException> exceptionList = this.patrolExceptionService.getAll();
-		for(int k=0; k < exceptionList.size();k++){
-			PatrolException p = exceptionList.get(k);
-			map.put(p.getId(),p.getExceptionName());
+	@RequestMapping("patrolUserRegionList")
+	public ModelAndView getPatrolUserRegionsBySth(String username,Integer regionId,Integer exceptionType,String startTime,String endTime,Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
+		ModelAndView mv = new ModelAndView();
+		List<PatrolRegion> patrolRegions = patrolRegionService.getAll();
+		
+		PageBean<PatrolUserRegion> patrolUserRegions = this.patrolUserRegionService.getPatrolUserBySth(username, regionId, exceptionType, startTime, endTime, page, pageSize);
+		for (PatrolUserRegion patrolUserRegion : patrolUserRegions.getList()) {
+			PatrolRegion patrolRegion = patrolRegionService.getById(patrolUserRegion.getRegionId());
+			patrolUserRegion.setRegionName(patrolRegion.getRegionName());
 		}
-		if(list!=null&&list.size()>0){
-			for(int i = 0; i < list.size();i++){
-				PatrolUserRegion p = list.get(i);
-				PatrolUserRegionShow p1 = new PatrolUserRegionShow();
-				p1.setUsername(p.getUsername());
-				p1.setJobNum(p.getJobNum());
-				p1.setStartTime(p.getStartTime());
-				p1.setEndTime(p.getEndTime());
-				if(p.getEndTime()!=null){
-					p1.setPatrolTime(p.getEndTime().getTime()-p.getStartTime().getTime());
-				}else{
-					p1.setPatrolTime(null);
-				}
-				PatrolRegion patrolRegion = this.patrolRegionService.getById(p.getRegionId());
-				p1.setRegionName(patrolRegion.getRegionName());
-				List<Integer> list2 = this.patrolLocationInfoService.getExceptionTypes(p.getJobNum(), startTime, endTime);
-				if(list2!=null&&list2.size()>0){
-					p1.setStatus(2);
-					String exceptionNames = "";
-					for(int j =0;j<list2.size();j++){
-						exceptionNames += map.get(list2.get(j))+",";
-					}
-					String exp = exceptionNames.substring(0, exceptionNames.length()-1);
-					p1.setExceptionName(exp);
-				}else{
-					p1.setStatus(1);
-				}
-				list1.add(p1);
-			}
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(list1,features)+"}");
-		}else{
-			out.print("{\"status\":\"true\",\"Code\":1,\"msg\":\"无数据\"}");
-		}
-		out.flush();
-		out.close();
+		mv.addObject("patrolUserRegions", patrolUserRegions);
+		mv.addObject("patrolRegions", patrolRegions);
+		mv.setViewName("manager/system/patrol/patrolUserRegionList");
+//		List<PatrolUserRegionShow> list1 = new ArrayList<PatrolUserRegionShow>();
+//		Map<Integer,String> map = new HashMap<Integer, String>();
+//		List<PatrolException> exceptionList = this.patrolExceptionService.getAll();
+//		for(int k=0; k < exceptionList.size();k++){
+//			PatrolException p = exceptionList.get(k);
+//			map.put(p.getId(),p.getExceptionName());
+//		}
+//		if(list!=null&&list.size()>0){
+//			for(int i = 0; i < list.size();i++){
+//				PatrolUserRegion p = list.get(i);
+//				PatrolUserRegionShow p1 = new PatrolUserRegionShow();
+//				p1.setUsername(p.getUsername());
+//				p1.setJobNum(p.getJobNum());
+//				p1.setStartTime(p.getStartTime());
+//				p1.setEndTime(p.getEndTime());
+//				if(p.getEndTime()!=null){
+//					p1.setPatrolTime(p.getEndTime().getTime()-p.getStartTime().getTime());
+//				}else{
+//					p1.setPatrolTime(null);
+//				}
+//				PatrolRegion patrolRegion = this.patrolRegionService.getById(p.getRegionId());
+//				p1.setRegionName(patrolRegion.getRegionName());
+//				List<Integer> list2 = this.patrolLocationInfoService.getExceptionTypes(p.getJobNum(), startTime, endTime);
+//				if(list2!=null&&list2.size()>0){
+//					p1.setStatus(2);
+//					String exceptionNames = "";
+//					for(int j =0;j<list2.size();j++){
+//						exceptionNames += map.get(list2.get(j))+",";
+//					}
+//					String exp = exceptionNames.substring(0, exceptionNames.length()-1);
+//					p1.setExceptionName(exp);
+//				}else{
+//					p1.setStatus(1);
+//				}
+//				list1.add(p1);
+//			}
+//		}
+			return mv;
 	}
 	/**
 	 * 安防巡更区域查询

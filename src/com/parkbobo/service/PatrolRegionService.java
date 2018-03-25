@@ -32,6 +32,9 @@ public class PatrolRegionService {
 	public List<PatrolRegion> getByCampusNum(Integer campusNum){
 		return this.patrolRegionDao.getByProperty("campusNum", campusNum);
 	}
+	public List<PatrolRegion> getAll(){
+		return this.patrolRegionDao.getAll();
+	}
 	
 	public List<PatrolRegion> getBySth(String regionName,Integer campusNum,Integer page,Integer pageSize) throws UnsupportedEncodingException{
 		String hql = "from PatrolRegion where 1= 1";

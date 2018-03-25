@@ -124,30 +124,21 @@ $(function(){
 	    </dd>
 	    <!-- 个人中心END -->
 	    </sec:authorize>
-	    <sec:authorize ifAnyGranted="monthlyHandleManage,monthlyRenewManage">
-	    <!-- 月租管理START -->
+	    <sec:authorize ifAnyGranted="patrolUserRegionList">
+<!-- 	    月租管理START -->
 	    <dd>
 	    <div class="title">
-	    <span><img src="<%=path %>/page/images/leftico01.png" /></span>月租管理
+	    <span><img src="<%=path %>/page/images/leftico01.png" /></span>安防巡更
 	    </div>
 	    	<ul class="menuson">
-	    	<sec:authorize ifAnyGranted="monthlyHandleManage">
-	        <li><cite></cite><a href="<%=path %>/monthlyHandle_list?isRenew=0" target="rightFrame">月租办理</a><i></i></li>
-	    	</sec:authorize>
-	    	<sec:authorize ifAnyGranted="monthlyRenewManage">
-	        <li><cite></cite><a href="<%=path %>/monthlyHandle_list?isRenew=1" target="rightFrame">月租续费</a><i></i></li>
-	    	</sec:authorize>
-	    	<sec:authorize ifAnyGranted="monthlyRentManage">
-	        <li><cite></cite><a href="<%=path %>/monthlyRentManage" target="rightFrame">车场月租信息管理</a><i></i></li>
-	    	</sec:authorize>
-	    	<sec:authorize ifAnyGranted="inOutRecord">
-	        <li><cite></cite><a href="<%=path %>/inOutRecord" target="rightFrame">进出记录</a><i></i></li>
+	    	<sec:authorize ifAnyGranted="patrolUserRegionList">
+	        <li><cite></cite><a href="<%=path %>/patrolUserRegionList" target="rightFrame">巡更记录管理</a><i></i></li>
 	    	</sec:authorize>
 	    	
 	        </ul>    
 	    </dd>
-	    <!-- 月租管理END -->
-	    </sec:authorize>
+<!-- 	    月租管理END -->
+ 		</sec:authorize>
 	    <sec:authorize ifAnyGranted="monthlyHandleManage,monthlyRenewManage">
 	    <!-- 消防巡查管理START -->
 	    <dd>
