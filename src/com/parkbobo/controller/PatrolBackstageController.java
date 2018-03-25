@@ -295,44 +295,7 @@ public class PatrolBackstageController {
 		mv.addObject("patrolUserRegions", patrolUserRegions);
 		mv.addObject("patrolRegions", patrolRegions);
 		mv.setViewName("manager/system/patrol/patrolUserRegionList");
-//		List<PatrolUserRegionShow> list1 = new ArrayList<PatrolUserRegionShow>();
-//		Map<Integer,String> map = new HashMap<Integer, String>();
-//		List<PatrolException> exceptionList = this.patrolExceptionService.getAll();
-//		for(int k=0; k < exceptionList.size();k++){
-//			PatrolException p = exceptionList.get(k);
-//			map.put(p.getId(),p.getExceptionName());
-//		}
-//		if(list!=null&&list.size()>0){
-//			for(int i = 0; i < list.size();i++){
-//				PatrolUserRegion p = list.get(i);
-//				PatrolUserRegionShow p1 = new PatrolUserRegionShow();
-//				p1.setUsername(p.getUsername());
-//				p1.setJobNum(p.getJobNum());
-//				p1.setStartTime(p.getStartTime());
-//				p1.setEndTime(p.getEndTime());
-//				if(p.getEndTime()!=null){
-//					p1.setPatrolTime(p.getEndTime().getTime()-p.getStartTime().getTime());
-//				}else{
-//					p1.setPatrolTime(null);
-//				}
-//				PatrolRegion patrolRegion = this.patrolRegionService.getById(p.getRegionId());
-//				p1.setRegionName(patrolRegion.getRegionName());
-//				List<Integer> list2 = this.patrolLocationInfoService.getExceptionTypes(p.getJobNum(), startTime, endTime);
-//				if(list2!=null&&list2.size()>0){
-//					p1.setStatus(2);
-//					String exceptionNames = "";
-//					for(int j =0;j<list2.size();j++){
-//						exceptionNames += map.get(list2.get(j))+",";
-//					}
-//					String exp = exceptionNames.substring(0, exceptionNames.length()-1);
-//					p1.setExceptionName(exp);
-//				}else{
-//					p1.setStatus(1);
-//				}
-//				list1.add(p1);
-//			}
-//		}
-			return mv;
+		return mv;
 	}
 	/**
 	 * 安防巡更区域查询
