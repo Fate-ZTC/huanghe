@@ -8,7 +8,7 @@ Date date = new Date();
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>巡查人员-添加</title>
+<title>巡更人员-添加</title>
 <link href="<%=path %>/page/css/style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<%=path %>/page/js/jquery.js"></script>
 <link rel="stylesheet" href="<%=path %>/page/validator/jquery.validator.css" />
@@ -29,14 +29,14 @@ $(function(){
 	<div class="place">
     <span>位置：</span>
     <ul class="placeul">
-    <li><a href="#">消防巡查</a></li>
-    <li><a href="<%=path %>/firePatrolUser_list">巡查人员管理</a></li>
+    <li><a href="#">安防巡耿</a></li>
+    <li><a href="<%=path %>/patrolUser_list">巡更人员管理</a></li>
     <li><a href="#">添加</a></li>
     </ul>
     </div>
     <div class="formbody">
-    <div class="formtitle"><span>添加巡查人员</span></div>
-    <form action="<%=path %>/firePatrolUser_add" method="post" id="addForm" data-validator-option="{stopOnError:true, timely:1 ,theme:'yellow_right'}">
+    <div class="formtitle"><span>添加巡更人员</span></div>
+    <form action="<%=path %>/patrolUser_add" method="post" id="addForm" data-validator-option="{stopOnError:true, timely:1 ,theme:'yellow_right'}">
     <input type="hidden" name="method" value="add" />
     <ul class="forminfo">
     <li><label>姓名<b>*</b></label><input name="username" type="text" class="dfinput" data-rule="名称:required;length[~100];"/></li>

@@ -489,15 +489,6 @@ public class FirePatrolBackstageController {
 	public void deleteById(Integer id){
 		this.firePatrolInfoService.deleteById(id);
 	}
-//	/**
-//	 * 批量删除记录
-//	 * @param idStr  id串  格式 (3,4,5,)
-//	 */
-//	@RequestMapping("bulkDeleteFireInfo")
-//	public void bulkDelete(String idStr){
-//		String[] idArr = idStr.split(",");
-//		this.firePatrolInfoService.bulkDelete(idArr);
-//	}
 	/**
 	 * 查看详细异常信息
 	 * @param excStr 异常信息id串

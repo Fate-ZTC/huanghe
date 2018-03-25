@@ -97,11 +97,7 @@ public class PatrolBackstageController {
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
-			PageBean<PatrolUser> users = this.patrolUserService.getUsers(username,jobNum,page, pageSize);
 			List<PatrolUser> list = null;
-			if(users!=null){
-				list = users.getList();
-			}
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(list,features)+"}");
 		} catch (IOException e) {
 			if(out==null){
@@ -589,7 +585,6 @@ public class PatrolBackstageController {
 			String[] idArr = idStr.split(",");
 			try {
 				out = response.getWriter();
-				this.patrolEmergencyService.bulkDelete(idArr);
 				out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"删除成功\"}");
 			}catch(Exception e){
 				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"流程错误,请联系技术人员\"}");
@@ -604,110 +599,7 @@ public class PatrolBackstageController {
 			out.close();
 		}
 	}
-	@RequestMapping("excelOutEmergency")
-	public ResponseEntity<byte[]> excelOutEmergency(Integer campusNum,Date startTime,Date endTime,HttpServletResponse response,HttpServletRequest request) throws IOException{
-		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = response.getWriter();
-		Date today = new Date();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		//导出文件的标题
-		String title = "突发事件记录"+df.format(today)+".xls";
-		List<PatrolEmergency> list = null;
-		try {
-			list = this.patrolEmergencyService.getBySth(campusNum,startTime,endTime);
-		} catch (Exception e1) {
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"获取数据错误\"}");
-		}
-		//设置表格标题行
-		String[] headers = new String[] {"突发事件发时间","突发事件结束时间", "事件时长","突发事件发起人姓名","突发事件发起人账号"};
-		List<Object[]> dataList = new ArrayList<Object[]>();
-		Object[] objs = null;
-		if (list!=null && list.size()>0) {
-			for (PatrolEmergency entryOutRecord : list) {//循环每一条数据
-				objs = new Object[headers.length];
-				objs[0] = entryOutRecord.getStartTime();
-				objs[1] = entryOutRecord.getEndTime();
-				if(entryOutRecord.getEndTime()!=null){
-					long mills = entryOutRecord.getStartTime().getTime()-entryOutRecord.getEndTime().getTime();
-					long day = 0;    
-					long hour = 0;    
-					long min = 0;    
-					long sec = 0;    
-					day = mills / (24 * 60 * 60 * 1000);    
-					hour = (mills / (60 * 60 * 1000) - day * 24);    
-					min = ((mills / (60 * 1000)) - day * 24 * 60 - hour * 60);    
-					sec = (mills/1000-day*24*60*60-hour*60*60-min*60); 
-					objs[2] = hour+":"+min+":"+sec;
-				}else{
-					objs[2] = null;
-				}
-				objs[3] = entryOutRecord.getUsername();
-				objs[4] = entryOutRecord.getJobNum();
-				//数据添加到excel表格
-				dataList.add(objs);
-			}
-		}
-		try {
-			//防止中文乱码
-			// 第一步，创建一个webbook，对应一个Excel文件    
-			HSSFWorkbook wb = new HSSFWorkbook();
-			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet    
-			HSSFSheet sheet = wb.createSheet(title);
-			// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short    
-			HSSFRow row = sheet.createRow((int) 0);
-			// 第四步，创建单元格，并设置值表头 设置表头居中    
-			HSSFCellStyle style = wb.createCellStyle(); 
-			style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式    
-			HSSFCell  cell = null;   //设置单元格的数据类型
-			for (int i = 0; i < headers.length; i++) {
-				cell = row.createCell(i);
-				cell.setCellValue(headers[i]);
-				cell.setCellStyle(style);
-			}
-			// 第五步，写入实体数据 实际应用中这些数据从数据库得到，    
-			for(int i=0;i<dataList.size();i++){
-				if (i<5) {
-					sheet.autoSizeColumn(i, true);
-				}
-				Object[] obj = dataList.get(i);//遍历每个对象
-				row = sheet.createRow(i+1);//创建所需的行数（从第二行开始写数据）
-				for(int j=0; j<obj.length; j++){
-					cell = row.createCell(j);
-					if (obj[j]!=null && !obj[j].equals("null") ) {
-						cell.setCellValue(obj[j].toString());
-					}else{
-						cell.setCellValue("");
-					}
-					cell.setCellStyle(style);			//设置单元格样式
-				}
-			}
-			//下载文件路径
-			String path = request.getServletContext().getRealPath("/download/");
-			File file = new File(path);
-			if (!file.exists()){
-				file.setWritable(true, false); //设置文件夹权限，避免在Linux下不能写入文件
-				file.mkdirs();
-			}
-			file = new File(path+"temp.xls");
-			HttpHeaders httpHeaders = new HttpHeaders();  
-			//下载显示的文件名，解决中文名称乱码问题  
-			String downloadFielName = new String(title.getBytes("UTF-8"),"iso-8859-1");
-			//通知浏览器以attachment（下载方式）打开图片
-			httpHeaders.setContentDispositionFormData("attachment", downloadFielName); 
-			//application/octet-stream ： 二进制流数据（最常见的文件下载）。
-			httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			wb.write(file);
-			wb.close();
-			out.print("{\"status\":\"false\",\"errorCode\":1,\"Msg\":\"导出成功\"}");
-			return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),httpHeaders, HttpStatus.CREATED);  
-		} catch (Exception e) {
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"流程错误,请联系技术人员\"}");
-			return null;
-		}finally{
-			out.flush();
-			out.close();
-		}
-	}
+	
 	/**
 	 * 返显配置信息
 	 * @param response

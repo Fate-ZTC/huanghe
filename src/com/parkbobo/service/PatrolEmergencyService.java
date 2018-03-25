@@ -60,10 +60,17 @@ public class PatrolEmergencyService {
 	public void deleteById(Integer id){
 		this.patrolEmergencyDao.delete(id);
 	}
-	public void bulkDelete(String[] idArr){
-		this.patrolEmergencyDao.bulkDelete(idArr);
+	public void bulkDelete(String ids){
+		if(ids.length() > 0){
+			String[] strs = ids.split(",");
+			Integer[] idArr = new Integer[strs.length];
+			for (int i=0; i< strs.length; i++) {
+				idArr[i] = Integer.parseInt(strs[i]);
+			}
+			this.patrolEmergencyDao.bulkDelete(idArr);
+		}
 	}
-	public List<PatrolEmergency> getBySth(Integer campusNum, Date startTime, Date endTime) {
+	public List<PatrolEmergency> getBySth(Integer campusNum,Date startTime, Date endTime) {
 		String hql = "from PatrolEmergency where campusNum = "+campusNum;
 		if(startTime!=null){
 			hql += " and startTime > '"+startTime+"'";
@@ -72,5 +79,8 @@ public class PatrolEmergencyService {
 			hql += " and startTime< '"+ endTime + "'";
 		}
 		return this.patrolEmergencyDao.getByHQL(hql);
+	}
+	public PageBean<PatrolEmergency> getByHql(String hql, int pageSize, int page) {
+		return this.patrolEmergencyDao.pageQuery(hql, pageSize, page);
 	}
 }

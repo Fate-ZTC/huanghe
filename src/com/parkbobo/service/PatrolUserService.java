@@ -44,16 +44,8 @@ public class PatrolUserService {
 	 * @param page 页码
 	 * @param pageSize 每页条数
 	 * @return
-	 * @throws UnsupportedEncodingException 
 	 */
-	public PageBean<PatrolUser> getUsers(String username,String jobNum,Integer page,Integer pageSize) throws UnsupportedEncodingException{
-		String hql = "from  PatrolUser where isDel = 0";
-		if(StringUtils.isNotBlank(username)){
-			hql += " and username like '% " +URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8")+"'%";
-		}
-		if(StringUtils.isNotBlank(jobNum)){
-			hql +=" and jobNum like '% "+jobNum+"%'";
-		}
+	public PageBean<PatrolUser> getUsers(String hql,Integer pageSize,Integer page){
 		return this.patrolUserDao.pageQuery(hql, pageSize, page);
 	}
 	
