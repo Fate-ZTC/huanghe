@@ -1,5 +1,7 @@
 package com.parkbobo.service;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -15,5 +17,10 @@ public class FirePatrolImgService {
 
 	public FirePatrolImg add(FirePatrolImg firePatrolImg) {
 		return this.firePatrolImgDao.add(firePatrolImg);
+	}
+
+	public List<FirePatrolImg> getByp(Integer id) {
+		List<FirePatrolImg> byProperty = this.firePatrolImgDao.getByProperty("infoId", id);
+		return byProperty;
 	}
 }

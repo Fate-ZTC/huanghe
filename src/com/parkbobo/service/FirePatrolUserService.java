@@ -46,14 +46,7 @@ public class FirePatrolUserService {
 	 * @return
 	 * @throws UnsupportedEncodingException 
 	 */
-	public PageBean<FirePatrolUser> getUsers(String username,String jobNum,Integer page,Integer pageSize) throws UnsupportedEncodingException{
-		String hql = "from  FirePatrolUser where isDel = 0";
-		if(StringUtils.isNotBlank(username)){
-			hql += " and username like '% " +URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8")+"'%";
-		}
-		if(StringUtils.isNotBlank(jobNum)){
-			hql +=" and jobNum like '% "+jobNum+"%'";
-		}
+	public PageBean<FirePatrolUser> getUsers(String hql,Integer pageSize,Integer page) throws UnsupportedEncodingException{
 		return this.firePatrolUserDao.pageQuery(hql, pageSize, page);
 	}
 	

@@ -155,7 +155,7 @@ public class FirePatrolUserController {
 						fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
 					}
 					List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
-					this.firePatrolInfoService.add(firePatrolInfo);
+					FirePatrolInfo add = this.firePatrolInfoService.add(firePatrolInfo);
 					this.fireFightEquipmentService.update(fireFightEquipment);
 					if(imgUrls!=null&&imgUrls.length>0){
 						for(int i = 0;i<imgUrls.length;i++){
@@ -164,6 +164,7 @@ public class FirePatrolUserController {
 							firePatrolImg.setImgUrl(imgUrls[i]);
 							firePatrolImg.setFirePatrolUser(patrolUser);
 							firePatrolImg.setUploadTIme(date);
+							firePatrolImg.setInfoId(add.getId());
 							list.add(this.firePatrolImgService.add(firePatrolImg));
 						}
 						out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"imgList\":"+JSONObject.toJSONString(list,features)+",\"firePatrolInfo\":"+JSONObject.toJSONString(firePatrolInfo,features)+"}}");
@@ -243,7 +244,7 @@ public class FirePatrolUserController {
 						fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
 					}
 					List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
-					this.firePatrolInfoService.add(firePatrolInfo);
+					FirePatrolInfo add = this.firePatrolInfoService.add(firePatrolInfo);
 					this.fireFightEquipmentService.update(fireFightEquipment);
 					if(imgUrls!=null&&imgUrls.length>0){
 						for(int i = 0;i<imgUrls.length;i++){
@@ -252,6 +253,7 @@ public class FirePatrolUserController {
 							firePatrolImg.setImgUrl(imgUrls[i]);
 							firePatrolImg.setFirePatrolUser(patrolUser);
 							firePatrolImg.setUploadTIme(date);
+							firePatrolImg.setInfoId(add.getId());
 							list.add(this.firePatrolImgService.add(firePatrolImg));
 						}
 						out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"imgList\":"+JSONObject.toJSONString(list,features)+",\"firePatrolInfo\":"+JSONObject.toJSONString(firePatrolInfo,features)+"}}");

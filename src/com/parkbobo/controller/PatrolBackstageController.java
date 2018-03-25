@@ -82,7 +82,7 @@ public class PatrolBackstageController {
 	 * @param pageSize 每页条数
 	 * @throws IOException 
 	 */
-	@RequestMapping("pageQueryPatrolUsers")
+	@RequestMapping("patrolUserQuery")
 	public void pageQueryUsers(String username,String jobNum,Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -134,6 +134,7 @@ public class PatrolBackstageController {
 	 * @param idStr
 	 * @throws IOException 
 	 */
+	@RequestMapping("bulkDeletePatrolUser")
 	public void bulkDeleteUser(String idStr,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -179,7 +180,7 @@ public class PatrolBackstageController {
 	 * @return
 	 * @throws IOException
 	 */
-	@RequestMapping("patrolUserExcelOut")
+	@RequestMapping("excelOutPatrolUser")
 	public ResponseEntity<byte[]> excelOut(String username,String jobNum,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
@@ -280,7 +281,7 @@ public class PatrolBackstageController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping("getPatrolUserRegionBySth")
+	@RequestMapping("patrolUserRegionQuery")
 	public void getPatrolUserRegionsBySth(String username,Integer regionId,Integer exceptionType,Date startTime,Date endTime,Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
@@ -336,6 +337,7 @@ public class PatrolBackstageController {
 	 * @param pageSize 每页条数
 	 * @param response
 	 */
+	@RequestMapping("regionQuery")
 	public void getRegionBySth(String regionName,Integer campusNum,Integer page,Integer pageSize,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -355,6 +357,7 @@ public class PatrolBackstageController {
 	 * @param regionId 区域id
 	 * @param response
 	 */
+	@RequestMapping("reshowRegion")
 	public void reshowRegion(Integer regionId,HttpServletResponse response){
 		PatrolRegion patrolRegion = this.patrolRegionService.getById(regionId);
 		response.setCharacterEncoding("UTF-8");
@@ -376,6 +379,7 @@ public class PatrolBackstageController {
 	 * @param regionName 区域名字
 	 * @param response
 	 */
+	@RequestMapping("updateRegionName")
 	public void updateRegionName(Integer regionId,String regionName,HttpServletResponse response){
 		PatrolRegion patrolRegion = this.patrolRegionService.getById(regionId);
 		response.setCharacterEncoding("UTF-8");
@@ -401,6 +405,7 @@ public class PatrolBackstageController {
 	 * @param response
 	 * @throws IOException
 	 */
+	@RequestMapping("bulkDeleteRegion")
 	public void  bulkDeleteRegion(String idStr,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -428,6 +433,7 @@ public class PatrolBackstageController {
 	 * @param regionId 区域id
 	 * @param response
 	 */
+	@RequestMapping("deleteRegion")
 	public void deleteById(Integer regionId,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -448,6 +454,7 @@ public class PatrolBackstageController {
 	 * @param regionName 区域名字
 	 * @param response
 	 */
+	@RequestMapping("addRegion")
 	public void addRegion(Integer campusNum,String regionName,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -480,6 +487,7 @@ public class PatrolBackstageController {
 	 * @param regionId 区域id
 	 * @param response
 	 */
+	@RequestMapping("updateRegionLocation")
 	public void updateRegionLocation(Integer regionId,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -506,6 +514,7 @@ public class PatrolBackstageController {
 	 * @param pageSize 每页条数
 	 * @param response
 	 */
+	@RequestMapping("emergencyQuery")
 	public void getEmergencies(Integer campusNum,Integer page,Integer pageSize,Date startTime,Date endTime,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -526,6 +535,7 @@ public class PatrolBackstageController {
 	 * @param startTime 起始时间
 	 * @param endTime 结束时间
 	 */
+	@RequestMapping("countEmergency")
 	public void countEmergencies(Integer campusNum,Date startTime,Date endTime,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -545,6 +555,7 @@ public class PatrolBackstageController {
 	 * @param id 突发事件id 
 	 * @param response
 	 */
+	@RequestMapping("deleteEmergency")
 	public void deleteEmergency(Integer id,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -565,6 +576,7 @@ public class PatrolBackstageController {
 	 * @param response
 	 * @throws IOException
 	 */
+	@RequestMapping("bulkDeleteEmergency")
 	public void  bulkDeleteEmergencies(String idStr,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -587,6 +599,7 @@ public class PatrolBackstageController {
 			out.close();
 		}
 	}
+	@RequestMapping("excelOutEmergency")
 	public ResponseEntity<byte[]> excelOutEmergency(Integer campusNum,Date startTime,Date endTime,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
@@ -694,6 +707,7 @@ public class PatrolBackstageController {
 	 * 返显配置信息
 	 * @param response
 	 */
+	@RequestMapping("reshowPatrolConfig")
 	public void reshowPatrolConfig(Integer campusNum,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -708,7 +722,7 @@ public class PatrolBackstageController {
 			out.close();
 		}
 	}
-
+	@RequestMapping("updatePatrolConfig")
 	public void updatePatrolConfig(Integer configId,Integer uploadTime,Integer refreshTime,Integer leaveRegionDistance,Integer leaveRegionTime,Integer startPatrolTime,Integer lazyTime,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;

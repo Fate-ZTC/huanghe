@@ -3,6 +3,7 @@ package com.parkbobo.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -26,14 +27,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.parkbobo.model.FirePatrolConfig;
 import com.parkbobo.model.FirePatrolException;
+import com.parkbobo.model.FirePatrolInfo;
 import com.parkbobo.model.FirePatrolUser;
 import com.parkbobo.service.FirePatrolConfigService;
 import com.parkbobo.service.FirePatrolExceptionService;
+import com.parkbobo.service.FirePatrolInfoService;
 import com.parkbobo.service.FirePatrolUserService;
 import com.parkbobo.utils.PageBean;
 
@@ -46,13 +50,16 @@ public class FirePatrolBackstageController {
 	private FirePatrolConfigService firePatrolConfigService;
 	@Resource
 	private FirePatrolUserService firePatrolUserService;
+
+	private FirePatrolInfoService firePatrolInfoService;
 	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect};
 
 	/**
-	 * 根据关键词获取异常信息
+	 * 分页获取异常信息
 	 * @param excName 关键词
 	 * @param response
 	 */
+	@RequestMapping("fireExcQuery")
 	public void pageQuery(String excName,Integer page,Integer pageSize,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -71,6 +78,7 @@ public class FirePatrolBackstageController {
 	 * 统计根据关键词查出的数据量
 	 * @param excName
 	 */
+	@RequestMapping("countFireExc")
 	public void countBySth(String excName,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -91,6 +99,7 @@ public class FirePatrolBackstageController {
 	 * @param sort 排序
 	 * @param response
 	 */
+	@RequestMapping("addFireExc")
 	public void addRecord(String excName,Integer sort,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -121,6 +130,7 @@ public class FirePatrolBackstageController {
 	 * @param excName 名称
 	 * @param response
 	 */
+	@RequestMapping("updateFireExc")
 	public void updateExc(Integer id,Integer sort,String excName,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -149,6 +159,7 @@ public class FirePatrolBackstageController {
 	 * @param id 异常id
 	 * @param response
 	 */
+	@RequestMapping("reshowFireExc")
 	public void reshowException(Integer id,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -168,6 +179,7 @@ public class FirePatrolBackstageController {
 	 * @param id 异常id
 	 * @param response
 	 */
+	@RequestMapping("deleteFireExc")
 	public void deleteById(Integer id,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -188,6 +200,7 @@ public class FirePatrolBackstageController {
 	 * @param response
 	 * @throws IOException 
 	 */
+	@RequestMapping("bulkDeleteFireExc")
 	public void bulkDelete(String idStr,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -195,7 +208,6 @@ public class FirePatrolBackstageController {
 			String[] idArr = idStr.split(",");
 			try {
 				out = response.getWriter();
-				this.firePatrolExceptionService.bulkDelete(idArr);
 				out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"删除成功\"}");
 			}catch(Exception e){
 				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"流程错误,请联系技术人员\"}");
@@ -215,6 +227,7 @@ public class FirePatrolBackstageController {
 	 * @param distance 距离 m
 	 * @param response
 	 */
+	@RequestMapping("updateFireConfig")
 	public void updateConfig(Integer configId,Integer distance,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -236,6 +249,7 @@ public class FirePatrolBackstageController {
 	 * @param campusNum 校区id
 	 * @param response
 	 */
+	@RequestMapping("reshowFireConfig")
 	public void reshowConfig(Integer campusNum,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -250,35 +264,8 @@ public class FirePatrolBackstageController {
 			out.close();
 		}
 	}
-	/**
-	 * 条件分页查询用户
-	 * @param username (用户名)
-	 * @param jobNum  工号(账号)
-	 * @param page   页码
-	 * @param pageSize 每页条数
-	 * @throws IOException 
-	 */
-	public void pageQueryUsers(String username,String jobNum,Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
-		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = null;
-		try {
-			out = response.getWriter();
-			PageBean<FirePatrolUser> users = this.firePatrolUserService.getUsers(username,jobNum,page, pageSize);
-			List<FirePatrolUser> list = null;
-			if(users!=null){
-				list = users.getList();
-			}
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(list,features)+"}");
-		} catch (IOException e) {
-			if(out==null){
-				out=response.getWriter();
-			}
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
-		}finally{
-			out.flush();
-			out.close();
-		}
-	}
+
+
 	/**
 	 * 按条件统计用户数量
 	 * @param username
@@ -286,6 +273,7 @@ public class FirePatrolBackstageController {
 	 * @param response
 	 * @throws IOException 
 	 */
+	@RequestMapping("countFireUser")
 	public void countUserBySth(String username,String jobNum,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -308,6 +296,7 @@ public class FirePatrolBackstageController {
 	 * @param idStr
 	 * @throws IOException 
 	 */
+	@RequestMapping("bulkDeleteFireUser")
 	public void bulkDeleteUser(String idStr,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -344,6 +333,16 @@ public class FirePatrolBackstageController {
 			out.close();
 		}
 	}
+	/**
+	 * 导出excel
+	 * @param username 用户名
+	 * @param jobNum 工号
+	 * @param response
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping("excelOutFireUser")
 	public ResponseEntity<byte[]> excelOut(String username,String jobNum,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
@@ -432,9 +431,89 @@ public class FirePatrolBackstageController {
 			out.close();
 		}
 	}
-	
-	public void getFirePatrolInfoBy(String equipName,String username,Integer status,Date startTime,Date endTime,HttpServletResponse response){
-		
+	/**
+	 * 分页获取消防巡查记录
+	 * @param equipName 设备名称
+	 * @param username 用户名
+	 * @param status 巡查结果
+	 * @param startTime 起始时间
+	 * @param endTime 结束时间
+	 * @param page 页码
+	 * @param pageSize 每页条数
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping("fireInfoQuery")
+	public void getFirePatrolInfoBy(String equipName,String username,Integer status,Date startTime,Date endTime,Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			PageBean<FirePatrolInfo> firePatrolInfo = this.firePatrolInfoService.getUsers(equipName,username,status,startTime,endTime,page, pageSize);
+			List<FirePatrolInfo> list = null;
+			if(firePatrolInfo!=null){
+				list = firePatrolInfo.getList();
+			}
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(list,features)+"}");
+		} catch (IOException e) {
+			if(out==null){
+				out=response.getWriter();
+			}
+			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
+		}finally{
+			out.flush();
+			out.close();
+		}
 	}
-	
+	/**
+	 * 统计复核条件的巡查记录数量
+	 * @param equipName 设备名称
+	 * @param username 用户名
+	 * @param status  是否异常  1正常 0异常
+	 * @param startTime 起始时间
+	 * @param endTime 结束时间
+	 */
+	@RequestMapping("countFireInfo")
+	public void countInfo(String equipName,String username,Integer status,Date startTime,Date endTime){
+		try {
+			int count = this.firePatrolInfoService.countInfo(equipName,username,status,startTime,endTime);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * 根据id删除巡查记录
+	 * @param id 记录id
+	 */
+	@RequestMapping("deleteFireInfo")
+	public void deleteById(Integer id){
+		this.firePatrolInfoService.deleteById(id);
+	}
+	/**
+	 * 批量删除记录
+	 * @param idStr  id串  格式 (3,4,5,)
+	 */
+	@RequestMapping("bulkDeleteFireInfo")
+	public void bulkDelete(String idStr){
+		String[] idArr = idStr.split(",");
+		this.firePatrolInfoService.bulkDelete(idArr);
+	}
+	/**
+	 * 查看详细异常信息
+	 * @param excStr 异常信息id串
+	 */
+	@RequestMapping("showExc")
+	public void showExcpetions(String excStr){
+		String[] idArr = excStr.split(",");
+		StringBuffer sb = new StringBuffer();
+		for(int i = 0;i < idArr.length;i++){
+			int id = Integer.parseInt(idArr[i]);
+			FirePatrolException patrolException = this.firePatrolExceptionService.getById(id);
+			sb.append(patrolException.getExceptionName()+",");
+		}
+		String excInfo = sb.substring(0, sb.length()-1).toString();
+		System.out.println(excInfo);
+	}
+
+
 }

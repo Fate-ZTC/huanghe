@@ -39,7 +39,7 @@ public class FirePatrolUser implements Serializable{
 	/**
 	 * 创建时间
 	 */
-	private Date createtime;
+	private Date createTime;
 	/**
 	 * 校区编号
 	 */
@@ -86,12 +86,12 @@ public class FirePatrolUser implements Serializable{
 	public void setJobNum(String jobNum) {
 		this.jobNum = jobNum;
 	}
-	@Column(name="createtime")
-	public Date getCreatetime() {
-		return createtime;
+	@Column(name="create_time")
+	public Date getCreateTime() {
+		return createTime;
 	}
-	public void setCreatetime(Date createtime) {
-		this.createtime = createtime;
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 	@Column(name="campus_num")
 	public Integer getCampusNum() {
