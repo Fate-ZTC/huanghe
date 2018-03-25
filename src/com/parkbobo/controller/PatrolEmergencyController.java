@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -29,145 +30,99 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.parkbobo.model.FirePatrolUser;
-import com.parkbobo.service.FirePatrolUserService;
+import com.parkbobo.model.PatrolEmergency;
+import com.parkbobo.service.PatrolEmergencyService;
 import com.parkbobo.utils.PageBean;
-import com.system.utils.StringUtil;
 
 /**
- * 消防巡查人员管理
+ * 突发时间记录
  * @author zj
  *@version 1.0
  */
 @Controller
-public class FireUserManagerController {
-
+public class PatrolEmergencyController {
 	@Resource
-	private FirePatrolUserService firePatrolUserService;
-
-	/**
-	 * 巡查人员
-	 * @return
-	 * @throws UnsupportedEncodingException 
-	 */
-	@RequestMapping("firePatrolUserList")
-	public ModelAndView list(FirePatrolUser firePatrolUser,Integer page,Integer pageSize) throws UnsupportedEncodingException
+	private PatrolEmergencyService patrolEmergencyService;
+	
+	@RequestMapping("patrolEmergency_list")
+	public ModelAndView list(Date startTime1,Date endTime1,Integer page,Integer pageSize) throws UnsupportedEncodingException
 	{
 		ModelAndView mv = new ModelAndView();
 		
-		String hql = "from  FirePatrolUser f where isDel = 0";
-		if(firePatrolUser != null && StringUtil.isNotEmpty(firePatrolUser.getUsername()))
-		{
-			hql+=" and f.username like '%" + firePatrolUser.getUsername() + "%'";
+		String hql = "from  PatrolEmergency f where campusNum = 1";
+		if(startTime1!=null){
+			hql += " and f.startTime > '"+startTime1+"'";
 		}
-		if(StringUtil.isNotEmpty(firePatrolUser.getJobNum())){
-			hql +=" and f.jobNum like '% "+firePatrolUser.getJobNum()+"%'";
+		if(endTime1!=null){
+			hql += " and f.startTime < '"+endTime1+"'";
 		}
-		hql += " order by f.id";
-		PageBean<FirePatrolUser> firePatrolUserPage = this.firePatrolUserService.getUsers(hql,pageSize==null?12:pageSize, page==null?1:page);
-		mv.addObject("firePatrolUserPage", firePatrolUserPage);
-		mv.addObject("firePatrolUser",firePatrolUser);
-		mv.setViewName("manager/system/firePatrol/fireUser-list");
-		return mv;
-	}
-	@RequestMapping("firePatrolUser_add")
-	public ModelAndView add(String method,FirePatrolUser firePatrolUser,HttpSession session )
-	{
-		ModelAndView mv = new ModelAndView();
-		//添加
-		if(StringUtil.isNotEmpty(method) && method.equals("add"))
-		{
-			FirePatrolUser byJobNum = this.firePatrolUserService.getByJobNum(firePatrolUser.getJobNum());
-			if(byJobNum!=null){
-				mv.setViewName("manager/system/firePatrol/fireUser-add");
-				mv.addObject("msg","工号已存在,请更换");
-				return mv;
-			}
-			Date date = new Date();
-			firePatrolUser.setCreateTime(date);
-			firePatrolUser.setCampusNum(1);
-			firePatrolUser.setIsDel((short)0);
-			firePatrolUser.setLastUpdateTime(date);
-			firePatrolUserService.addUser(firePatrolUser);
-			mv.setViewName("redirect:/firePatrolUserList?method=addSuccess");
-		}
-		//跳转到添加页面
-		else
-		{
-			mv.setViewName("manager/system/firePatrol/fireUser-add");
-		}
-		return mv;
-	}
-	@RequestMapping("firePatrolUser_edit")
-	public ModelAndView edit(String method,FirePatrolUser firePatrolUser,HttpSession session,Integer id)
-	{
-		ModelAndView mv = new ModelAndView();
-		//编辑
-		if(StringUtil.isNotEmpty(method) && method.equals("edit"))
-		{
-			firePatrolUser.setLastUpdateTime(new Date());
-			firePatrolUserService.update(firePatrolUser);
-			mv.setViewName("redirect:/firePatrolUserList?method=editSuccess");
-		}
-		//跳转到编辑页面
-		else
-		{
-			firePatrolUser = firePatrolUserService.getById(id);
-			mv.addObject("firePatrolUser", firePatrolUser);
-			mv.setViewName("manager/system/firePatrol/fireUser-edit");
-		}
+		hql += " order by startTime desc";
+		PageBean<PatrolEmergency> patrolEmergencyPage = this.patrolEmergencyService.getByHql(hql,pageSize==null?12:pageSize, page==null?1:page);
+		mv.addObject("patrolEmergencyPage", patrolEmergencyPage);
+		mv.addObject("startTime1",startTime1);
+		mv.addObject("endTime1",endTime1);
+		mv.setViewName("manager/system/patrolEmergency/patrolEmergency-list");
 		return mv;
 	}
 	/**
-	 * 删除巡查人员
+	 * 删除异常信息
 	 * @return
 	 */
-	@RequestMapping("firePatrolUser_delete")
+	@RequestMapping("patrolEmergency_delete")
 	public ModelAndView delete(String ids,HttpSession session)
 	{
 		ModelAndView mv = new ModelAndView();
-		if(ids==null){
-			mv.setViewName("redirect:/firePatrolUserList");
-			mv.addObject("msg","请勾选信息");
-			return mv;
-		}
-		String[] idArr = ids.split(",");
-		for(int i = 0;i < idArr.length;i++){
-			int id = Integer.parseInt(idArr[i]);
-			FirePatrolUser patrolUser = this.firePatrolUserService.getById(id);
-			patrolUser.setIsDel((short)1);
-			this.firePatrolUserService.update(patrolUser);
-		}
-		mv.setViewName("redirect:/firePatrolUserList?method=deleteSuccess");
+		this.patrolEmergencyService.bulkDelete(ids);
+		mv.setViewName("redirect:/patrolEmergency_list?method=deleteSuccess");
 		return mv;
 	}
+	
 	/**
-	 * 导出excel
+	 * 消防巡查记录导出
+	 * @param response
+	 * @param request
+	 * @return
+	 * @throws IOException
 	 */
-	@RequestMapping("firePatrolUser_excelOut")
-	public ResponseEntity<byte[]> excelOut(FirePatrolUser firePatrolUser,HttpServletResponse response,HttpServletRequest request) throws IOException{
+	@RequestMapping("patrolEmergency_excelOut")
+	public ResponseEntity<byte[]> excelOut(Integer campusNum,Date startTime1,Date endTime1,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		Date today = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		//导出文件的标题
-		String title = "消防巡查人员记录"+df.format(today)+".xls";
-		List<FirePatrolUser> list = null;
+		String title = "突发事件记录"+df.format(today)+".xls";
+		List<PatrolEmergency> list = null;
 		try {
-			list = this.firePatrolUserService.getBySth(firePatrolUser.getUsername(),firePatrolUser.getJobNum());
+			list = this.patrolEmergencyService.getBySth(campusNum==null?1:campusNum,startTime1,endTime1);
 		} catch (Exception e1) {
 			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"获取数据错误\"}");
 		}
 		//设置表格标题行
-		String[] headers = new String[] {"巡更人员姓名","巡更人员账号", "更新时间"};
+		String[] headers = new String[] {"突发事件发生时间","突发事件接收时间", "事件时长","突发事件发起人姓名","突发事件发起人账号"};
 		List<Object[]> dataList = new ArrayList<Object[]>();
 		Object[] objs = null;
 		if (list!=null && list.size()>0) {
-			for (FirePatrolUser entryOutRecord : list) {//循环每一条数据
+			for (PatrolEmergency entryOutRecord : list) {//循环每一条数据
 				objs = new Object[headers.length];
-				objs[0] = entryOutRecord.getUsername();
-				objs[1] = entryOutRecord.getJobNum();
-				objs[2] = entryOutRecord.getLastUpdateTime();
+				objs[0] = entryOutRecord.getStartTime();
+				objs[1] = entryOutRecord.getEndTime();
+				if(entryOutRecord.getEndTime()!=null){
+					long mills = entryOutRecord.getStartTime().getTime()-entryOutRecord.getEndTime().getTime();
+					long day = 0;    
+					long hour = 0;    
+					long min = 0;    
+					long sec = 0;    
+					day = mills / (24 * 60 * 60 * 1000);    
+					hour = (mills / (60 * 60 * 1000) - day * 24);    
+					min = ((mills / (60 * 1000)) - day * 24 * 60 - hour * 60);    
+					sec = (mills/1000-day*24*60*60-hour*60*60-min*60); 
+					objs[2] = hour+":"+min+":"+sec;
+				}else{
+					objs[2] = null;
+				}
+				objs[3] = entryOutRecord.getUsername();
+				objs[4] = entryOutRecord.getJobNum();
 				//数据添加到excel表格
 				dataList.add(objs);
 			}

@@ -17,10 +17,10 @@ import com.parkbobo.utils.PageBean;
 
 @Service
 public class FirePatrolInfoService {
-	
+
 	@Resource(name="firePatrolInfoDaoImpl")
 	private FirePatrolInfoDao firePatrolInfoDao;
-	
+
 	public List<FirePatrolInfo> getByProperty(String propertyName ,Object value ,String orderBy,boolean isAsc){
 		return firePatrolInfoDao.getByProperty(propertyName, value, orderBy, isAsc);
 	}
@@ -30,12 +30,12 @@ public class FirePatrolInfoService {
 	public FirePatrolInfo get(Integer entityid){
 		return firePatrolInfoDao.get(entityid);
 	}
-	
+
 
 	public FirePatrolInfo add(FirePatrolInfo firePatrolInfo) {
 		return this.firePatrolInfoDao.add(firePatrolInfo);
 	}
-	
+
 	public FirePatrolInfo getNewest(Integer equipmentId){
 		String hql = " from FirePatrolInfo where fireFightEquipment.id = "+equipmentId+" order by timestamp desc limit 1";
 		List<FirePatrolInfo> list = this.firePatrolInfoDao.getByHQL(hql);
@@ -54,7 +54,7 @@ public class FirePatrolInfoService {
 			hql += " and fireFightEquipment.name like '%"+URLDecoder.decode(URLEncoder.encode(equipName, "ISO8859_1"), "UTF-8")+"%'";
 		}
 		if(StringUtils.isNotBlank(username)){
-			hql += " and firePatrolUser.name like '%" + URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8")+"%'";
+			hql += " and firePatrolUser.username like '%" + URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8")+"%'";
 		}
 		if(status!=null){
 			hql += " and patrolStatus ="+status;
@@ -73,7 +73,7 @@ public class FirePatrolInfoService {
 			hql += " and fireFightEquipment.name like '%"+URLDecoder.decode(URLEncoder.encode(equipName, "ISO8859_1"), "UTF-8")+"%'";
 		}
 		if(StringUtils.isNotBlank(username)){
-			hql += " and firePatrolUser.name like '%" + URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8")+"%'";
+			hql += " and firePatrolUser.username like '%" + URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8")+"%'";
 		}
 		if(status!=null){
 			hql += " and patrolStatus ="+status;
@@ -101,5 +101,25 @@ public class FirePatrolInfoService {
 			}
 			this.firePatrolInfoDao.bulkDelete(idArr);
 		}
+	}
+	public List<FirePatrolInfo> getBySth(FirePatrolInfo firePatrolInfo, Date startTime, Date endTime) throws UnsupportedEncodingException {
+		String hql = "from FirePatrolInfo where 1=1";
+		if(StringUtils.isNotBlank(firePatrolInfo.getFireFightEquipment().getName())){
+			hql += " and fireFightEquipment.name like '%"+URLDecoder.decode(URLEncoder.encode(firePatrolInfo.getFireFightEquipment().getName(), "ISO8859_1"), "UTF-8")+"%'";
+		}
+		if(StringUtils.isNotBlank(firePatrolInfo.getFirePatrolUser().getUsername())){
+			hql += " and firePatrolUser.username like '%" + URLDecoder.decode(URLEncoder.encode(firePatrolInfo.getFirePatrolUser().getUsername(), "ISO8859_1"), "UTF-8")+"%'";
+		}
+		if(firePatrolInfo.getPatrolStatus()!=-1){
+			hql += " and patrolStatus ="+firePatrolInfo.getPatrolStatus();
+		}
+		if(startTime!=null){
+			hql += " and timestamp > '"+startTime+"'";
+		}
+		if(endTime!=null){
+			hql += " and timestamp < '"+endTime+"'";
+		}
+		hql +=" order by timestamp desc";
+		return this.firePatrolInfoDao.getByHQL(hql);
 	}
 }
