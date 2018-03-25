@@ -29,16 +29,4 @@ public class PatrolConfigController {
 		mv.setViewName("manager/system/patrolConfig/patrolConfig-list");
 		return mv;
 	}
-	@RequestMapping("patrolConfig_edit")
-	public ModelAndView edit(PatrolConfig patrolConfig){
-		ModelAndView mv = new ModelAndView();
-		if(patrolConfig.getDistance()==null){
-			mv.addObject("msg","请输入距离");
-			mv.setViewName("redirect:/patrolConfig_list");
-			return mv;
-		}
-		this.patrolConfigService.updateConfig(patrolConfig);
-		mv.setViewName("redirect:/patrolConfig_list?method=editSuccess");
-		return mv;
-	}
 }

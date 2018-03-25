@@ -152,13 +152,13 @@ $(function(){
 	    	<sec:authorize ifAnyGranted="firePatrolUserList,firePatrolUser_add,firePatrolUser_edit,firePatrolUser_delete">
 	        <li><cite></cite><a href="<%=path %>/firePatrolUserList" target="rightFrame">消防人员管理</a><i></i></li>
 	    	</sec:authorize>
-	    	
-	    	
-	    	
+	    	<sec:authorize ifAnyGranted="firePatrolInfo_list">
+	        <li><cite></cite><a href="<%=path %>/firePatrolInfo_list" target="rightFrame">巡查记录</a><i></i></li>
+	    	</sec:authorize>
 	    	
 	        </ul>    
 	    </dd>
-	    <!-- 月租管理END -->
+	    <!-- 消防巡查管理END -->
 	    </sec:authorize>
     </dl>
     

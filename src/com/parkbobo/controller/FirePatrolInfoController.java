@@ -30,6 +30,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.parkbobo.model.FirePatrolImg;
 import com.parkbobo.model.FirePatrolInfo;
 import com.parkbobo.service.FirePatrolExceptionService;
@@ -54,19 +55,19 @@ public class FirePatrolInfoController {
 	private FirePatrolImgService firePatrolImgService; 
 	
 	@RequestMapping("firePatrolInfo_list")
-	public ModelAndView list(FirePatrolInfo firePatrolInfo,Date startTime,Date endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException
+	public ModelAndView list(String equipmentName,String username,Integer patrolStatus,Date startTime,Date endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException
 	{
 		ModelAndView mv = new ModelAndView();
 		
-		String hql = "from  FirePatrolException f where 1=1";
-		if(StringUtil.isNotEmpty(firePatrolInfo.getFireFightEquipment().getName())){
-			hql +=" and f.fireFightEquipment.name like '% "+firePatrolInfo.getFireFightEquipment().getName()+"%'";
+		String hql = "from  FirePatrolInfo f where 1=1";
+		if(StringUtils.isNotBlank(equipmentName)){
+			hql +=" and f.fireFightEquipment.name like '% "+equipmentName+"%'";
 		}
-		if(StringUtils.isNotBlank(firePatrolInfo.getFirePatrolUser().getUsername())){
-			hql += " and f.firePatrolUser.username like '%" + firePatrolInfo.getFirePatrolUser().getUsername()+"%'";
+		if(StringUtils.isNotBlank(username)){
+			hql += " and f.firePatrolUser.username like '%" + username +"%'";
 		}
-		if(firePatrolInfo.getPatrolStatus()!=-1){
-			hql += " and patrolStatus ="+firePatrolInfo.getPatrolStatus();
+		if(patrolStatus != null){
+			hql += " and patrolStatus ="+patrolStatus;
 		}
 		if(startTime!=null){
 			hql += " and timestamp > '"+startTime+"'";
@@ -74,10 +75,9 @@ public class FirePatrolInfoController {
 		if(endTime!=null){
 			hql += " and timestamp < '"+endTime+"'";
 		}
-		hql += " order by startTime desc";
+		hql += " order by timestamp desc";
 		PageBean<FirePatrolInfo> firePatrolInfoPage = this.firePatrolInfoService.getByHql(hql,pageSize==null?12:pageSize, page==null?1:page);
 		mv.addObject("firePatrolInfoPage", firePatrolInfoPage);
-		mv.addObject("firePatrolInfo",firePatrolInfo);
 		mv.setViewName("manager/system/firePatrolInfo/firePatrolInfo-list");
 		return mv;
 	}
@@ -90,16 +90,18 @@ public class FirePatrolInfoController {
 	{
 		ModelAndView mv = new ModelAndView();
 		this.firePatrolInfoService.bulkDelete(ids);
-		mv.setViewName("redirect:/firePatrolExc_list?method=deleteSuccess");
+		mv.setViewName("redirect:/firePatrolInfo_list?method=deleteSuccess");
 		return mv;
 	}
 	
 	/**
 	 * 显示所有异常信息
+	 * @throws IOException 
 	 */
 	@RequestMapping("showExcptions")
-	public ModelAndView showExc(String exceptionTypes,Integer id){
-		ModelAndView mv = new ModelAndView();
+	public void showExc(String exceptionTypes,Integer id,HttpServletResponse response) throws IOException{
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
 		FirePatrolInfo firePatrolInfo = this.firePatrolInfoService.get(id);
 		String[] exceptions = null;
 		if(exceptionTypes.length() > 0){
@@ -109,10 +111,14 @@ public class FirePatrolInfoController {
 				exceptions[i]=this.firePatrolExceptionService.getById(Integer.parseInt(strs[i])).getExceptionName();
 			}
 		}
-		mv.addObject("exceptions",exceptions);
-		mv.addObject("firePatrolInfo",firePatrolInfo);
-		mv.setViewName("redirect:/firePatrolExc_list?method=deleteSuccess");
-		return mv;
+		String exception = "";
+		for (int i = 0; i < exceptions.length; i++) {
+			exception += ","+exceptions[i];
+		}
+		exception = exception.substring(1);
+		out.print("{\"status\":\"true\",\"Code\":1,\"exceptions\":\""+exception+"\",\"description\":\""+firePatrolInfo.getDescription()+"\"}"); 
+		out.flush();
+		out.close();
 	}
 	/**
 	 * 展示图片
@@ -120,12 +126,37 @@ public class FirePatrolInfoController {
 	 * @return
 	 */
 	@RequestMapping("showImgs")
-	public ModelAndView showImgs(Integer id){
-		ModelAndView mv = new ModelAndView();
-		List<FirePatrolImg> list = this.firePatrolImgService.getByp(id);
-		mv.addObject("list",list);
-		mv.setViewName("redirect:/firePatrolExc_list?method=deleteSuccess");
-		return mv;
+	public void showImgs(Integer id,HttpServletResponse response,HttpServletRequest request){
+		response.setCharacterEncoding("UTF-8");
+		try {
+			PrintWriter out = response.getWriter();
+			List<FirePatrolImg> firePatrolImgs = this.firePatrolImgService.getByProperty("infoId", id);
+			StringBuilder sb =new StringBuilder();
+			sb.append("{\"title\":\"照片\",\"id\":1,\"start\":0,\"data\":[");
+			if(firePatrolImgs!=null && firePatrolImgs.size()>0){
+				int i = 0;
+				for (FirePatrolImg firePatrolImg : firePatrolImgs) {
+					sb.append("{");
+					sb.append("\"alt\":\"设备图\",");
+					sb.append("\"pid\":"+firePatrolImg.getId()+",");
+					sb.append("\"src\":\""+firePatrolImg.getImgUrl()+"\",");
+					sb.append("\"thumb\":\""+firePatrolImg.getImgUrl()+"\"");
+					if(i==firePatrolImgs.size()-1){
+						sb.append("}");
+					}else{
+						sb.append("},");
+					}
+					i++;
+				}
+			}
+			sb.append("]}");
+			out.print(sb.toString()); 
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	/**
 	 * 消防巡查记录导出
@@ -137,17 +168,11 @@ public class FirePatrolInfoController {
 	@RequestMapping("firePatrolInfo_excelOut")
 	public ResponseEntity<byte[]> excelOut(FirePatrolInfo firePatrolInfo,Date startTime,Date endTime,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = response.getWriter();
 		Date today = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		//导出文件的标题
 		String title = "消防巡查人员记录"+df.format(today)+".xls";
-		List<FirePatrolInfo> list = null;
-		try {
-			list = this.firePatrolInfoService.getBySth(firePatrolInfo,startTime,endTime);
-		} catch (Exception e1) {
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"获取数据错误\"}");
-		}
+		List<FirePatrolInfo> list = firePatrolInfoService.getAll();
 		//设置表格标题行
 		String[] headers = new String[] {"设备名称","巡查人员姓名", "巡查人员账号","巡查时间","巡查结果"};
 		List<Object[]> dataList = new ArrayList<Object[]>();
@@ -164,7 +189,6 @@ public class FirePatrolInfoController {
 				dataList.add(objs);
 			}
 		}
-		try {
 			//防止中文乱码
 			// 第一步，创建一个webbook，对应一个Excel文件    
 			HSSFWorkbook wb = new HSSFWorkbook();
@@ -215,14 +239,6 @@ public class FirePatrolInfoController {
 			httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			wb.write(file);
 			wb.close();
-			out.print("{\"status\":\"false\",\"errorCode\":1,\"Msg\":\"导出成功\"}");
 			return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),httpHeaders, HttpStatus.CREATED);  
-		} catch (Exception e) {
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"流程错误,请联系技术人员\"}");
-			return null;
-		}finally{
-			out.flush();
-			out.close();
-		}
 	}
 }

@@ -134,6 +134,7 @@ $(function(){
     });
 var the_host = "<%=path%>/";
 function upHtm(regionName,regionId){
+	$(".layui-layer-title").text("修改信息");
 	layer.open({
 	  type: 1,
 	  skin: 'layui-layer-rim', //加上边框
@@ -145,6 +146,7 @@ function upHtm(regionName,regionId){
 	});
 }
 function addHtm(){
+	$(".layui-layer-title").text("增加信息");
 	layer.open({
 	  type: 1,
 	  skin: 'layui-layer-rim', //加上边框

@@ -19,8 +19,7 @@ public class FirePatrolImgService {
 		return this.firePatrolImgDao.add(firePatrolImg);
 	}
 
-	public List<FirePatrolImg> getByp(Integer id) {
-		List<FirePatrolImg> byProperty = this.firePatrolImgDao.getByProperty("infoId", id);
-		return byProperty;
+	public List<FirePatrolImg> getByProperty(String propertyName ,Object value) {
+		return this.firePatrolImgDao.getByProperty(propertyName, value);
 	}
 }
