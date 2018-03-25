@@ -2,7 +2,6 @@ package com.parkbobo.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,22 +43,22 @@ public class PatrolEmergencyController {
 	private PatrolEmergencyService patrolEmergencyService;
 	
 	@RequestMapping("patrolEmergency_list")
-	public ModelAndView list(Date startTime1,Date endTime1,Integer page,Integer pageSize) throws UnsupportedEncodingException
+	public ModelAndView list(Date startTime,Date endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException
 	{
 		ModelAndView mv = new ModelAndView();
 		
 		String hql = "from  PatrolEmergency f where campusNum = 1";
-		if(startTime1!=null){
-			hql += " and f.startTime > '"+startTime1+"'";
+		if(startTime!=null){
+			hql += " and f.startTime > '"+startTime+"'";
 		}
-		if(endTime1!=null){
-			hql += " and f.startTime < '"+endTime1+"'";
+		if(endTime!=null){
+			hql += " and f.startTime < '"+endTime+"'";
 		}
 		hql += " order by startTime desc";
 		PageBean<PatrolEmergency> patrolEmergencyPage = this.patrolEmergencyService.getByHql(hql,pageSize==null?12:pageSize, page==null?1:page);
 		mv.addObject("patrolEmergencyPage", patrolEmergencyPage);
-		mv.addObject("startTime1",startTime1);
-		mv.addObject("endTime1",endTime1);
+		mv.addObject("startTime",startTime);
+		mv.addObject("endTime",endTime);
 		mv.setViewName("manager/system/patrolEmergency/patrolEmergency-list");
 		return mv;
 	}
@@ -86,7 +85,6 @@ public class PatrolEmergencyController {
 	@RequestMapping("patrolEmergency_excelOut")
 	public ResponseEntity<byte[]> excelOut(Integer campusNum,Date startTime1,Date endTime1,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = response.getWriter();
 		Date today = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		//导出文件的标题
@@ -95,7 +93,6 @@ public class PatrolEmergencyController {
 		try {
 			list = this.patrolEmergencyService.getBySth(campusNum==null?1:campusNum,startTime1,endTime1);
 		} catch (Exception e1) {
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"获取数据错误\"}");
 		}
 		//设置表格标题行
 		String[] headers = new String[] {"突发事件发生时间","突发事件接收时间", "事件时长","突发事件发起人姓名","突发事件发起人账号"};
@@ -106,20 +103,7 @@ public class PatrolEmergencyController {
 				objs = new Object[headers.length];
 				objs[0] = entryOutRecord.getStartTime();
 				objs[1] = entryOutRecord.getEndTime();
-				if(entryOutRecord.getEndTime()!=null){
-					long mills = entryOutRecord.getStartTime().getTime()-entryOutRecord.getEndTime().getTime();
-					long day = 0;    
-					long hour = 0;    
-					long min = 0;    
-					long sec = 0;    
-					day = mills / (24 * 60 * 60 * 1000);    
-					hour = (mills / (60 * 60 * 1000) - day * 24);    
-					min = ((mills / (60 * 1000)) - day * 24 * 60 - hour * 60);    
-					sec = (mills/1000-day*24*60*60-hour*60*60-min*60); 
-					objs[2] = hour+":"+min+":"+sec;
-				}else{
-					objs[2] = null;
-				}
+				objs[2] = entryOutRecord.getCheckDuration();
 				objs[3] = entryOutRecord.getUsername();
 				objs[4] = entryOutRecord.getJobNum();
 				//数据添加到excel表格
@@ -177,14 +161,9 @@ public class PatrolEmergencyController {
 			httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			wb.write(file);
 			wb.close();
-			out.print("{\"status\":\"false\",\"errorCode\":1,\"Msg\":\"导出成功\"}");
 			return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),httpHeaders, HttpStatus.CREATED);  
 		} catch (Exception e) {
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"流程错误,请联系技术人员\"}");
 			return null;
-		}finally{
-			out.flush();
-			out.close();
 		}
 	}
 }

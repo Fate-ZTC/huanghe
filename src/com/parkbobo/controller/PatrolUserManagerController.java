@@ -103,13 +103,13 @@ public class PatrolUserManagerController {
 		//编辑
 		if(StringUtil.isNotEmpty(method) && method.equals("edit"))
 		{
-			PatrolUser user = patrolUserService.getById(id);
+			PatrolUser user = patrolUserService.getById(patrolUser.getId());
 			patrolUser.setLastUpdateTime(new Date());
 			patrolUser.setCampusNum(user.getCampusNum());
 			patrolUser.setClientId(user.getClientId());
 			patrolUser.setCreatetime(user.getCreatetime());
 			patrolUser.setIsDel((short)0);
-			patrolUserService.update(patrolUser);
+			patrolUserService.merge(patrolUser);
 			mv.setViewName("redirect:/patrolUser_list?method=editSuccess");
 		}
 		//跳转到编辑页面

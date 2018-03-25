@@ -176,7 +176,6 @@ public class FirePatrolInfoController {
 		try {
 			list = this.firePatrolInfoService.getBySth(firePatrolInfo,startTime,endTime);
 		} catch (Exception e1) {
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"获取数据错误\"}");
 		}
 		//设置表格标题行
 		String[] headers = new String[] {"设备名称","巡查人员姓名", "巡查人员账号","巡查时间","巡查结果"};

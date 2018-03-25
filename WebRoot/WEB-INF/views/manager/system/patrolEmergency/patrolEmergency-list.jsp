@@ -9,9 +9,12 @@ String path = request.getContextPath();
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>突发事件管理-列表</title>
 <link href="<%=path %>/page/css/style.css" rel="stylesheet" type="text/css" />
+<link href="<%=path %>/page/css/select.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<%=path %>/page/js/select-ui.min.js"></script>
 <script type="text/javascript" src="<%=path %>/page/js/jquery.js"></script>
 <script type="text/javascript" src="<%=path %>/page/js/common.js"></script>
 <script type="text/javascript" src="<%=path %>/page/layer/layer.js"></script>
+<script src="<%=path %>/page/chart/laydate/laydate.js"></script>
 <script type="text/javascript">
 	var method = '${method }';
 	if(method=='addSuccess'){
@@ -22,33 +25,7 @@ String path = request.getContextPath();
 		layer.msg('删除成功', {icon: 1});
 	}else{
 	}
-	function getTime(startTime,endTime){
-	    var date3 = Date.parse(new Date(endTime.replace(/\-/g, "/")))-Date.parse(new Date(startTime.replace(/\-/g, "/")));
-	    var days=Math.floor(date3/(24*3600*1000))
-		  //计算出小时数
-	  	var leave1=date3%(24*3600*1000)    //计算天数后剩余的毫秒数
-	  	var hours=Math.floor(leave1/(3600*1000))
-	 	 //计算相差分钟数
-	 	 var leave2=leave1%(3600*1000)        //计算小时数后剩余的毫秒数
-	 	 var minutes=Math.floor(leave2/(60*1000))
-	 	 //计算相差秒数
-		  var leave3=leave2%(60*1000)      //计算分钟数后剩余的毫秒数
-		  var seconds=Math.round(leave3/1000)
-		  var str=null;
-		  if(days!=null){
-			  str+=days+"天";
-		  }
-		  if(hours!=null){
-			  str+=hours+"小时";
-		  }
-		  if(minutes!=null){
-			  str+=minutes +"分钟";
-		  }
-		  if(seconds!=null){
-			  str+=seconds+"秒";
-		  }
-		return str;
-	}
+	
 </script>
 </head>
 <body>
@@ -66,11 +43,11 @@ String path = request.getContextPath();
     <ul class="seachform">
    		<li>
 			<label>开始时间：</label>
-			<input type="text" class="laydate-icon scinput" id="start-time" name="startTime1" value="${startTime1}" style="width: 137px;height:32px;" />
+			<input type="text" class="laydate-icon scinput" id="start-time" name="startTime" value="${startTime}" style="width: 137px;height:32px;" />
 		</li>
 		<li>
 			<label>结束时间：</label>
-			<input type="text" class="laydate-icon scinput" id="end-time" name="endTime1" value="${endTime1}" style="width: 137px;height:32px;" />
+			<input type="text" class="laydate-icon scinput" id="end-time" name="endTime" value="${endTime}" style="width: 137px;height:32px;" />
 		</li>
 		<li><label>&nbsp;</label><input name="" type="submit" class="scbtn" value="搜索"/>
 		<input type="hidden" name="pageSize" value="${pageSize}" />
@@ -87,7 +64,6 @@ String path = request.getContextPath();
         <sec:authorize ifAnyGranted="patrolEmergency_delete">
         <li onclick="forWardUrl('<%=path %>/patrolEmergency_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
         </sec:authorize>
-        <li><span>${msg }</span></li>
         </ul>
     
     </div>
@@ -111,7 +87,7 @@ String path = request.getContextPath();
         <td><input type="checkbox" name="checkbox" value="${d.id}" id="checkbox_${d.id}" class="checkItem"/></td>
           <td><fmt:formatDate value="${d.startTime}" pattern="yyyy-MM-dd HH:mm"/></td>
           <td><fmt:formatDate value="${d.endTime}" pattern="yyyy-MM-dd HH:mm"/></td>
-        <td><a href="javascript:getTime(${d.startTime },${d.endTime });"></a></td>
+        <td>${d.checkDuration }</td>
         <td>${d.username}</td>
         <td>${d.jobNum}</td>
         <td>

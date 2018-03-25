@@ -40,9 +40,9 @@ $(function(){
     <input type="hidden" name="method" value="add" />
     <ul class="forminfo">
     <li><label>姓名<b>*</b></label><input name="username" type="text" class="dfinput" data-rule="名称:required;length[~100];"/></li>
-    <li><label>密码<b>*</b></label><input name="password" type="password" class="dfinput" value="" data-rule="序列:required;integer[+0];"/></li>
+    <li><label>密码<b>*</b></label><input name="password" type="password" class="dfinput" value="" /></li>
     <li><label>工号<b>*</b></label><input name="jobNum" type="text" class="dfinput"/></li>
-    <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认添加"/><span>${msg }</span><span></li>
+    <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认添加"/></li>
     </ul>
     </form>
     

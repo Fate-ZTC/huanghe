@@ -120,7 +120,7 @@ public class PatrolUserService {
 		this.patrolUserDao.update(patrolUser);
 	}
 	public List<PatrolUser> getBySth(String username,String jobNum) throws UnsupportedEncodingException{
-		String hql = " from PatrolUser where 1=1";
+		String hql = " from PatrolUser where isDel = 0";
 		if(StringUtils.isNotBlank(username)){
 			hql += " and username like '% " +URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8")+"'%";
 		}
@@ -128,6 +128,9 @@ public class PatrolUserService {
 			hql +=" and jobNum like '% "+jobNum+"%'";
 		}
 		return this.patrolUserDao.getByHQL(hql);
+	}
+	public void merge(PatrolUser patrolUser) {
+		this.patrolUserDao.merge(patrolUser);
 	}
 	
 }

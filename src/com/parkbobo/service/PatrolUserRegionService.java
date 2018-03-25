@@ -102,14 +102,14 @@ public class PatrolUserRegionService {
 		if (StringUtils.isNotBlank(endTime)) {
 			hql += " and endTime < '"+endTime+"'";
 		}
-		if (regionId!=null) {
+		if (regionId!=null&&regionId!=-1) {
 			hql += " and regionId = "+regionId;
 		}
-		if(exceptionType!=null){
+		if(exceptionType!=null&&exceptionType!=-1){
 			if(exceptionType==1){
-				hql += " and exceptionType is null";
+				hql += " and patrolException.exceptionType is null";
 			}else{
-				hql += " and exceptionType is not null";
+				hql += " and patrolException.exceptionType is not null";
 			}
 		}
 		hql += "order by lastUpdateTime desc";		
