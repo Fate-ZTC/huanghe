@@ -27,6 +27,9 @@ public class FirePatrolInfoService {
 	public List<FirePatrolInfo> getByProperty(String propertyName ,Object value){
 		return firePatrolInfoDao.getByProperty(propertyName, value);
 	}
+	public List<FirePatrolInfo> getAll(){
+		return firePatrolInfoDao.getAll();
+	}
 	public FirePatrolInfo get(Integer entityid){
 		return firePatrolInfoDao.get(entityid);
 	}

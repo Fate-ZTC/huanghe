@@ -65,6 +65,10 @@ public class PatrolRegion implements Serializable{
 	 * 面图元几何中心点
 	 */
 	private String geometryCentroid;
+	/**
+	 * 是否删除
+	 */
+	private Short isDel;
 	@Id
 	@Column(name="id",unique=true,nullable=false)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -110,7 +114,15 @@ public class PatrolRegion implements Serializable{
 	public void setRegionLocation(MultiPolygon regionLocation) {
 		this.regionLocation = regionLocation;
 	}
-	
+	@Column(name="is_del")
+	public Short getIsDel() {
+		return isDel;
+	}
+
+	public void setIsDel(Short isDel) {
+		this.isDel = isDel;
+	}
+
 	@Transient
 	public String getGeometry() {
 		WKTWriter wr = new WKTWriter();

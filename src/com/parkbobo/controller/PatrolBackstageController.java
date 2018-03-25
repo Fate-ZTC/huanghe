@@ -3,6 +3,7 @@ package com.parkbobo.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -15,6 +16,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -48,7 +50,10 @@ import com.parkbobo.service.PatrolLocationInfoService;
 import com.parkbobo.service.PatrolRegionService;
 import com.parkbobo.service.PatrolUserRegionService;
 import com.parkbobo.service.PatrolUserService;
+import com.parkbobo.utils.ExcelOut;
 import com.parkbobo.utils.PageBean;
+import com.system.model.Manager;
+import com.system.service.OptLogsService;
 import com.vividsolutions.jts.geom.MultiPolygon;
 
 /**
@@ -73,6 +78,8 @@ public class PatrolBackstageController {
 	private PatrolEmergencyService patrolEmergencyService;
 	@Resource
 	private PatrolConfigService patrolConfigService;
+	@Resource
+	private OptLogsService optLogsService;
 
 	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect};
 
@@ -175,11 +182,10 @@ public class PatrolBackstageController {
 	 * @param jobNum 工号
 	 * @param response
 	 * @param request
-	 * @return
 	 * @throws IOException
 	 */
 	@RequestMapping("patrolUserExcelOut")
-	public ResponseEntity<byte[]> excelOut(String username,String jobNum,HttpServletResponse response,HttpServletRequest request) throws IOException{
+	public void patrolUserExcelOut(String username,String jobNum,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		Date today = new Date();
@@ -206,66 +212,7 @@ public class PatrolBackstageController {
 				dataList.add(objs);
 			}
 		}
-		try {
-			//防止中文乱码
-			// 第一步，创建一个webbook，对应一个Excel文件    
-			HSSFWorkbook wb = new HSSFWorkbook();
-			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet    
-			HSSFSheet sheet = wb.createSheet(title);
-			// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short    
-			HSSFRow row = sheet.createRow((int) 0);
-			// 第四步，创建单元格，并设置值表头 设置表头居中    
-			HSSFCellStyle style = wb.createCellStyle(); 
-			style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式    
-			HSSFCell  cell = null;   //设置单元格的数据类型
-			for (int i = 0; i < headers.length; i++) {
-				cell = row.createCell(i);
-				cell.setCellValue(headers[i]);
-				cell.setCellStyle(style);
-			}
-			// 第五步，写入实体数据 实际应用中这些数据从数据库得到，    
-			for(int i=0;i<dataList.size();i++){
-				if (i<5) {
-					sheet.autoSizeColumn(i, true);
-				}
-				Object[] obj = dataList.get(i);//遍历每个对象
-				row = sheet.createRow(i+1);//创建所需的行数（从第二行开始写数据）
-				for(int j=0; j<obj.length; j++){
-					cell = row.createCell(j);
-					if (obj[j]!=null && !obj[j].equals("null") ) {
-						cell.setCellValue(obj[j].toString());
-					}else{
-						cell.setCellValue("");
-					}
-					cell.setCellStyle(style);			//设置单元格样式
-				}
-			}
-			//下载文件路径
-			String path = request.getServletContext().getRealPath("/download/");
-			File file = new File(path);
-			if (!file.exists()){
-				file.setWritable(true, false); //设置文件夹权限，避免在Linux下不能写入文件
-				file.mkdirs();
-			}
-			file = new File(path+"temp.xls");
-			HttpHeaders httpHeaders = new HttpHeaders();  
-			//下载显示的文件名，解决中文名称乱码问题  
-			String downloadFielName = new String(title.getBytes("UTF-8"),"iso-8859-1");
-			//通知浏览器以attachment（下载方式）打开图片
-			httpHeaders.setContentDispositionFormData("attachment", downloadFielName); 
-			//application/octet-stream ： 二进制流数据（最常见的文件下载）。
-			httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			wb.write(file);
-			wb.close();
-			out.print("{\"status\":\"false\",\"errorCode\":1,\"Msg\":\"导出成功\"}");
-			return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),httpHeaders, HttpStatus.CREATED);  
-		} catch (Exception e) {
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"流程错误,请联系技术人员\"}");
-			return null;
-		}finally{
-			out.flush();
-			out.close();
-		}
+		ExcelOut.getInstance().excelOut(title, headers, dataList, request, response);
 	}
 	/**
 	 * 分页获取巡查信息列表
@@ -282,8 +229,8 @@ public class PatrolBackstageController {
 	@RequestMapping("patrolUserRegionList")
 	public ModelAndView getPatrolUserRegionsBySth(String username,Integer regionId,Integer exceptionType,String startTime,String endTime,Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
 		ModelAndView mv = new ModelAndView();
-		List<PatrolRegion> patrolRegions = patrolRegionService.getAll();
-		
+		String hql = "from PatrolRegion where isDel != 1 order by id asc";
+		List<PatrolRegion> patrolRegions = patrolRegionService.getByHQL(hql);
 		PageBean<PatrolUserRegion> patrolUserRegions = this.patrolUserRegionService.getPatrolUserBySth(username, regionId, exceptionType, startTime, endTime, page, pageSize);
 		for (PatrolUserRegion patrolUserRegion : patrolUserRegions.getList()) {
 			PatrolRegion patrolRegion = patrolRegionService.getById(patrolUserRegion.getRegionId());
@@ -292,67 +239,148 @@ public class PatrolBackstageController {
 		mv.addObject("patrolUserRegions", patrolUserRegions);
 		mv.addObject("patrolRegions", patrolRegions);
 		mv.setViewName("manager/system/patrol/patrolUserRegionList");
-//		List<PatrolUserRegionShow> list1 = new ArrayList<PatrolUserRegionShow>();
-//		Map<Integer,String> map = new HashMap<Integer, String>();
-//		List<PatrolException> exceptionList = this.patrolExceptionService.getAll();
-//		for(int k=0; k < exceptionList.size();k++){
-//			PatrolException p = exceptionList.get(k);
-//			map.put(p.getId(),p.getExceptionName());
-//		}
-//		if(list!=null&&list.size()>0){
-//			for(int i = 0; i < list.size();i++){
-//				PatrolUserRegion p = list.get(i);
-//				PatrolUserRegionShow p1 = new PatrolUserRegionShow();
-//				p1.setUsername(p.getUsername());
-//				p1.setJobNum(p.getJobNum());
-//				p1.setStartTime(p.getStartTime());
-//				p1.setEndTime(p.getEndTime());
-//				if(p.getEndTime()!=null){
-//					p1.setPatrolTime(p.getEndTime().getTime()-p.getStartTime().getTime());
-//				}else{
-//					p1.setPatrolTime(null);
-//				}
-//				PatrolRegion patrolRegion = this.patrolRegionService.getById(p.getRegionId());
-//				p1.setRegionName(patrolRegion.getRegionName());
-//				List<Integer> list2 = this.patrolLocationInfoService.getExceptionTypes(p.getJobNum(), startTime, endTime);
-//				if(list2!=null&&list2.size()>0){
-//					p1.setStatus(2);
-//					String exceptionNames = "";
-//					for(int j =0;j<list2.size();j++){
-//						exceptionNames += map.get(list2.get(j))+",";
-//					}
-//					String exp = exceptionNames.substring(0, exceptionNames.length()-1);
-//					p1.setExceptionName(exp);
-//				}else{
-//					p1.setStatus(1);
-//				}
-//				list1.add(p1);
-//			}
-//		}
-			return mv;
+		return mv;
 	}
 	/**
+	 * 巡查信息删除
+	 * @return
+	 */
+	@RequestMapping("patUserReg_delete")
+	public ModelAndView delete(String ids,HttpSession session){
+		ModelAndView mv = new ModelAndView();
+		Manager user = (Manager) session.getAttribute("loginUser");
+		if(ids.length() > 0){
+			String[] strs = ids.split(",");
+			Integer[] idArr = new Integer[strs.length];
+			for (int i=0; i< strs.length; i++) {
+				idArr[i] = Integer.parseInt(strs[i]);
+			}
+			patrolUserRegionService.bulkDelete(idArr);
+		}
+		optLogsService.addLogo("巡查管理", user, "删除巡查信息,信息ID：" +ids);
+		mv.setViewName("redirect:/patrolUserRegionList?method=deleteSuccess");
+		return mv;
+	}
+	/**
+	 * 巡查信息列表导出
+	 * @param username
+	 * @param jobNum
+	 * @param response
+	 * @param request
+	 * @throws IOException
+	 */
+	@RequestMapping("paUserRegExOut")
+	public void paUserRegExOut(HttpServletResponse response,HttpServletRequest request) throws IOException{
+		response.setCharacterEncoding("UTF-8");
+		Date today = new Date();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		//导出文件的标题
+		String title = "巡查信息列表"+df.format(today)+".xls";
+		List<PatrolUserRegion> list = patrolUserRegionService.getAll();
+		//设置表格标题行
+		String[] headers = new String[] {"巡更人员姓名","巡更人员账号", "开始巡查时间", "结束巡查时间", "巡更时长", "巡更区域", "是否异常", "异常原因"};
+		List<Object[]> dataList = new ArrayList<Object[]>();
+		Object[] objs = null;
+		if (list!=null && list.size()>0) {
+			for (PatrolUserRegion record : list) {//循环每一条数据
+				PatrolRegion patrolRegion = patrolRegionService.getById(record.getRegionId());
+				record.setRegionName(patrolRegion.getRegionName());
+				objs = new Object[headers.length];
+				objs[0] = record.getUsername();
+				objs[1] = record.getJobNum();
+				objs[2] = record.formatStartTime();
+				objs[3] = record.formatEndTime();
+				objs[4] = record.getCheckDuration();
+				objs[5] = record.getRegionName();
+				if (record.getPatrolException()!=null) {
+					objs[6] = "是";
+					objs[7] = record.getPatrolException().getExceptionName();
+				}else{
+					objs[6] = "否";
+					objs[7] = "无";
+				}
+				//数据添加到excel表格
+				dataList.add(objs);
+			}
+		}
+		ExcelOut.getInstance().excelOut(title, headers, dataList, request, response);
+	}
+	
+	/**
 	 * 安防巡更区域查询
-	 * @param regionName 区域名
+	 * @param regionId 区域id
 	 * @param campusNum 校区id
 	 * @param page 页码
 	 * @param pageSize 每页条数
 	 * @param response
 	 */
-	@RequestMapping("regionQuery")
-	public void getRegionBySth(String regionName,Integer campusNum,Integer page,Integer pageSize,HttpServletResponse response){
+	@RequestMapping("patrolRegList")
+	public ModelAndView getRegionBySth(Integer regionId,Integer campusNum,Integer page,Integer pageSize,HttpServletResponse response){
 		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = null;
-		try {
-			out = response.getWriter();
-			List<PatrolRegion> list = this.patrolRegionService.getBySth(regionName, campusNum, page, pageSize);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(list,features)+"}");
-		}catch(Exception e){
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"流程错误,请联系技术人员\"}");
-		}finally{
-			out.flush();
-			out.close();
+		ModelAndView mv = new ModelAndView();
+		String hql = "from PatrolRegion where isDel != 1 order by id asc";
+		List<PatrolRegion> patrolRegions = patrolRegionService.getByHQL(hql);
+		PageBean<PatrolRegion> patrolRegionPage = this.patrolRegionService.getBySth(regionId, campusNum, pageSize, page);
+		mv.addObject("patrolRegionPage",patrolRegionPage);
+		mv.addObject("patrolRegions",patrolRegions);
+		mv.setViewName("manager/system/patrol/patrolRegList");
+		return mv;
+	}
+	/**
+	 * 安防巡更区域删除
+	 * @param regionId 区域id
+	 * @param campusNum 校区id
+	 * @param page 页码
+	 * @param pageSize 每页条数
+	 * @param response
+	 */
+	@RequestMapping("patrolReg_delete")
+	public ModelAndView patrolRegDelete(String ids){
+		ModelAndView mv = new ModelAndView();
+		if(ids.length() > 0){
+			String[] strs = ids.split(",");
+			Integer[] idArr = new Integer[strs.length];
+			for (int i=0; i< strs.length; i++) {
+				idArr[i] = Integer.parseInt(strs[i]);
+				PatrolRegion patrolRegion = patrolRegionService.getById(idArr[i]);
+				patrolRegion.setIsDel((short)1);
+				patrolRegionService.update(patrolRegion);
+			}
 		}
+		mv.setViewName("redirect:/patrolRegList?method=deleteSuccess");
+		return mv;
+	}
+	/**
+	 * 安防巡更区域增加
+	 * @param regionName 区域名
+	 */
+	@RequestMapping("patrolReg_add")
+	public ModelAndView patrolRegAdd(String regionName){
+		ModelAndView mv = new ModelAndView();
+		PatrolRegion patrolRegion = new PatrolRegion();
+		Date date = new Date();
+		patrolRegion.setCreatetime(date);
+		patrolRegion.setIsDel((short)0);
+		patrolRegion.setLastUpdateTime(date);
+		patrolRegion.setRegionName(regionName);
+		patrolRegionService.addRecord(patrolRegion);
+		mv.setViewName("redirect:/patrolRegList?method=addSuccess");
+		return mv;
+	}
+	/**
+	 * 安防巡更区域修改
+	 * @param regionId 区域id
+	 * @param regionName 区域名
+	 */
+	@RequestMapping("patrolReg_update")
+	public ModelAndView patrolRegUpdate(Integer regionId,String regionName){
+		ModelAndView mv = new ModelAndView();
+		PatrolRegion patrolRegion = patrolRegionService.getById(regionId);
+		patrolRegion.setRegionName(regionName);
+		patrolRegion.setLastUpdateTime(new Date());
+		patrolRegionService.update(patrolRegion);
+		mv.setViewName("redirect:/patrolRegList?method=editSuccess");
+		return mv;
 	}
 	/**
 	 * 返显
@@ -397,35 +425,6 @@ public class PatrolBackstageController {
 		}catch(Exception e){
 			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知错误,请联系技术人员\"}");
 		}finally{
-			out.flush();
-			out.close();
-		}
-	}
-	/**
-	 * 批量删除区域
-	 * @param idStr 区域id 格式(3,4,5,)
-	 * @param response
-	 * @throws IOException
-	 */
-	@RequestMapping("bulkDeleteRegion")
-	public void  bulkDeleteRegion(String idStr,HttpServletResponse response) throws IOException{
-		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = null;
-		if(idStr!=null){
-			String[] idArr = idStr.split(",");
-			try {
-				out = response.getWriter();
-				this.patrolRegionService.bulkDelete(idArr);
-				out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"删除成功\"}");
-			}catch(Exception e){
-				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"流程错误,请联系技术人员\"}");
-			}finally{
-				out.flush();
-				out.close();
-			}
-		}else{
-			out= response.getWriter();
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"请勾选要删除的区域\"}");
 			out.flush();
 			out.close();
 		}

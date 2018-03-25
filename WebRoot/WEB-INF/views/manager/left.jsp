@@ -124,7 +124,7 @@ $(function(){
 	    </dd>
 	    <!-- 个人中心END -->
 	    </sec:authorize>
-	    
+	    <!-- 安防巡查管理START -->
 	    <sec:authorize ifAnyGranted="patrolUserRegionList">
 	    <dd>
 	    <div class="title">
@@ -133,6 +133,9 @@ $(function(){
 	    	<ul class="menuson">
 	    	<sec:authorize ifAnyGranted="patrolUserRegionList">
 	        <li><cite></cite><a href="<%=path %>/patrolUserRegionList" target="rightFrame">巡更记录管理</a><i></i></li>
+	    	</sec:authorize>
+	    	<sec:authorize ifAnyGranted="patrolRegList">
+	        <li><cite></cite><a href="<%=path %>/patrolRegList" target="rightFrame">巡更区域管理</a><i></i></li>
 	    	</sec:authorize>
 	    	<sec:authorize ifAnyGranted="patrolEmergency_list,patrolEmergency_delete">
 	        <li><cite></cite><a href="<%=path %>/patrolEmergency_list" target="rightFrame">突发事件管理</a><i></i></li>
@@ -157,6 +160,9 @@ $(function(){
 	    	<sec:authorize ifAnyGranted="firePatrolUserList,firePatrolUser_add,firePatrolUser_edit,firePatrolUser_delete">
 	        <li><cite></cite><a href="<%=path %>/firePatrolUserList" target="rightFrame">消防人员管理</a><i></i></li>
 	    	</sec:authorize>
+	    	<sec:authorize ifAnyGranted="firePatrolInfo_list">
+	        <li><cite></cite><a href="<%=path %>/firePatrolInfo_list" target="rightFrame">巡查记录</a><i></i></li>
+	    	</sec:authorize>
 	    	<sec:authorize ifAnyGranted="firePatrolConfig_list,firePatrolConfig_edit">
 	        <li><cite></cite><a href="<%=path %>/firePatrolConfig_list" target="rightFrame">巡查参数配置</a><i></i></li>
 	    	</sec:authorize>
@@ -166,7 +172,7 @@ $(function(){
 	    	
 	        </ul>    
 	    </dd>
-	    <!-- 月租管理END -->
+	    <!-- 消防巡查管理END -->
 	    </sec:authorize>
     </dl>
     

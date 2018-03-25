@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.parkbobo.dao.PatrolUserRegionDao;
 import com.parkbobo.model.PatrolUserRegion;
 import com.parkbobo.utils.PageBean;
+import com.system.model.Manager;
 
 @Service
 public class PatrolUserRegionService {
@@ -84,8 +85,14 @@ public class PatrolUserRegionService {
 		String hql = "from PatrolUserRegion where endTime is null and status = 2";
 		return this.patrolUserRegionDao.getByHQL(hql);
 	}
+	public List<PatrolUserRegion> getAll() {
+		return this.patrolUserRegionDao.getAll();
+	}
+	public void bulkDelete(Integer[] ids){
+		patrolUserRegionDao.bulkDelete(ids);
+	}
 	public PageBean<PatrolUserRegion> getPatrolUserBySth(String username,Integer regionId,Integer exceptionType,String startTime,String endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException{
-		String hql = "from PatrolUserRegion where 1=1";
+		String hql = "from PatrolUserRegion where 1=1 ";
 		if (StringUtils.isNotBlank(username)) {
 			hql += " and username like '%"+username+"%'";
 		}

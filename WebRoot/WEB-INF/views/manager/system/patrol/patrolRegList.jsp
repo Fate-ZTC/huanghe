@@ -9,10 +9,11 @@ String date ="今天是："+ df.format(new Date());
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-	<title>安防巡更|巡更记录管理</title>
+	<title>安防巡更|巡更区域管理</title>
 	<link href="<%=path %>/page/css/style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<%=path %>/page/js/jquery.js"></script>
 <link href="<%=path %>/page/css/select.css" rel="stylesheet" type="text/css" />
+<link href="<%=path %>/layer3.1.1/mobile/need/layer.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<%=path %>/page/js/select-ui.min.js"></script>
 <script type="text/javascript" src="<%=path %>/page/js/common.js"></script>
 <script type="text/javascript" src="<%=path %>/page/layer/layer.js"></script>
@@ -33,23 +34,34 @@ String date ="今天是："+ df.format(new Date());
 	
 	}
 </script>
+<style>
+.updul li{
+    font-size: 1.5rem;
+    margin-left: 3rem;
+    margin-top: 3rem;
+    }
+.btn{
+    font-size: 1.5rem;
+    margin-left: 3rem;
+    margin-top: 3rem;
+    }
+</style>
 </head>
 <body>
 	<div class="place">
 	    <span>位置：</span>
 		    <ul class="placeul">
 			    <li><a href="#">安防巡更</a></li>
-			    <li><a href="<%=path %>/patrolUserRegionList">巡更记录管理</a></li>
+			    <li><a href="<%=path %>/patrolRegList">巡更区域管理</a></li>
 		    </ul>
 	    </div>
 	<div class="rightinfo">
 				<%--
 					分页表单				
 				--%>
-				<form action="<%=path %>/patrolUserRegionList" method="post" id="searchForm">
+				<form action="<%=path %>/patrolRegList" method="post" id="searchForm">
 				    <ul class="seachform">
-				    	<li><label>巡更人员姓名</label><input name="username" value="${carparkName}" type="text" class="scinput" style="width: 90px;"/></li>
-				    	<li><label>巡更区域</label>
+				    	<li><label>巡更区域名称</label>
 							<div class="vocation">
 								<select class="select3" name="regionId" >
 						        	<option value="-1">-请选择-</option>
@@ -59,23 +71,6 @@ String date ="今天是："+ df.format(new Date());
 						        </select>
 							</div>
 						</li>
-				    	<li><label>是否异常</label>
-					    	<div class="vocation">
-								<select class="select3" name="exceptionType" >
-						        	<option value="-1">-请选择-</option>
-									<option value="0">否</option>
-									<option value="1">是</option>
-						        </select>
-							</div>
-				    	</li>
-						<li>
-							<label>开始时间：</label>
-							<input type="text" class="laydate-icon scinput" id="start-time" name="startTime" value="${startTime}" style="width: 137px;height:32px;" />
-						</li>
-						<li>
-							<label>结束时间：</label>
-							<input type="text" class="laydate-icon scinput" id="end-time" name="endTime" value="${endTime}" style="width: 137px;height:32px;" />
-						</li>
 						<li><label>&nbsp;</label><input name="" type="submit" class="scbtn" value="搜索"/>
 						<input type="hidden" name="pageSize" value="${pageSize}" />
 						<input type="hidden" name="page" id="page" value="${page}"/>
@@ -84,11 +79,11 @@ String date ="今天是："+ df.format(new Date());
 				</form>
 				<div class="tools">
 			    	<ul class="toolbar">
-				    	<sec:authorize ifAnyGranted="patUserReg_delete">
-				        <li onclick="bulkDelete('<%=path %>/patUserReg_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>删除</li>
+				    	<sec:authorize ifAnyGranted="patrolReg_add">
+				        <li onclick="addHtm();"><span><img src="<%=path %>/page/images/t01.png" /></span>添加</li>
 				        </sec:authorize>
-				    	<sec:authorize ifAnyGranted="patrolUserRegionList">
-				        <li onclick="ExOut('<%=path %>/paUserRegExOut','0');"><span><img src="<%=path %>/page/images/t07.png" /></span>导出</li>
+				    	<sec:authorize ifAnyGranted="patrolReg_delete">
+				        <li onclick="bulkDelete('<%=path %>/patrolReg_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>删除</li>
 				        </sec:authorize>
 			        </ul>
 			    </div>
@@ -97,48 +92,30 @@ String date ="今天是："+ df.format(new Date());
 		            	<thead>
 					    	<tr>
 					        	<th class="tbt1"><input type="checkbox" name="checkAll" value="checkbox" id="checkAll" class="checkAll"/></th>
-			            		<th>巡更人员姓名</th>
-			            		<th>巡更人员账号</th>
-			            		<th>开始巡更时间</th>
-			            		<th>结束巡更时间</th>
-			            		<th>巡更时长</th>
-			            		<th>巡更区域</th>
-			            		<th>是否异常</th>
-			            		<th>异常原因</th>
-<!-- 			            		<th>操作</th> -->
+			            		<th>巡更区域名称</th>
+			            		<th>更新时间</th>
+			            		<th>操作</th>
 					        </tr>
 				        </thead>
-		            	<c:forEach items="${patrolUserRegions.list}" var="m">
+		            	<c:forEach items="${patrolRegionPage.list}" var="m">
 					        <tr>
 					        <td><input type="checkbox" name="checkbox" value="${m.id}" id="checkbox_${m.id}" class="checkItem"/></td>
-					        <td>${m.username}</td>
-					        <td>${m.jobNum}</td>
-					        <td>${m.formatStartTime}</td>
-					        <td>${m.formatEndTime}</td>
-					        <td>${m.checkDuration}</td>
 					        <td>${m.regionName}</td>
-					        <td>
-					        	<c:if test="${empty m.patrolException}">否</c:if>
-					        	<c:if test="${!empty m.patrolException}">是</c:if>
-					        </td>
-					        <td>
-					        	<c:if test="${empty m.patrolException}">无</c:if>
-					        	<c:if test="${!empty m.patrolException}">${m.patrolException.exceptionName}</c:if>
-					        </td>
-<!-- 					        <td>删除</td> -->
+					        <td>${m.lastUpdateTime}</td>
+					        <td style="color:#16c2ea;"><a  style="color:#16c2ea;" href="javascript:void(0);" onclick="upHtm('${m.regionName}',${m.id});">修改名称</a> 配置巡更范围</td>
 					        </tr> 
 				        </c:forEach>
 			        </tbody>
 			    </table>
 			   	<!-- 分页开始 -->
 			    <div class="pagin">
-			    	<div class="message">共<i class="blue">${patrolUserRegions.allRow}</i>条记录，当前显示第&nbsp;<i class="blue"> ${patrolUserRegions.currentPage}/${patrolUserRegions.totalPage }&nbsp;</i>页</div>
+			    	<div class="message">共<i class="blue">${patrolRegionPage.allRow}</i>条记录，当前显示第&nbsp;<i class="blue"> ${patrolRegionPage.currentPage}/${patrolRegionPage.totalPage }&nbsp;</i>页</div>
 			        <ul class="paginList">
-						<c:forEach items="${patrolUserRegions.fristPage}" var="f">
+						<c:forEach items="${patrolRegionPage.fristPage}" var="f">
 							<li class="paginItem"><a href="javascript:void(0);" rel="${f}">${f}</a></li>
 						</c:forEach>
-						<li class="paginItem current"><a href="javascript:void(0);">${patrolUserRegions.currentPage}</a></li>
-						<c:forEach items="${patrolUserRegions.laPage}" var="l">
+						<li class="paginItem current"><a href="javascript:void(0);">${patrolRegionPage.currentPage}</a></li>
+						<c:forEach items="${patrolRegionPage.laPage}" var="l">
 							<li class="paginItem"><a href="javascript:void(0);" rel="${l}">${l}</a></li>
 						</c:forEach>
 			        </ul>
@@ -149,38 +126,38 @@ String date ="今天是："+ df.format(new Date());
 $(function(){
     	//选择框
 	    $(".select3").uedSelect({
-			width : 80
+			width : 150
 		});
+		/**
+		 * 弹出页面
+		 */
     });
 var the_host = "<%=path%>/";
+function upHtm(regionName,regionId){
+	$(".layui-layer-title").text("修改信息");
+	layer.open({
+	  type: 1,
+	  skin: 'layui-layer-rim', //加上边框
+	  area: ['420px', '240px'], //宽高
+	  content: '<form action="<%=path %>/patrolReg_update" method="post" id="editForm">'+
+   				'<ul class="updul"><li>巡更区域名称:<input name="regionName" style="font-size:1.5rem" type="text" value="'+regionName+'"/></li>'+
+   				'<input name="regionId" type="hidden" value="'+regionId+'"/>'+
+   				'<li><input type="submit" class="btn" value="提交"/><label>&nbsp;</label><input type="reset" class="btn" value="重置"/> </li></ul></form>'
+	});
+}
+function addHtm(){
+	$(".layui-layer-title").text("增加信息");
+	layer.open({
+	  type: 1,
+	  skin: 'layui-layer-rim', //加上边框
+	  area: ['420px', '240px'], //宽高
+	  content: '<form action="<%=path %>/patrolReg_add" method="post" id="addForm">'+
+   				'<ul class="updul"><li>巡更区域名称:<input name="regionName" style="font-size:1.5rem" type="text" value=""/></li>'+
+   				'<li><input type="submit" class="btn" value="提交"/><label>&nbsp;</label><input type="reset" class="btn" value="重置"/> </li></ul></form>'
+	});
+}
 $('.tablelist tbody tr:odd').addClass('odd');
 	
-	var start_time = {
-			  elem: '#start-time',
-			  format: 'YYYY-MM-DD hh:mm:ss',
-			  max: '2099-06-16',
-			  istime: true,
-			  istoday: false,
-			  choose: function(datas){
-			     end_time.min = datas;
-			     $("#start-time").val(datas);
-			  }
-			};
-			laydate(start_time);
-			
-			//结束时间
-			var end_time = {
-			  elem: '#end-time',
-			  format: 'YYYY-MM-DD hh:mm:ss',
-			  max: '2099-06-16',
-			  istime: true,
-			  istoday: false,
-			  choose: function(datas){
-			    start_time.max = datas;
-			    $("#end-time").val(datas);
-			  }
-			};
-			laydate(end_time);
 		$(document).ready(function(){
 			$(".m_berthOrder_l").attr("class","lhover");
 			/**
@@ -243,22 +220,16 @@ $('.tablelist tbody tr:odd').addClass('odd');
 				if(ids.length>0){
 					ids=ids.substr(0,ids.length-1);
 					layer.confirm('确定要删除吗？',function(index){
-						window.location.href=the_host+"patUserReg_delete?ids="+ids;
+						window.location.href=the_host+"patrolReg_delete?ids="+ids;
 					});
 				}else{
 					layer.alert('请至少选择一条数据！', 8, !1);
 				}
 			}else{
 				layer.confirm('确定要删除吗？',function(index){
-					window.location.href=the_host+"patUserReg_delete?ids="+ids;
+					window.location.href=the_host+"patrolReg_delete?ids="+ids;
 				});
 			}
-		}
-		/**
-		 * 导出
-		 */
-		function ExOut(){
-			window.location.href=the_host+"paUserRegExOut";
 		}
 
 </script>

@@ -12,6 +12,9 @@ String path = request.getContextPath();
 <script type="text/javascript" src="<%=path %>/page/js/jquery.js"></script>
 <script type="text/javascript" src="<%=path %>/page/js/common.js"></script>
 <script type="text/javascript" src="<%=path %>/page/layer/layer.js"></script>
+<script src="<%=path %>/page/chart/laydate/laydate.js"></script>
+<link href="<%=path %>/page/css/select.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<%=path %>/page/js/select-ui.min.js"></script>
 <script type="text/javascript">
 	var method = '${method }';
 	if(method=='addSuccess'){
@@ -23,6 +26,19 @@ String path = request.getContextPath();
 	}else{
 	}
 </script>
+<style>
+.excul li{
+	font-size: 1.5rem;
+    margin-left: 4rem;
+    margin-top: 3rem;
+}
+.scbtn {
+    width: 60px;
+}
+.scinput {
+    width: 80px;
+    }
+</style>
 </head>
 <body>
 
@@ -37,14 +53,14 @@ String path = request.getContextPath();
     <div class="rightinfo">
     <form action="<%=path %>/firePatrolInfo_list" method="post" id="searchForm">
     <ul class="seachform">
-    	<li><label>设备名称:</label><input name="fireFightEquipment.name" value="${firePatrolInfo.fireFightEquipment.name}" type="text" class="scinput" /></li>
-		<li><label>巡查人员姓名:</label><input name="firePatrolUser.username" value="${firePatrolInfo.firePatrolUser.username}" type="text" class="scinput" /></li>
+    	<li><label>设备名称:</label><input name="equipmentName" value="" type="text" class="scinput" /></li>
+		<li><label>巡查人员姓名:</label><input name="username" value="" type="text" class="scinput" /></li>
 		<li><label>巡查结果:</label>
     		<div class="vocation">
 				<select class="select3" name="patrolStatus" >
 		        	<option value="-1">-请选择-</option>
-					<option value="0" ${firePatrolInfo.patrolStatus eq 0?"selected":"" }>设备异常</option>
-					<option value="1" ${firePatrolInfo.patrolStatus eq 1?"selected":"" }>设备正常</option>
+					<option value="0">设备异常</option>
+					<option value="1">设备正常</option>
 		        </select>
 			</div>
    		</li>
@@ -68,10 +84,9 @@ String path = request.getContextPath();
     	<sec:authorize ifAnyGranted="firePatrolInfo_delete">
         <li onclick="bulkDelete('<%=path %>/firePatrolInfo_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
         </sec:authorize>
-        <sec:authorize ifAnyGranted="firePatrolInfo_excelOut">
+        <sec:authorize ifAnyGranted="firePatrolInfo_list">
         <li onclick="forWardUrl('<%=path %>/firePatrolInfo_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
         </sec:authorize>
-        <li><span>${msg }</span></li>
         </ul>
     
     </div>
@@ -99,9 +114,9 @@ String path = request.getContextPath();
         <td><fmt:formatDate value="${d.timestamp}" pattern="yyyy-MM-dd HH:mm"/></td>
         <td>${d.patrolStatus==1?"设备正常":"设备异常"}</td>
         <td>
-        	<a href="<%=path %>/showImgs?id=${d.id}" class="tablelink">查看现场照片</a> | 
+        	<a href="javascript:void(0);" onclick="showImgs(${d.id})" class="tablelink">查看现场照片</a> | 
         <c:if test="${d.patrolStatus!=1 }">
-        <a href="<%=path %>/showExceptions?exceptionTypes=${d.exceptionTypes}" class="tablelink">查看异常描述</a> |
+        	<a href="javascript:void(0);" onclick="excepDeta('${d.fireFightEquipment.name}','${d.exceptionTypes}',${d.id})" class="tablelink">查看异常描述</a> |
         </c:if>
         	<sec:authorize ifAnyGranted="firePatrolInfo_delete">
         	<a href="javascript:void(0);" onclick="bulkDelete('<%=path %>/firePatrolInfo_delete','${d.id}');" class="tablelink"> 删除</a> 
@@ -128,7 +143,86 @@ String path = request.getContextPath();
     <!-- 分页结束 -->
     </div>
     <script type="text/javascript">
+    $(function(){
+    	//选择框
+	    $(".select3").uedSelect({
+			width : 80
+		});
+    });
 	$('.tablelist tbody tr:odd').addClass('odd');
+	var start_time = {
+			  elem: '#start-time',
+			  format: 'YYYY-MM-DD hh:mm:ss',
+			  max: '2099-06-16',
+			  istime: true,
+			  istoday: false,
+			  choose: function(datas){
+			     end_time.min = datas;
+			     $("#start-time").val(datas);
+			  }
+			};
+			laydate(start_time);
+			
+			//结束时间
+			var end_time = {
+			  elem: '#end-time',
+			  format: 'YYYY-MM-DD hh:mm:ss',
+			  max: '2099-06-16',
+			  istime: true,
+			  istoday: false,
+			  choose: function(datas){
+			    start_time.max = datas;
+			    $("#end-time").val(datas);
+			  }
+			};
+			laydate(end_time);
+	var the_host = "<%=path%>/";
+	function showImgs(id){
+		$.get(the_host+'showImgs',{'id':id}, function(json){
+		  layer.photos({
+		    photos: json
+		    ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+		  });
+		}); 
+	}
+	function excepDeta(name,exceptionTypes,id){
+	$.get(the_host+'showExcptions',{'exceptionTypes':exceptionTypes,'id':id},function(data){
+ 		console.log(data);
+   		if(data.status=='true'){
+			$(".layui-layer-title").text(name + "-异常描述");
+			layer.open({
+			  type: 1,
+			  skin: 'layui-layer-rim', //加上边框
+			  area: ['420px', '240px'], //宽高
+			  content: '<ul class="excul"><li>'+data.exceptions+'</li>'+
+		   				'<li>'+data.description+'</li></ul>'
+			});
+   		}
+   	},'json');
+}
+	/**
+		 * 删除
+		 */
+		function bulkDelete(url,ids){
+			if(ids == 0){
+				var ids = "";
+				$("[name='checkbox']:checked").each(function(){
+					ids += $(this).val()+",";
+				});
+				if(ids.length>0){
+					ids=ids.substr(0,ids.length-1);
+					layer.confirm('确定要删除吗？',function(index){
+						window.location.href=the_host+"firePatrolInfo_delete?ids="+ids;
+					});
+				}else{
+					layer.alert('请至少选择一条数据！', 8, !1);
+				}
+			}else{
+				layer.confirm('确定要删除吗？',function(index){
+					window.location.href=the_host+"firePatrolInfo_delete?ids="+ids;
+				});
+			}
+		}
 	</script>
 
 </body>

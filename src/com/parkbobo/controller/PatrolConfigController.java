@@ -29,6 +29,7 @@ public class PatrolConfigController {
 		mv.setViewName("manager/system/patrolConfig/patrolConfig-list");
 		return mv;
 	}
+<<<<<<< HEAD
 	@RequestMapping("patrolConfig_edit")
 	public ModelAndView edit(PatrolConfig patrolConfig){
 		ModelAndView mv = new ModelAndView();
@@ -60,4 +61,6 @@ public class PatrolConfigController {
 		mv.setViewName("redirect:/patrolConfig_list?method=editSuccess");
 		return mv;
 	}
+=======
+>>>>>>> branch 'master' of http://192.168.4.240:3000/JAVAEE/sicnupatrol.git
 }
