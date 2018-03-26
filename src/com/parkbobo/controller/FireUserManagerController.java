@@ -153,7 +153,6 @@ public class FireUserManagerController {
 	@RequestMapping("firePatrolUser_excelOut")
 	public ResponseEntity<byte[]> excelOut(FirePatrolUser firePatrolUser,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = response.getWriter();
 		Date today = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		//导出文件的标题
@@ -162,7 +161,7 @@ public class FireUserManagerController {
 		try {
 			list = this.firePatrolUserService.getBySth(firePatrolUser.getUsername(),firePatrolUser.getJobNum());
 		} catch (Exception e1) {
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"获取数据错误\"}");
+			e1.printStackTrace();
 		}
 		//设置表格标题行
 		String[] headers = new String[] {"巡更人员姓名","巡更人员账号", "更新时间"};
@@ -229,14 +228,9 @@ public class FireUserManagerController {
 			httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			wb.write(file);
 			wb.close();
-			out.print("{\"status\":\"false\",\"errorCode\":1,\"Msg\":\"导出成功\"}");
 			return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),httpHeaders, HttpStatus.CREATED);  
 		} catch (Exception e) {
-			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"流程错误,请联系技术人员\"}");
 			return null;
-		}finally{
-			out.flush();
-			out.close();
 		}
 	}
 }

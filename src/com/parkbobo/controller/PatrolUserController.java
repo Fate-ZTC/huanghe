@@ -110,8 +110,7 @@ public class PatrolUserController {
 	 * @throws IOException 
 	 */
 	@RequestMapping("startPatrol")
-	public void startPatrol(String  username,Integer regionId ,String jobNum,Integer campusNum,
-			Integer configId,HttpServletResponse response) throws IOException
+	public void startPatrol(String  username,Integer regionId ,String jobNum,Integer campusNum,HttpServletResponse response) throws IOException
 	{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -252,7 +251,7 @@ public class PatrolUserController {
 						map.put("content","异常报告");
 						push.sendMsg("异常报警", "用户"+patrolUserRegion.getUsername()+",工号:"+jobNum+",于"+date+"起,已超过"+patrolConfig.getLazyTime()+"分钟未更新巡逻信息", map);
 					}else{
-						//原地不超过五分钟
+						//原地不超过规定时间
 						if(patrolUserRegion.getStatus()==1){
 							//当前为正常状态
 						}if(patrolUserRegion.getStatus()==2){
@@ -272,15 +271,14 @@ public class PatrolUserController {
 						patrolLocationInfo.setPatrolException(patrolE1);
 						patrolLocationInfo.setStatus(2);
 						JPushClientExample push = new JPushClientExample("4636b7d218171e7cf4a89e5c", "b4d131ecf1c2438fb492feac");
+						
 						Map<String, String> map = new HashMap<String, String>();
 						map.put("type", "1");
 						map.put("content","异常报告");
 						push.sendMsg("异常报警", "用户"+patrolUserRegion.getUsername()+",工号:"+jobNum+",于"+date+"起,已超过"+patrolConfig.getLeaveRegionTime()+"分钟位于巡逻区域外", map);
+						patrolUserRegion.setAbnormalCount(0);
 					}else{
 						//异常状态  不报警
-						if(patrolUserRegion.getStatus()==2){
-							patrolUserRegion.setStatus(1);
-						}
 						patrolLocationInfo.setStatus(1);
 						patrolUserRegion.setAbnormalCount(abnormalCount+1);
 					}

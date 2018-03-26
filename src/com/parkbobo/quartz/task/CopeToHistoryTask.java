@@ -23,7 +23,7 @@ public class CopeToHistoryTask {
 		getCopeToHistoryTask();
 	}
 	/**
-	 * 每月一号0点重置所有消防设备的巡查状态
+	 * 每月一号2点重置所有消防设备的巡查状态
 	 */
 	@SuppressWarnings("deprecation")
 	private void getCopeToHistoryTask() {
