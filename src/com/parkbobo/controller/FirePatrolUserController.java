@@ -136,7 +136,7 @@ public class FirePatrolUserController {
 			}
 			//将上传文件保存到一个目标文件当中
 			file.transferTo(new File(path + File.separator + filename));
-			return "success";
+			return path + File.separator + filename;
 		} else {
 			return "error";
 		}
@@ -151,9 +151,10 @@ public class FirePatrolUserController {
 	 * @throws IOException 
 	 */
 	@RequestMapping("normalUpload")
-	public void normalUpload(Double lon,Double lat,Integer userId,Integer equipmentId,String[] imgUrls,HttpServletResponse response) throws IOException{
+	public void normalUpload(MultipartFile[] file,Double lon,Double lat,Integer userId,Integer equipmentId,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		PrintWriter out = null;
 		try {
+			
 			response.setCharacterEncoding("UTF-8");
 			out=response.getWriter();
 			FirePatrolConfig patrolConfig = this.firePatrolConfigService.getById(1);
@@ -194,11 +195,11 @@ public class FirePatrolUserController {
 				List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
 				FirePatrolInfo add = this.firePatrolInfoService.add(firePatrolInfo);
 				this.fireFightEquipmentService.update(fireFightEquipment);
-				if(imgUrls!=null&&imgUrls.length>0){
-					for(int i = 0;i<imgUrls.length;i++){
+				if(file!=null&&file.length>0){
+					for(int i = 0;i<file.length;i++){
 						FirePatrolImg firePatrolImg = new FirePatrolImg();
 						firePatrolImg.setFireFightEquipment(fireFightEquipment);
-						firePatrolImg.setImgUrl(imgUrls[i]);
+						firePatrolImg.setImgUrl(upload(request,file[i]));
 						firePatrolImg.setFirePatrolUser(patrolUser);
 						firePatrolImg.setUploadTIme(date);
 						firePatrolImg.setInfoId(add.getId());
@@ -236,7 +237,7 @@ public class FirePatrolUserController {
 	 * @throws IOException
 	 */
 	@RequestMapping("abnormalUpload")
-	public void abnormalUpload(Double lon,Double lat,Integer userId,Integer equipmentId,String[] imgUrls,String exceptionTypes,String description,HttpServletResponse response) throws IOException{
+	public void abnormalUpload(MultipartFile[] file,Double lon,Double lat,Integer userId,Integer equipmentId,String exceptionTypes,String description,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		PrintWriter out = null;
 		try {
 			response.setCharacterEncoding("UTF-8");
@@ -284,11 +285,11 @@ public class FirePatrolUserController {
 				List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
 				FirePatrolInfo add = this.firePatrolInfoService.add(firePatrolInfo);
 				this.fireFightEquipmentService.update(fireFightEquipment);
-				if(imgUrls!=null&&imgUrls.length>0){
-					for(int i = 0;i<imgUrls.length;i++){
+				if(file!=null&&file.length>0){
+					for(int i = 0;i<file.length;i++){
 						FirePatrolImg firePatrolImg = new FirePatrolImg();
 						firePatrolImg.setFireFightEquipment(fireFightEquipment);
-						firePatrolImg.setImgUrl(imgUrls[i]);
+						firePatrolImg.setImgUrl(upload(request,file[i]));
 						firePatrolImg.setFirePatrolUser(patrolUser);
 						firePatrolImg.setUploadTIme(date);
 						firePatrolImg.setInfoId(add.getId());
