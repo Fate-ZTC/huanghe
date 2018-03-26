@@ -107,9 +107,9 @@ public class PatrolUserRegionService {
 		}
 		if(exceptionType!=null&&exceptionType!=-1){
 			if(exceptionType==1){
-				hql += " and patrolException.exceptionType is null";
+				hql += " and patrolException.type is not null ";
 			}else{
-				hql += " and patrolException.exceptionType is not null";
+				hql += " and patrolException is null ";
 			}
 		}
 		hql += "order by lastUpdateTime desc";		

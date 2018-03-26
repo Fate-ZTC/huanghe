@@ -57,7 +57,6 @@ String path = request.getContextPath();
         <sec:authorize ifAnyGranted="firePatrolUser_excelOut">
         <li onclick="forWardUrl('<%=path %>/firePatrolUser_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
         </sec:authorize>
-        <li><span>${msg }</span></li>
         </ul>
     
     </div>

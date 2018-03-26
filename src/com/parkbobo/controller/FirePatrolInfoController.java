@@ -55,7 +55,7 @@ public class FirePatrolInfoController {
 	private FirePatrolImgService firePatrolImgService; 
 
 	@RequestMapping("firePatrolInfo_list")
-	public ModelAndView list(String equipmentName,String username,Integer patrolStatus,Date startTime,Date endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException
+	public ModelAndView list(String equipmentName,String username,Integer patrolStatus,String startTime,String endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException
 	{
 		ModelAndView mv = new ModelAndView();
 		
@@ -66,13 +66,13 @@ public class FirePatrolInfoController {
 		if(StringUtils.isNotBlank(username)){
 			hql += " and f.firePatrolUser.username like '%" + username +"%'";
 		}
-		if(patrolStatus != null){
+		if(patrolStatus != null&&patrolStatus!=-1){
 			hql += " and patrolStatus ="+patrolStatus;
 		}
-		if(startTime!=null){
+		if(StringUtils.isNotBlank(startTime)){
 			hql += " and timestamp > '"+startTime+"'";
 		}
-		if(endTime!=null){
+		if(StringUtils.isNotBlank(endTime)){
 			hql += " and timestamp < '"+endTime+"'";
 		}
 		hql += " order by timestamp desc";

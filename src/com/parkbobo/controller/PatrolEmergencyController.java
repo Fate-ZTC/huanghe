@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -43,15 +44,15 @@ public class PatrolEmergencyController {
 	private PatrolEmergencyService patrolEmergencyService;
 	
 	@RequestMapping("patrolEmergency_list")
-	public ModelAndView list(Date startTime,Date endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException
+	public ModelAndView list(String startTime,String endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException
 	{
 		ModelAndView mv = new ModelAndView();
 		
 		String hql = "from  PatrolEmergency f where campusNum = 1";
-		if(startTime!=null){
+		if(StringUtils.isNotBlank(startTime)){
 			hql += " and f.startTime > '"+startTime+"'";
 		}
-		if(endTime!=null){
+		if(StringUtils.isNotBlank(endTime)){
 			hql += " and f.startTime < '"+endTime+"'";
 		}
 		hql += " order by startTime desc";

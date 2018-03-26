@@ -117,6 +117,32 @@ String path = request.getContextPath();
     </div>
     <script type="text/javascript">
 	$('.tablelist tbody tr:odd').addClass('odd');
+	var start_time = {
+			  elem: '#start-time',
+			  format: 'YYYY-MM-DD hh:mm:ss',
+			  max: '2099-06-16',
+			  istime: true,
+			  istoday: false,
+			  choose: function(datas){
+			     end_time.min = datas;
+			     $("#start-time").val(datas);
+			  }
+			};
+			laydate(start_time);
+			
+			//结束时间
+			var end_time = {
+			  elem: '#end-time',
+			  format: 'YYYY-MM-DD hh:mm:ss',
+			  max: '2099-06-16',
+			  istime: true,
+			  istoday: false,
+			  choose: function(datas){
+			    start_time.max = datas;
+			    $("#end-time").val(datas);
+			  }
+			};
+			laydate(end_time);
 	</script>
 
 </body>
