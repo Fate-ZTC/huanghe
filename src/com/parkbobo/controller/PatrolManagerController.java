@@ -85,8 +85,7 @@ public class PatrolManagerController {
 	 * @throws IOException
 	 */
 	@RequestMapping("addPatrolUser")
-	public void addUser(String jobNum,String password,String username,Integer campusNum,HttpServletResponse response) throws IOException{
-		PrintWriter out = null;
+	public void addUser(String jobNum,String password,String username,Integer campusNum,HttpServletResponse response) throws IOException{PrintWriter out = null;
 		try {
 			response.setCharacterEncoding("UTF-8");
 			out = response.getWriter();
@@ -98,9 +97,8 @@ public class PatrolManagerController {
 			patrolUser.setJobNum(jobNum);
 			patrolUser.setPassword(password);
 			patrolUser.setIsDel((short)0);
-			//patrolUser.setUsername(new String(username.getBytes("ISO-8859-1"),"utf-8"));
 			if (username != null) {
-				patrolUser.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
+				patrolUser.setUsername(username);
 			} else {
 				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户名不能为空\"}");
 				return;
@@ -167,7 +165,7 @@ public class PatrolManagerController {
 			patrolUser.setPassword(password);
 			patrolUser.setCreatetime(this.patrolUserService.getById(id).getCreatetime());
 			if(username!=null){
-				patrolUser.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
+				patrolUser.setUsername(username);
 			}else{
 				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户名不能为空\"}");
 				return;
@@ -191,7 +189,7 @@ public class PatrolManagerController {
 	}
 	/**
 	 * 删除用户
-	 * @param 巡查员id
+	 * @param id 巡查员id
 	 * @throws IOException 
 	 */
 	@RequestMapping("deletePatrolUser")
@@ -370,6 +368,10 @@ public class PatrolManagerController {
 				}
 			}
 
+			//获取刷新时间
+
+
+
 			if (patrolLocationInfos != null && patrolLocationInfos.size()>0) {
 				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolLocationInfos,features)+"}");
 			}else{
@@ -402,7 +404,7 @@ public class PatrolManagerController {
 		out.close();
 	}
 	/**
-	 *异常报警
+	 * 异常报警
 	 * @throws IOException 
 	 */
 	@RequestMapping("abnormalAlarm")

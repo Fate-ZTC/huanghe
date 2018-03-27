@@ -1,14 +1,11 @@
 	package com.parkbobo.controller;
 
-import java.io.IOException;
+	import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,25 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.parkbobo.model.PatrolConfig;
-import com.parkbobo.model.PatrolException;
-import com.parkbobo.model.PatrolLocationInfo;
-import com.parkbobo.model.PatrolRegion;
-import com.parkbobo.model.PatrolUser;
-import com.parkbobo.model.PatrolUserRegion;
-import com.parkbobo.service.PatrolConfigService;
-import com.parkbobo.service.PatrolEmergencyService;
-import com.parkbobo.service.PatrolExceptionService;
-import com.parkbobo.service.PatrolLocationInfoService;
-import com.parkbobo.service.PatrolRegionService;
-import com.parkbobo.service.PatrolUserRegionService;
-import com.parkbobo.service.PatrolUserService;
+import com.parkbobo.model.*;
+import com.parkbobo.service.*;
 import com.parkbobo.utils.GisUtils;
 import com.parkbobo.utils.JPushClientExample;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
-/**
+import static com.alibaba.fastjson.JSON.toJSONString;
+
+	/**
  * 安防使用端接口
  * @author zj
  *@version 1.0
@@ -87,7 +75,7 @@ public class PatrolUserController {
 					out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账户已删除\"}");
 					return;
 				}
-				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolUser,features)+"}");
+				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+ toJSONString(patrolUser,features)+"}");
 			}else{
 				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账号密码错误\"}");
 			}
@@ -110,7 +98,7 @@ public class PatrolUserController {
 	 * @throws IOException 
 	 */
 	@RequestMapping("startPatrol")
-	public void startPatrol(String  username,Integer regionId ,String jobNum,Integer campusNum,HttpServletResponse response) throws IOException
+	public void startPatrol(String username,Integer regionId ,String jobNum,Integer campusNum,HttpServletResponse response) throws IOException
 	{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -118,7 +106,7 @@ public class PatrolUserController {
 			out = response.getWriter();
 			PatrolUserRegion patrolUserRegion = new PatrolUserRegion();
 			if(username!=null){
-				patrolUserRegion.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
+				patrolUserRegion.setUsername(username);
 			}else{
 				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户名不能为空\"}");
 				return;
@@ -131,7 +119,7 @@ public class PatrolUserController {
 			patrolUserRegion.setStatus(1);
 			patrolUserRegion.setAbnormalCount(0);
 			this.patrolUserRegionService.addRecord(patrolUserRegion);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolUserRegion,features)+"}");
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+ toJSONString(patrolUserRegion,features)+"}");
 		} catch (Exception e) {
 			e.printStackTrace();
 			if(out==null){
@@ -145,7 +133,7 @@ public class PatrolUserController {
 	}
 	/**
 	 * 结束巡逻
-	 * @param patrolRegion
+	 * @param jobNum
 	 * @return
 	 * @throws IOException 
 	 */
@@ -160,7 +148,7 @@ public class PatrolUserController {
 			patrolUserRegion.setLastUpdateTime(date);
 			patrolUserRegion.setEndTime(date);
 			this.patrolUserRegionService.updateRecord(patrolUserRegion);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolUserRegion,features)+"}");
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+ toJSONString(patrolUserRegion,features)+"}");
 		} catch (Exception e) {
 			if(out==null){
 				out=response.getWriter();
@@ -174,12 +162,9 @@ public class PatrolUserController {
 
 	/**
 	 * 上传位置信息
-	 * @param usregId  区域id
+	 * @param regionId  区域id
 	 * @param configId 配置id
-	 * @param userId 用户id
 	 * @param jobNum 工号
-	 * @param username 姓名
-	 * @param patrolUserRegionId  用户区域id
 	 * @param lon 经度
 	 * @param lat 纬度
 	 * @param campusNum  校区编号
@@ -222,7 +207,7 @@ public class PatrolUserController {
 		if(patrolConfig.getIsEmergency()==1){
 			patrolLocationInfo = patrolLocationInfoService.add(patrolLocationInfo);
 			//紧急状态
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+JSONObject.toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+JSONObject.toJSONString(patrolConfig,features)+"}}");
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+ toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
 			out.flush();
 			out.close();
 			return;
@@ -287,14 +272,14 @@ public class PatrolUserController {
 			patrolUserRegion.setLastUpdateTime(date);
 			this.patrolUserRegionService.merge(patrolUserRegion);
 			patrolLocationInfo = patrolLocationInfoService.add(patrolLocationInfo);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+JSONObject.toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+JSONObject.toJSONString(patrolConfig,features)+"}}");
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+ toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
 			out.flush();
 			out.close();
 		}
 	}
 	/**
 	 * 初始化区域信息
-	 * @param 校区id
+	 * @param campusNum 校区id
 	 * @throws IOException 
 	 */
 	@RequestMapping("initRegion")
@@ -305,6 +290,8 @@ public class PatrolUserController {
 			out = response.getWriter();
 			List<PatrolRegion> list = this.patrolRegionService.getByCampusNum(campusNum);
 			PatrolConfig patrolConfig = this.patrolConfigService.getById(1);
+			String str = JSONObject.toJSONString(list,features);
+			String str2 = JSONObject.toJSONString(patrolConfig.getIsEmergency(),features);
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolRegion\":"+JSONObject.toJSONString(list,features)+",\"isEmergency\":"+JSONObject.toJSONString(patrolConfig.getIsEmergency(),features)+"}}");
 		} catch (Exception e) {
 			if(out==null){
@@ -329,10 +316,10 @@ public class PatrolUserController {
 			out = response.getWriter();
 			PatrolUserRegion patrolUserRegion = this.patrolUserRegionService.getCountTime(jobNum);
 			long countTime = 0;
-			if(patrolUserRegion!=null){
-				countTime = new Date().getTime()-patrolUserRegion.getStartTime().getTime();
+			if(patrolUserRegion!=null) {
+				countTime = new Date().getTime() - patrolUserRegion.getStartTime().getTime();
 			}
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"PatrolUserRegion\":"+JSONObject.toJSONString(patrolUserRegion,features)+",\"countTime\":"+countTime+"}}");
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"PatrolUserRegion\":"+ toJSONString(patrolUserRegion,features)+",\"countTime\":"+countTime+"}}");
 		}catch(Exception e){
 			if(out==null){
 				out=response.getWriter();

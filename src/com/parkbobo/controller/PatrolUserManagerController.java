@@ -96,6 +96,9 @@ public class PatrolUserManagerController {
 		}
 		return mv;
 	}
+
+
+
 	@RequestMapping("patrolUser_edit")
 	public ModelAndView edit(String method,PatrolUser patrolUser,HttpSession session,Integer id)
 	{
