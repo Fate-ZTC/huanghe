@@ -216,7 +216,7 @@ public class PatrolUserController {
 		patrolLocationInfo.setLon(lon);//经度
 		patrolLocationInfo.setLat(lat);//纬度
 		patrolLocationInfo.setJobNum(jobNum);
-		patrolLocationInfo.setUsregId(regionId);
+		patrolLocationInfo.setUsregId(patrolUserRegion.getId());
 		patrolLocationInfo.setTimestamp(date);
 		patrolLocationInfo.setUsername(patrolUserRegion.getUsername());
 		if(patrolConfig.getIsEmergency()==1){
