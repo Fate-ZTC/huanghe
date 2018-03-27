@@ -93,7 +93,7 @@ public class PatrolUserService {
 			return 0;
 		}
 		try {
-			this.patrolUserDao.update(patrolUser);
+			this.patrolUserDao.merge(patrolUser);
 		} catch (Exception e) {
 			return 2;
 		}
