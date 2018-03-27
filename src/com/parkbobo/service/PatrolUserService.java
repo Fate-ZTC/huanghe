@@ -86,7 +86,6 @@ public class PatrolUserService {
 	 * @return 0工号重复   1成功   2未知错误
 	 */
 	public int updateUser(PatrolUser patrolUser){
-		//TODO 这里写的有问题,账号也是可以修改的,要做好判断
 		String hql = "from PatrolUser where jobNum='"+patrolUser.getJobNum()+"' and "+
 				" id="+patrolUser.getId();
 		List<PatrolUser> list = this.patrolUserDao.getByHQL(hql);
