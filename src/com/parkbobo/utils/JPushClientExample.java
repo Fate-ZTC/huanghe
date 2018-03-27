@@ -1,4 +1,4 @@
-﻿package com.parkbobo.utils;
+package com.parkbobo.utils;
 
 import java.util.HashMap;
 import java.util.List;

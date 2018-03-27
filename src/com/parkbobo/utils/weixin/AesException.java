@@ -1,4 +1,4 @@
-﻿package com.parkbobo.utils.weixin;
+package com.parkbobo.utils.weixin;
 
 @SuppressWarnings("serial")
 public class AesException extends Exception {

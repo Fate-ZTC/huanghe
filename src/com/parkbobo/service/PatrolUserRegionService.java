@@ -1,11 +1,8 @@
 package com.parkbobo.service;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.parkbobo.dao.PatrolUserRegionDao;
 import com.parkbobo.model.PatrolUserRegion;
 import com.parkbobo.utils.PageBean;
-import com.system.model.Manager;
 
 @Service
 public class PatrolUserRegionService {
@@ -117,7 +113,7 @@ public class PatrolUserRegionService {
 		return this.patrolUserRegionDao.pageQuery(hql,pageSize==null?12:pageSize, page==null?1:page);
 	}
 	public PatrolUserRegion getByJobNum(String jobNum) {
-		String hql = "from PatrolUserRegion where jobNum ='"+ jobNum +"' and endTime is null order by createTime desc limit 1";
+		String hql = "from PatrolUserRegion where jobNum ='"+ jobNum +"' and endTime is null order by startTime desc limit 1";
 		List<PatrolUserRegion> list = this.patrolUserRegionDao.getByHQL(hql);
 		if(list!=null&&list.size()>0){
 			return list.get(0);

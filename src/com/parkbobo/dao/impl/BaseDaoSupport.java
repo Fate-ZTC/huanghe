@@ -310,8 +310,8 @@ public class BaseDaoSupport<T> implements BaseDao<T> {
 	/**
 	 * 
 	 * 根据多个属性名和属性值查询单个对象.
-	 * @param propertyName 字段名
-	 * @param value 值
+	 * @param propertyNames 字段名
+	 * @param values 值
 	 * @return T 实体 
 	 * 
 	 */
@@ -410,7 +410,7 @@ public class BaseDaoSupport<T> implements BaseDao<T> {
 	 * 根据主键ID局部更新一条数据多个字段值.
 	 * @param  entityid 序列号实体ID
 	 * @param  propertyNames 需要更新字段名数组
-	 * @param  value 字段新值数组
+	 * @param  values 字段新值数组
 	 * 
 	 */
 	
@@ -479,7 +479,7 @@ public class BaseDaoSupport<T> implements BaseDao<T> {
 	}
 	/**
 	 * 根据HQL语句删除.
-	 * @param  ids 关键字ID数组
+	 * @param  hql 关键字ID数组
 	 */
 	public int deleteByHql(final String hql) {
 		Object obj = hibernateTemplate.execute(new HibernateCallback() {

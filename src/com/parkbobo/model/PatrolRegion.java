@@ -127,10 +127,11 @@ public class PatrolRegion implements Serializable{
 	public String getGeometry() {
 		WKTWriter wr = new WKTWriter();
    		geometry =  wr.write(this.regionLocation);
-   		if(geometry.length() > 0)
-   		{
-   			geometry = geometry.replaceAll(", ", ",");
-   		}
+		if(geometry != null) {
+			if (geometry.length() > 0) {
+				geometry = geometry.replaceAll(", ", ",");
+			}
+		}
 		return geometry;
 	}
 
