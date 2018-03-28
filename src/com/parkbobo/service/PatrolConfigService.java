@@ -26,7 +26,8 @@ public class PatrolConfigService {
 	 * @param patrolConfig
 	 */
 	public void updateConfig(PatrolConfig patrolConfig){
-		this.patrolConfigDao.update(patrolConfig);
+//		this.patrolConfigDao.update(patrolConfig);
+		this.patrolConfigDao.merge(patrolConfig);
 	}
 	/**
 	 * 根据id查询

@@ -29,6 +29,12 @@ public class PatrolConfigController {
 		mv.setViewName("manager/system/patrolConfig/patrolConfig-list");
 		return mv;
 	}
+
+	/**
+	 * 进行的是后台配置
+	 * @param patrolConfig
+	 * @return
+     */
 	@RequestMapping("patrolConfig_edit")
 	public ModelAndView edit(PatrolConfig patrolConfig){
 		ModelAndView mv = new ModelAndView();

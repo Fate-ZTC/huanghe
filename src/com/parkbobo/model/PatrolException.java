@@ -55,6 +55,4 @@ public class PatrolException implements Serializable{
 		this.exceptionName = exceptionName;
 	}
 
-
-
 }

@@ -50,13 +50,21 @@ public class PatrolConfig implements Serializable {
 	 */
 	private Integer refreshTime;
 	/**
-	 * 可以原地不动时间
+	 * 可以原地不动时间 分钟
 	 */
 	private Integer lazyTime;
 	/**
-	 * 可以离开范围时间
+	 * 可以离开范围时间 分钟
 	 */
 	private Integer leaveRegionTime;
+	/**
+	 * 人员丢失时长(分钟)
+     */
+	private Integer personnelLossTime;
+	/**
+	 * 异常推送频率(分钟/次)
+     */
+	private Integer exceptionPushTime;
 	
 	@Id
 	@Column(name="id",nullable=false,unique=true)
@@ -123,6 +131,20 @@ public class PatrolConfig implements Serializable {
 	public void setLeaveRegionTime(Integer leaveRegionTime) {
 		this.leaveRegionTime = leaveRegionTime;
 	}
-	
-	
+	@Column(name = "personnel_loss_time")
+	public Integer getPersonnelLossTime() {
+		return personnelLossTime;
+	}
+
+	public void setPersonnelLossTime(Integer personnelLossTime) {
+		this.personnelLossTime = personnelLossTime;
+	}
+	@Column(name = "exception_push_time")
+	public Integer getExceptionPushTime() {
+		return exceptionPushTime;
+	}
+
+	public void setExceptionPushTime(Integer exceptionPushTime) {
+		this.exceptionPushTime = exceptionPushTime;
+	}
 }
