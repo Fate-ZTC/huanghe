@@ -134,7 +134,7 @@ public class PatrolUserService {
 	}
 	public PageBean<PatrolUser> getAllUserByPage(Integer pageSize, Integer page) {
 		String hql = "from PatrolUser where isDel = 0";
-		return this.patrolUserDao.pageQuery(hql, pageSize, page);
+		return this.patrolUserDao.pageQuery(hql, pageSize==null?20:pageSize, page==null?1:page);
 	}
 	
 }

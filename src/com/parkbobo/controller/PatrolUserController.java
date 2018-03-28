@@ -374,10 +374,6 @@ public class PatrolUserController {
 			}
 			sb.append("]}");
 			out.print(sb.toString()); 
-			if (patrolUserRegions!=null && patrolUserRegions.size()>0) {
-			}else{
-				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"暂无数据\"}"); 
-			}
 		}else{
 			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"参数不完整\"}"); 
 		}

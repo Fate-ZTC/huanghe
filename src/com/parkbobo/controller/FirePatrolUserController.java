@@ -120,6 +120,30 @@ public class FirePatrolUserController {
 			out.close();
 		}
 	}
+	/**
+	 * 获取当前登录用户上传的信息 
+	 * @param jobNum 工号
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping("getByJobNum")
+	public void getInfoByJobNum(String jobNum,HttpServletResponse response) throws IOException{
+		PrintWriter out = null;
+		try {
+			response.setCharacterEncoding("UTF-8");
+			out=response.getWriter();
+			List<FirePatrolInfo> list = this.firePatrolInfoService.getByHql(jobNum);
+			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(list,features)+"}");
+		}catch(Exception e){
+			if(out==null){
+				out=response.getWriter();
+			}
+			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
+		}finally{
+			out.flush();
+			out.close();
+		}
+	}
 
 	public String upload(HttpServletRequest request,
 			@RequestParam("file") MultipartFile file) throws Exception {
@@ -154,7 +178,7 @@ public class FirePatrolUserController {
 	public void normalUpload(MultipartFile[] file,Double lon,Double lat,Integer userId,Integer equipmentId,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		PrintWriter out = null;
 		try {
-			
+
 			response.setCharacterEncoding("UTF-8");
 			out=response.getWriter();
 			FirePatrolConfig patrolConfig = this.firePatrolConfigService.getById(1);

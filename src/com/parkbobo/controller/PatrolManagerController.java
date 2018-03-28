@@ -58,12 +58,12 @@ public class PatrolManagerController {
 	 * @throws IOException 
 	 */
 	@RequestMapping("getAllPatrolUser")
-	public void getAllUser(Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
+	public void getAllUser(HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
-			PageBean<PatrolUser> allUser = this.patrolUserService.getAllUserByPage(pageSize,page);
+			List<PatrolUser> allUser = this.patrolUserService.getAll();
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(allUser,features)+"}");
 		} catch (IOException e) {
 			if(out==null){
