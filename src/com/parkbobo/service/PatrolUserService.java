@@ -86,15 +86,14 @@ public class PatrolUserService {
 	 * @return 0工号重复   1成功   2未知错误
 	 */
 	public int updateUser(PatrolUser patrolUser){
-		//TODO 这里写的有问题,账号也是可以修改的,要做好判断
 		String hql = "from PatrolUser where jobNum='"+patrolUser.getJobNum()+"' and "+
-				" id="+patrolUser.getId();
+				" id<>"+patrolUser.getId();
 		List<PatrolUser> list = this.patrolUserDao.getByHQL(hql);
 		if(list != null && list.size()>0){
 			return 0;
 		}
 		try {
-			this.patrolUserDao.update(patrolUser);
+			this.patrolUserDao.merge(patrolUser);
 		} catch (Exception e) {
 			return 2;
 		}
@@ -132,6 +131,10 @@ public class PatrolUserService {
 	}
 	public void merge(PatrolUser patrolUser) {
 		this.patrolUserDao.merge(patrolUser);
+	}
+	public PageBean<PatrolUser> getAllUserByPage(Integer pageSize, Integer page) {
+		String hql = "from PatrolUser where isDel = 0";
+		return this.patrolUserDao.pageQuery(hql, pageSize==null?20:pageSize, page==null?1:page);
 	}
 	
 }

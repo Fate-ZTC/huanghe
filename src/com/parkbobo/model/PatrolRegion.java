@@ -44,7 +44,7 @@ public class PatrolRegion implements Serializable{
 	 * 创建时间
 	 */
 	private Date createtime;
-	
+
 	/**
 	 * 最后更新时间
 	 */
@@ -55,7 +55,7 @@ public class PatrolRegion implements Serializable{
 	 */
 	@JSONField(serialize=false)
 	private MultiPolygon regionLocation;
-	
+
 
 	/**
 	 * 字符串类型的空间经纬度信息
@@ -126,25 +126,31 @@ public class PatrolRegion implements Serializable{
 	@Transient
 	public String getGeometry() {
 		WKTWriter wr = new WKTWriter();
-   		geometry =  wr.write(this.regionLocation);
+		if(regionLocation!=null){
+			geometry =  wr.write(this.regionLocation);
+		}
 		if(geometry != null) {
 			if (geometry.length() > 0) {
 				geometry = geometry.replaceAll(", ", ",");
 			}
+			return geometry;
 		}
-		return geometry;
+		return null;
 	}
 
 	public void setGeometry(String geometry) {
 		this.geometry = geometry;
 	}
-	
+
 	@Transient
 	public String getGeometryCentroid() {
 		WKTWriter wr = new WKTWriter();
-		geometryCentroid = wr.write(this.regionLocation.getCentroid());
-		geometryCentroid = geometryCentroid.substring(geometryCentroid.indexOf("(")+1, geometryCentroid.indexOf(")")).replace(" ", ",");
-		return geometryCentroid;
+		if(regionLocation!=null){
+			geometryCentroid = wr.write(this.regionLocation.getCentroid());
+			geometryCentroid = geometryCentroid.substring(geometryCentroid.indexOf("(")+1, geometryCentroid.indexOf(")")).replace(" ", ",");
+			return geometryCentroid;
+		}
+		return null;
 	}
 	@Column(name="last_update_time")
 	public Date getLastUpdateTime() {
@@ -154,7 +160,7 @@ public class PatrolRegion implements Serializable{
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
-	
-	
+
+
 
 }

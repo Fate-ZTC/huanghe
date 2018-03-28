@@ -125,4 +125,8 @@ public class FirePatrolInfoService {
 		hql +=" order by timestamp desc";
 		return this.firePatrolInfoDao.getByHQL(hql);
 	}
+	public List<FirePatrolInfo> getByHql(String jobNum) {
+		String hql = " from FirePatrolInfo where firePatrolUser.jobNum = '" +jobNum+"' order by timestamp desc";
+		return this.firePatrolInfoDao.getByHQL(hql);
+	}
 }
