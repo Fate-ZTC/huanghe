@@ -1,6 +1,6 @@
-	package com.parkbobo.controller;
+package com.parkbobo.controller;
 
-	import java.io.IOException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import static com.alibaba.fastjson.JSON.toJSONString;
 
-	/**
+/**
  * 安防使用端接口
  * @author zj
  *@version 1.0
@@ -118,6 +118,11 @@ public class PatrolUserController {
 			patrolUserRegion.setLastUpdateTime(date);
 			patrolUserRegion.setStatus(1);
 			patrolUserRegion.setAbnormalCount(0);
+			PatrolUserRegion byJobNum = this.patrolUserRegionService.getByJobNum(jobNum);
+			if(byJobNum!=null){
+				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"当前有未结束巡更记录\"}");
+				return;
+			}
 			this.patrolUserRegionService.addRecord(patrolUserRegion);
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+ toJSONString(patrolUserRegion,features)+"}");
 		} catch (Exception e) {
@@ -144,11 +149,16 @@ public class PatrolUserController {
 		try {
 			out = response.getWriter();
 			Date date = new Date();
-			PatrolUserRegion patrolUserRegion = this.patrolUserRegionService.getByJobNum(jobNum);
-			patrolUserRegion.setLastUpdateTime(date);
-			patrolUserRegion.setEndTime(date);
-			this.patrolUserRegionService.updateRecord(patrolUserRegion);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+ toJSONString(patrolUserRegion,features)+"}");
+			List<PatrolUserRegion> list = this.patrolUserRegionService.getsByJobNum(jobNum);
+			if(list!=null&&list.size()>0){
+				for(int i = 0; i < list.size();i++){
+					PatrolUserRegion patrolUserRegion = list.get(i);
+					patrolUserRegion.setLastUpdateTime(date);
+					patrolUserRegion.setEndTime(date);
+					this.patrolUserRegionService.updateRecord(patrolUserRegion);
+				}
+			}
+			out.print("{\"status\":\"true\",\"Code\":1,\"msg\":\"结束巡更成功!\"}");
 		} catch (Exception e) {
 			if(out==null){
 				out=response.getWriter();
@@ -256,7 +266,7 @@ public class PatrolUserController {
 						patrolLocationInfo.setPatrolException(patrolE1);
 						patrolLocationInfo.setStatus(2);
 						JPushClientExample push = new JPushClientExample("4636b7d218171e7cf4a89e5c", "b4d131ecf1c2438fb492feac");
-						
+
 						Map<String, String> map = new HashMap<String, String>();
 						map.put("type", "1");
 						map.put("content","异常报告");
@@ -264,6 +274,7 @@ public class PatrolUserController {
 						patrolUserRegion.setAbnormalCount(0);
 					}else{
 						//异常状态  不报警
+						patrolLocationInfo.setPatrolException(patrolE1);
 						patrolLocationInfo.setStatus(1);
 						patrolUserRegion.setAbnormalCount(abnormalCount+1);
 					}
@@ -290,10 +301,9 @@ public class PatrolUserController {
 			out = response.getWriter();
 			List<PatrolRegion> list = this.patrolRegionService.getByCampusNum(campusNum);
 			PatrolConfig patrolConfig = this.patrolConfigService.getById(1);
-			String str = JSONObject.toJSONString(list,features);
-			String str2 = JSONObject.toJSONString(patrolConfig.getIsEmergency(),features);
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolRegion\":"+JSONObject.toJSONString(list,features)+",\"isEmergency\":"+JSONObject.toJSONString(patrolConfig.getIsEmergency(),features)+"}}");
 		} catch (Exception e) {
+			//e.printStackTrace();
 			if(out==null){
 				out=response.getWriter();
 			}

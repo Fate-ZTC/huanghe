@@ -26,6 +26,7 @@ import com.parkbobo.service.PatrolEmergencyService;
 import com.parkbobo.service.PatrolLocationInfoService;
 import com.parkbobo.service.PatrolUserRegionService;
 import com.parkbobo.service.PatrolUserService;
+import com.parkbobo.utils.PageBean;
 
 /**
  * 安防管理端接口
@@ -62,7 +63,7 @@ public class PatrolManagerController {
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
-			List<PatrolUser> allUser = this.patrolUserService.getAllUser();
+			PageBean<PatrolUser> allUser = this.patrolUserService.getAllUserByPage(pageSize,page);
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(allUser,features)+"}");
 		} catch (IOException e) {
 			if(out==null){
@@ -86,36 +87,36 @@ public class PatrolManagerController {
 	 */
 	@RequestMapping("addPatrolUser")
 	public void addUser(String jobNum,String password,String username,Integer campusNum,HttpServletResponse response) throws IOException{PrintWriter out = null;
-		try {
-			response.setCharacterEncoding("UTF-8");
-			out = response.getWriter();
-			Date date = new Date(); 
-			PatrolUser patrolUser = new PatrolUser();
-			patrolUser.setCreatetime(date);
-			patrolUser.setCampusNum(campusNum);
-			patrolUser.setLastUpdateTime(date);
-			patrolUser.setJobNum(jobNum);
-			patrolUser.setPassword(password);
-			patrolUser.setIsDel((short)0);
-			if (username != null) {
-				patrolUser.setUsername(username);
-			} else {
-				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户名不能为空\"}");
-				return;
-			}
-			int flag = this.patrolUserService.addUser(patrolUser);
-			if (flag == 2) {
-				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"新增出错\"}");
-			}
-			if (flag == 0) {
-				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账号已存在\"}");
-			}
-			if (flag == 1) {
-				out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"新增成功\"}");
-			} 
-		} catch (Exception e) {
-			out.print("{\"status\":\"false\",\"Code\":0,\"errorMsg\":\"未知异常\"}");
+	try {
+		response.setCharacterEncoding("UTF-8");
+		out = response.getWriter();
+		Date date = new Date(); 
+		PatrolUser patrolUser = new PatrolUser();
+		patrolUser.setCreatetime(date);
+		patrolUser.setCampusNum(campusNum);
+		patrolUser.setLastUpdateTime(date);
+		patrolUser.setJobNum(jobNum);
+		patrolUser.setPassword(password);
+		patrolUser.setIsDel((short)0);
+		if (username != null) {
+			patrolUser.setUsername(username);
+		} else {
+			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户名不能为空\"}");
+			return;
 		}
+		int flag = this.patrolUserService.addUser(patrolUser);
+		if (flag == 2) {
+			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"新增出错\"}");
+		}
+		if (flag == 0) {
+			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账号已存在\"}");
+		}
+		if (flag == 1) {
+			out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"新增成功\"}");
+		} 
+	} catch (Exception e) {
+		out.print("{\"status\":\"false\",\"Code\":0,\"errorMsg\":\"未知异常\"}");
+	}
 	}
 
 	/**
@@ -163,7 +164,14 @@ public class PatrolManagerController {
 			patrolUser.setJobNum(jobNum);
 			patrolUser.setLastUpdateTime(new Date());
 			patrolUser.setPassword(password);
-			patrolUser.setCreatetime(this.patrolUserService.getById(id).getCreatetime());
+			patrolUser.setIsDel((short)0);
+			PatrolUser user = this.patrolUserService.getById(id);
+			if(user!=null){
+				patrolUser.setCreatetime(user.getCreatetime());
+			}else{
+				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未查询到用户\"}");
+				return;
+			}
 			if(username!=null){
 				patrolUser.setUsername(username);
 			}else{
@@ -181,6 +189,7 @@ public class PatrolManagerController {
 				out.print("{\"status\":\"true\",\"Code\":1,\"Msg\":\"修改成功\"}");
 			} 
 		} catch (Exception e) {
+			//e.printStackTrace();
 			out.print("{\"status\":\"false\",\"Code\":0,\"errorMsg\":\"未知异常\"}");
 		}finally {
 			out.flush();
@@ -294,21 +303,26 @@ public class PatrolManagerController {
 	 * 实时获取位置
 	 * @param campusNum 校区id
 	 * @param jobNum 工号
-	 * @param regionId 区域id
+	 * @param usregId 用户区域id
 	 * @param response
 	 * @throws IOException
 	 */
 	@RequestMapping("getLocation")
-	public void getLocation(Integer campusNum,String jobNum,Integer regionId,HttpServletResponse response) throws IOException{
+	public void getLocation(Integer campusNum,String jobNum,HttpServletResponse response) throws IOException{
 		PrintWriter out = null;
 		try {
 			response.setCharacterEncoding("UTF-8");
 			out =  response.getWriter();
-			PatrolLocationInfo location = this.patrolLocationInfoService.getLocation(jobNum, regionId, campusNum);
-			if(location!=null){
-				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(location,features)+"}");
+			PatrolUserRegion byJobNum = this.patrolUserRegionService.getByJobNum(jobNum);
+			if(byJobNum!=null){
+				PatrolLocationInfo location = this.patrolLocationInfoService.getLocation(jobNum, byJobNum.getId(), campusNum);
+				if(location!=null){
+					out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(location,features)+"}");
+				}else{
+					out.print("{\"status\":\"false\",\"Code\":-2,\"Msg\":\"此人暂无巡逻信息\"}");
+				}
 			}else{
-				out.print("{\"status\":\"false\",\"Code\":-2,\"Msg\":\"此人暂无巡逻信息\"}");
+				out.println("{\"status\":\"false\",\"Code\":-2,\"Msg\":\"此人未开始巡逻\"}");
 			}
 		} catch (Exception e) {
 			if(out==null){
@@ -408,12 +422,12 @@ public class PatrolManagerController {
 	 * @throws IOException 
 	 */
 	@RequestMapping("abnormalAlarm")
-	public void abnormalAlarm(HttpServletResponse response) throws IOException{
+	public void abnormalAlarm(Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
-			List<PatrolUserRegion> list = this.patrolUserRegionService.getAbnormal();
+			PageBean<PatrolLocationInfo> list = this.patrolLocationInfoService.getAbnormal(pageSize,page);
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(list,features)+"}");
 		} catch (IOException e) {
 			if(out==null){

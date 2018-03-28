@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.parkbobo.dao.PatrolLocationInfoDao;
 import com.parkbobo.model.PatrolLocationInfo;
+import com.parkbobo.utils.PageBean;
 
 @Service
 public class PatrolLocationInfoService {
@@ -56,6 +57,10 @@ public class PatrolLocationInfoService {
 			return list;
 		}
 		return null;
+	}
+	public PageBean<PatrolLocationInfo> getAbnormal(Integer pageSize, Integer page) {
+		String hql = "from PatrolLocationInfo where status!=1";
+		return this.patrolLocationInfoDao.pageQuery(hql, pageSize==null?20:pageSize, page==null?1:page);
 	}
 	
 }

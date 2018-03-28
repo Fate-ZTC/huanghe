@@ -87,7 +87,7 @@ public class PatrolUserService {
 	 */
 	public int updateUser(PatrolUser patrolUser){
 		String hql = "from PatrolUser where jobNum='"+patrolUser.getJobNum()+"' and "+
-				" id="+patrolUser.getId();
+				" id<>"+patrolUser.getId();
 		List<PatrolUser> list = this.patrolUserDao.getByHQL(hql);
 		if(list != null && list.size()>0){
 			return 0;
@@ -131,6 +131,10 @@ public class PatrolUserService {
 	}
 	public void merge(PatrolUser patrolUser) {
 		this.patrolUserDao.merge(patrolUser);
+	}
+	public PageBean<PatrolUser> getAllUserByPage(Integer pageSize, Integer page) {
+		String hql = "from PatrolUser where isDel = 0";
+		return this.patrolUserDao.pageQuery(hql, pageSize, page);
 	}
 	
 }

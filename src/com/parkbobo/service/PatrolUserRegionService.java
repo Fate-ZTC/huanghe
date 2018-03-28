@@ -120,5 +120,9 @@ public class PatrolUserRegionService {
 		}
 		return null;
 	}
+	public List<PatrolUserRegion> getsByJobNum(String jobNum) {
+		String hql = "from PatrolUserRegion where jobNum ='"+ jobNum +"' and endTime is null order by startTime desc";
+		return   this.patrolUserRegionDao.getByHQL(hql);
+	}
 
 }
