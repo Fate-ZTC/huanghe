@@ -2,15 +2,12 @@ package com.parkbobo.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,18 +15,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.parkbobo.model.FireFightEquipment;
-import com.parkbobo.model.FireFightEquipmentHistory;
-import com.parkbobo.model.FirePatrolException;
-import com.parkbobo.model.FirePatrolInfo;
-import com.parkbobo.model.FirePatrolUser;
-import com.parkbobo.service.FireFightEquipmentHistoryService;
-import com.parkbobo.service.FireFightEquipmentService;
-import com.parkbobo.service.FirePatrolExceptionService;
-import com.parkbobo.service.FirePatrolInfoService;
-import com.parkbobo.service.FirePatrolUserService;
+import com.parkbobo.model.*;
+import com.parkbobo.service.*;
 import com.parkbobo.utils.PageBean;
 
 @Controller
@@ -50,6 +40,9 @@ public class FirePatrolManagerController {
 	@Resource
 	private FirePatrolInfoService firePatrolInfoService;
 
+	@Resource
+	private FirePatrolImgService firePatrolImgService;
+
 	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect};
 	/**
 	 * 获取所有巡查员
@@ -62,7 +55,8 @@ public class FirePatrolManagerController {
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
-			List<FirePatrolUser> allUser = this.firePatrolUserService.getAllUser();
+			String hql = "FROM FirePatrolUser WHERE isDel=0";
+			List<FirePatrolUser> allUser = this.firePatrolUserService.getAllUser(hql);
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(allUser,features)+"}");
 		} catch (IOException e) {
 			if(out==null){
@@ -100,7 +94,8 @@ public class FirePatrolManagerController {
 			patrolUser.setIsDel((short)0);
 			//patrolUser.setUsername(new String(username.getBytes("ISO-8859-1"),"utf-8"));
 			if (username != null) {
-				patrolUser.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
+//				patrolUser.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
+				patrolUser.setUsername(username);
 			} else {
 				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户名不能为空\"}");
 				return;
@@ -166,8 +161,9 @@ public class FirePatrolManagerController {
 			patrolUser.setLastUpdateTime(new Date());
 			patrolUser.setPassword(password);
 			patrolUser.setCreateTime(this.firePatrolUserService.getById(id).getCreateTime());
+			patrolUser.setIsDel((short)0);
 			if(username!=null){
-				patrolUser.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
+				patrolUser.setUsername(username);
 			}else{
 				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户名不能为空\"}");
 				return;
@@ -191,7 +187,7 @@ public class FirePatrolManagerController {
 	}
 	/**
 	 * 删除用户
-	 * @param 巡查员id
+	 * @param  id 巡查员id
 	 * @throws IOException 
 	 */
 	@RequestMapping("deleteFirePatrolUser")
@@ -245,6 +241,7 @@ public class FirePatrolManagerController {
 				}
 			}
 		}
+
 		if (firePatrolInfos != null && firePatrolInfos.size()>0) {
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(firePatrolInfos,features)+"}");
 		}else{
@@ -263,13 +260,29 @@ public class FirePatrolManagerController {
 	public void exceptionDetail(Integer fpId,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
+
+		if(fpId == null) {
+			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"参数不能为空\"}");
+			return;
+		}
+
 		FirePatrolInfo firePatrolInfo = firePatrolInfoService.get(fpId);
 		if (firePatrolInfo != null) {
 			String excptionTypes = firePatrolInfo.getExceptionTypes();
-			excptionTypes = excptionTypes.substring(0, excptionTypes.length()-1);
+//			excptionTypes = excptionTypes.substring(0, excptionTypes.length()-1);
 			String hql = "FROM FirePatrolException WHERE id IN ("+ excptionTypes +")";
 			List<FirePatrolException> patrolExceptions = firePatrolExceptionService.getByHQL(hql);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(firePatrolInfo,features)+",\"excptionData\":"+JSONObject.toJSONString(patrolExceptions,features)+"}");
+			//进行图片查询
+			String imgHql = "FROM FirePatrolImg WHERE infoId=" + fpId;
+			List<FirePatrolImg> firePatrolImgs = firePatrolImgService.getByHql(imgHql);
+			List<String> imgPaths = null;
+			if(firePatrolImgs != null && firePatrolImgs.size() > 0) {
+				imgPaths = new ArrayList<>();
+				for(FirePatrolImg firePatrolImg : firePatrolImgs) {
+					imgPaths.add(firePatrolImg.getImgUrl());
+				}
+			}
+			out.print("{\"status\":\"true\",\"Code\":1,\"imgPaths\":"+ JSON.toJSONString(imgPaths)+",\"data\":"+JSONObject.toJSONString(firePatrolInfo,features)+",\"excptionData\":"+JSONObject.toJSONString(patrolExceptions,features)+"}");
 		}else{
 			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"暂无该消防设备信息\"}");
 		}
@@ -279,17 +292,26 @@ public class FirePatrolManagerController {
 	/**
 	 * 巡查统计
 	 * @param response
+	 * @param page			当前页数
+	 * @param pageSize		当前页数量
 	 * @throws IOException
 	 */
 	@RequestMapping("statistical")
-	public void statistical(String startDate,HttpServletResponse response) throws IOException{
+	public void statistical(String startDate,Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
+
+		if(page == null || page == 0) {
+			page = 1;
+		}
+
 		PrintWriter out = response.getWriter();
 		String sql = "SELECT count (*) AS totalEqui, SUM (CASE WHEN fpi.status = 1 THEN 1 ELSE 0 END ) AS normalEqui,"+
 				"SUM (CASE WHEN fpi.status = 0 THEN 1 ELSE 0 END ) AS abnormalEqui,"+
 				"SUM (CASE WHEN fpi.check_status = 1 THEN 1 ELSE 0 END ) AS patrolEqui,"+
 				"SUM (CASE WHEN fpi.check_status = 0 THEN 1 ELSE 0 END ) AS unPatrolEqui,"+
 				"to_char(fpi.last_update_time,'YYYY-MM') AS month  FROM fire_fight_equipment_history AS fpi ";
+		int count = 0;
+		String countHql = "SELECT to_char(last_update_time, 'YYYY-MM') AS MONTH FROM fire_fight_equipment_history";
 		if (StringUtils.isNotBlank(startDate)) {
 			try {
 				startDate = startDate + "-01 00:00:00";
@@ -298,25 +320,51 @@ public class FirePatrolManagerController {
 				calendar.setTime(sdf.parse(startDate));
 				calendar.add(Calendar.MONTH, 1);
 				String endDate = sdf.format(calendar.getTime());
-				sql += " WHERE fpi.last_update_time >= '"+startDate+"' and fpi.last_update_time < '"+endDate+"'";
+				sql += " WHERE fpi.last_update_time BETWEEN '"+startDate+"' AND '"+endDate+"'";
+				countHql += " WHERE last_update_time BETWEEN '" + startDate + "' AND '" + endDate + "'";
 			} catch (ParseException e) {
 				e.printStackTrace();
 				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"网络错误\"}");
+				return;
 			}
 		}
-		sql += " GROUP BY month";
+		//这里进行计算offset
+		int start = (page -1) * pageSize;
+		sql += " GROUP BY month ORDER BY month DESC LIMIT "+pageSize+" OFFSET " + start;
+		countHql += " GROUP BY month";
+		List<Object[]> objectCount = fireFightEquipmentHistoryService.getBySql(countHql);
 		List<Object[]> objects = fireFightEquipmentHistoryService.getBySql(sql);
+		//是否还有下一页
+		boolean isNextPage = false;
+		count = objectCount.size();
+		if((page * pageSize) < count) {
+			isNextPage = true;
+		}
+
 		StringBuilder sb =new StringBuilder();
-		sb.append("{\"status\":\"true\",\"errorCode\":0,\"list\":[");
+		sb.append("{\"status\":\"true\",\"page\":"+page+",\"pageSize\":"+pageSize+",\"count\":"+count+",\"isNextPage\":"+isNextPage+",\"errorCode\":0,\"list\":[");
 		if(objects!=null && objects.size()>0){
 			int i = 0;
 			for (Object[] object : objects) {
+//				sb.append("{");
+//				sb.append("\"normalEqui\":\""+object[0]+"\",");
+//				sb.append("\"abnormalEqui\":\""+object[1]+"\",");
+//				sb.append("\"patrolEqui\":\""+object[2]+"\",");
+//				sb.append("\"unPatrolEqui\":\""+object[3]+"\",");
+//				sb.append("\"totalEqui\":\""+object[4]+"\",");
+//				sb.append("\"month\":\""+object[5]+"\"");
+//				if(i==objects.size()-1){
+//					sb.append("}");
+//				}else{
+//					sb.append("},");
+//				}
+//				i++;
 				sb.append("{");
-				sb.append("\"normalEqui\":\""+object[0]+"\",");
-				sb.append("\"abnormalEqui\":\""+object[1]+"\",");
-				sb.append("\"patrolEqui\":\""+object[2]+"\",");
-				sb.append("\"unPatrolEqui\":\""+object[3]+"\",");
-				sb.append("\"totalEqui\":\""+object[4]+"\",");
+				sb.append("\"totalEqui\":\""+object[0]+"\",");
+				sb.append("\"normalEqui\":\""+object[1]+"\",");
+				sb.append("\"abnormalEqui\":\""+object[2]+"\",");
+				sb.append("\"patrolEqui\":\""+object[3]+"\",");
+				sb.append("\"unPatrolEqui\":\""+object[4]+"\",");
 				sb.append("\"month\":\""+object[5]+"\"");
 				if(i==objects.size()-1){
 					sb.append("}");
@@ -359,6 +407,19 @@ public class FirePatrolManagerController {
 					hql += " and checkStatus = 0";
 				}
 				PageBean<FireFightEquipmentHistory> fireFightEquis = fireFightEquipmentHistoryService.pageQuery(hql, pageSize, page);
+
+				if (fireFightEquis.getList()!=null && fireFightEquis.getList().size()>0) {
+					for (FireFightEquipmentHistory fireHisFightEquipment : fireFightEquis.getList()) {
+						String fpinfoHql = "from FirePatrolInfo where timestamp >= '"+startDate+"' and timestamp < '"+endDate+"'"+
+								" and fireFightEquipment.id = " + fireHisFightEquipment.getOldId()+"order by timestamp desc";
+						List<FirePatrolInfo> firePatrolInfo = firePatrolInfoService.getByHqlPatrolInfo(fpinfoHql);
+						if (firePatrolInfo!=null && firePatrolInfo.size()>0) {
+							fireHisFightEquipment.setFpid(firePatrolInfo.get(0).getId());
+						}
+					}
+				}
+
+
 				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(fireFightEquis,features)+"}");
 			}else{
 				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"参数不完整\"}");

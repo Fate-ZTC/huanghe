@@ -1,60 +1,26 @@
 package com.parkbobo.controller;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.parkbobo.model.PatrolConfig;
-import com.parkbobo.model.PatrolEmergency;
-import com.parkbobo.model.PatrolException;
 import com.parkbobo.model.PatrolRegion;
-import com.parkbobo.model.PatrolUser;
 import com.parkbobo.model.PatrolUserRegion;
-import com.parkbobo.model.PatrolUserRegionShow;
-import com.parkbobo.service.PatrolConfigService;
-import com.parkbobo.service.PatrolEmergencyService;
-import com.parkbobo.service.PatrolExceptionService;
-import com.parkbobo.service.PatrolLocationInfoService;
-import com.parkbobo.service.PatrolRegionService;
-import com.parkbobo.service.PatrolUserRegionService;
-import com.parkbobo.service.PatrolUserService;
+import com.parkbobo.service.*;
 import com.parkbobo.utils.ExcelOut;
 import com.parkbobo.utils.PageBean;
 import com.system.model.Manager;
 import com.system.service.OptLogsService;
-import com.vividsolutions.jts.geom.MultiPolygon;
 
 /**
  * 安防后台管理
@@ -132,8 +98,6 @@ public class PatrolBackstageController {
 	}
 	/**
 	 * 巡查信息列表导出
-	 * @param username
-	 * @param jobNum
 	 * @param response
 	 * @param request
 	 * @throws IOException
@@ -189,7 +153,12 @@ public class PatrolBackstageController {
 		ModelAndView mv = new ModelAndView();
 		String hql = "from PatrolRegion where isDel != 1 order by id asc";
 		List<PatrolRegion> patrolRegions = patrolRegionService.getByHQL(hql);
-		PageBean<PatrolRegion> patrolRegionPage = this.patrolRegionService.getBySth(regionId, campusNum, pageSize, page);
+		PageBean<PatrolRegion> patrolRegionPage = new PageBean<>();
+		if(regionId == null) {
+			patrolRegionPage.setList(patrolRegions);
+		}else {
+			patrolRegionPage = this.patrolRegionService.getBySth(regionId, campusNum, pageSize, page);
+		}
 		mv.addObject("patrolRegionPage",patrolRegionPage);
 		mv.addObject("patrolRegions",patrolRegions);
 		mv.setViewName("manager/system/patrol/patrolRegList");
@@ -197,11 +166,7 @@ public class PatrolBackstageController {
 	}
 	/**
 	 * 安防巡更区域删除
-	 * @param regionId 区域id
-	 * @param campusNum 校区id
-	 * @param page 页码
-	 * @param pageSize 每页条数
-	 * @param response
+	 * @param ids 区域id
 	 */
 	@RequestMapping("patrolReg_delete")
 	public ModelAndView patrolRegDelete(String ids){
@@ -224,14 +189,17 @@ public class PatrolBackstageController {
 	 * @param regionName 区域名
 	 */
 	@RequestMapping("patrolReg_add")
-	public ModelAndView patrolRegAdd(String regionName){
+	public ModelAndView patrolRegAdd(String regionName,String color){
 		ModelAndView mv = new ModelAndView();
 		PatrolRegion patrolRegion = new PatrolRegion();
 		Date date = new Date();
+		//TODO 这里进行默认校区设置(默认设置为校区一)
+		patrolRegion.setCampusNum(1);
 		patrolRegion.setCreatetime(date);
 		patrolRegion.setIsDel((short)0);
 		patrolRegion.setLastUpdateTime(date);
 		patrolRegion.setRegionName(regionName);
+		patrolRegion.setColor(color);
 		patrolRegionService.addRecord(patrolRegion);
 		mv.setViewName("redirect:/patrolRegList?method=addSuccess");
 		return mv;
@@ -249,6 +217,22 @@ public class PatrolBackstageController {
 		patrolRegion.setLastUpdateTime(new Date());
 		patrolRegionService.update(patrolRegion);
 		mv.setViewName("redirect:/patrolRegList?method=editSuccess");
+		return mv;
+	}
+
+
+	/**
+	 * 跳转到绘制地图页面
+	 * @param id	区域id
+	 * @return
+     */
+	@RequestMapping("/firePatrolMap")
+	public ModelAndView patrolMap(Integer id) {
+		ModelAndView mv = new ModelAndView();
+		if(id != null && id > 0) {
+			mv.addObject("id",id);
+		}
+		mv.setViewName("manager/system/firePatrolMap/map");
 		return mv;
 	}
 	

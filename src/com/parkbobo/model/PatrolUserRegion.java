@@ -3,18 +3,7 @@ package com.parkbobo.model;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 @Entity
 @Table(name="patrol_user_region")
@@ -73,7 +62,34 @@ public class PatrolUserRegion implements Serializable{
 	private String formatStartTime;
 	private String formatEndTime;
 	private String regionName;
-	
+	/**
+	 * 离开巡更区域开始时间
+     */
+	private Date leaveRegionStartTime;
+	/**
+	 * 人员位置不变化开始时间
+     */
+	private Date locationNotChangeStartTime;
+	/**
+	 * 异常推动开始时间
+     */
+	private Date exceptionPushTime;
+	/**
+	 * 是否到达
+     */
+	private boolean isArrive;
+	/**
+	 * 区域id
+     */
+	private int campusNum;
+
+	public PatrolUserRegion() {}
+
+	public PatrolUserRegion(String username, String jobNum) {
+		this.username = username;
+		this.jobNum = jobNum;
+	}
+
 	@Id
 	@Column(name="id",unique=true,nullable=false)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -193,8 +209,50 @@ public class PatrolUserRegion implements Serializable{
 	public String getRegionName() {
 		return regionName;
 	}
-	public void setRegionName(String regionName) {
+	public void setRegionName(String ronName) {
 		this.regionName = regionName;
 	}
-	
+
+	@Column(name = "leave_region_start_time")
+	public Date getLeaveRegionStartTime() {
+		return leaveRegionStartTime;
+	}
+
+	public void setLeaveRegionStartTime(Date leaveRegionStartTime) {
+		this.leaveRegionStartTime = leaveRegionStartTime;
+	}
+
+	@Column(name = "not_change_start_time")
+	public Date getLocationNotChangeStartTime() {
+		return locationNotChangeStartTime;
+	}
+
+	public void setLocationNotChangeStartTime(Date locationNotChangeStartTime) {
+		this.locationNotChangeStartTime = locationNotChangeStartTime;
+	}
+	@Column(name = "exception_push_time")
+	public Date getExceptionPushTime() {
+		return exceptionPushTime;
+	}
+
+	public void setExceptionPushTime(Date exceptionPushTime) {
+		this.exceptionPushTime = exceptionPushTime;
+	}
+	@Column(name = "is_arrive")
+	public boolean isArrive() {
+		return isArrive;
+	}
+
+	public void setArrive(boolean arrive) {
+		isArrive = arrive;
+	}
+
+	@Column(name = "campus_num")
+	public int getCampusNum() {
+		return campusNum;
+	}
+
+	public void setCampusNum(int campusNum) {
+		this.campusNum = campusNum;
+	}
 }

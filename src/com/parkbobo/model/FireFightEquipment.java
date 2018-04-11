@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="fire_fight_equipment")
-@SequenceGenerator(name="generator", sequenceName="fire_fight_equipment_id_seq", allocationSize = 1)
+@SequenceGenerator(name="generator", sequenceName="fire_fight_equipment_info_id_seq", allocationSize = 1)
 public class FireFightEquipment implements Serializable{
 
 	/**
@@ -35,11 +35,11 @@ public class FireFightEquipment implements Serializable{
 	/**
 	 * 经度
 	 */
-	private Float lon;
+	private float lon;
 	/**
 	 * 纬度
 	 */
-	private Float lat;
+	private float lat;
 	/**
 	 * 巡查状态 0未检查 1已检查
 	 */
@@ -52,6 +52,32 @@ public class FireFightEquipment implements Serializable{
 	 * 校区
 	 */
 	private Integer campusNum;
+	/**
+	 * 楼层id
+     */
+	private String floorid;
+	/**
+	 * 图标
+     */
+	private String icon;
+	/**
+	 * 更新的id
+     */
+	private Integer pointid;
+
+
+
+
+//	      "coordinate": "[112.54907589175903,32.96925426267295]",
+//				  "floorid": "103214",
+//				  "geometry": "POINT (112.54907589175903 32.96925426267295)",
+//				  "icon": "zhuantitu/icon/xfk.png",
+//				  "images": "",
+//				  "name": "消防栓",
+//				  "pointid": 333
+
+
+
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -76,17 +102,17 @@ public class FireFightEquipment implements Serializable{
 		this.name = name;
 	}
 	@Column(name="lon")
-	public Float getLon() {
+	public float getLon() {
 		return lon;
 	}
-	public void setLon(Float lon) {
+	public void setLon(float lon) {
 		this.lon = lon;
 	}
 	@Column(name="lat")
-	public Float getLat() {
+	public float getLat() {
 		return lat;
 	}
-	public void setLat(Float lat) {
+	public void setLat(float lat) {
 		this.lat = lat;
 	}
 	@Column(name="check_status")
@@ -109,5 +135,29 @@ public class FireFightEquipment implements Serializable{
 	}
 	public void setCampusNum(Integer campusNum) {
 		this.campusNum = campusNum;
+	}
+
+	public String getFloorid() {
+		return floorid;
+	}
+
+	public void setFloorid(String floorid) {
+		this.floorid = floorid;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public Integer getPointid() {
+		return pointid;
+	}
+
+	public void setPointid(Integer pointid) {
+		this.pointid = pointid;
 	}
 }

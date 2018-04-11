@@ -1,9 +1,10 @@
 <%@ page language="java" import="java.util.*,java.text.*" pageEncoding="UTF-8"%>
 <%@include file="../../taglibs.jsp" %>
 <%
-String path = request.getContextPath();
-DateFormat df = new SimpleDateFormat("yyyy年MM月dd日，EEE", Locale.CHINA);
-String date ="今天是："+ df.format(new Date());
+	String path = request.getContextPath();
+	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+	DateFormat df = new SimpleDateFormat("yyyy年MM月dd日，EEE", Locale.CHINA);
+	String date ="今天是："+ df.format(new Date());
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -102,7 +103,10 @@ String date ="今天是："+ df.format(new Date());
 					        <td><input type="checkbox" name="checkbox" value="${m.id}" id="checkbox_${m.id}" class="checkItem"/></td>
 					        <td>${m.regionName}</td>
 					        <td>${m.lastUpdateTime}</td>
-					        <td style="color:#16c2ea;"><a  style="color:#16c2ea;" href="javascript:void(0);" onclick="upHtm('${m.regionName}',${m.id});">修改名称</a> 配置巡更范围</td>
+					        <td style="color:#16c2ea;">
+								<a  style="color:#16c2ea;" href="javascript:void(0);" onclick="upHtm('${m.regionName}',${m.id});">修改名称</a>
+								<a style="color:#16c2ea;" href="javascript:void(0);" onclick="toPatrolMap(${m.id})">配置巡更范围</a>
+							</td>
 					        </tr> 
 				        </c:forEach>
 			        </tbody>
@@ -123,40 +127,45 @@ String date ="今天是："+ df.format(new Date());
 			    <!-- 分页结束 -->
 </div>
 <script type="text/javascript">
-$(function(){
-    	//选择框
-	    $(".select3").uedSelect({
-			width : 150
-		});
-		/**
-		 * 弹出页面
-		 */
-    });
-var the_host = "<%=path%>/";
-function upHtm(regionName,regionId){
-	$(".layui-layer-title").text("修改信息");
-	layer.open({
-	  type: 1,
-	  skin: 'layui-layer-rim', //加上边框
-	  area: ['420px', '240px'], //宽高
-	  content: '<form action="<%=path %>/patrolReg_update" method="post" id="editForm">'+
-   				'<ul class="updul"><li>巡更区域名称:<input name="regionName" style="font-size:1.5rem" type="text" value="'+regionName+'"/></li>'+
-   				'<input name="regionId" type="hidden" value="'+regionId+'"/>'+
-   				'<li><input type="submit" class="btn" value="提交"/><label>&nbsp;</label><input type="reset" class="btn" value="重置"/> </li></ul></form>'
-	});
-}
-function addHtm(){
-	$(".layui-layer-title").text("增加信息");
-	layer.open({
-	  type: 1,
-	  skin: 'layui-layer-rim', //加上边框
-	  area: ['420px', '240px'], //宽高
-	  content: '<form action="<%=path %>/patrolReg_add" method="post" id="addForm">'+
-   				'<ul class="updul"><li>巡更区域名称:<input name="regionName" style="font-size:1.5rem" type="text" value=""/></li>'+
-   				'<li><input type="submit" class="btn" value="提交"/><label>&nbsp;</label><input type="reset" class="btn" value="重置"/> </li></ul></form>'
-	});
-}
-$('.tablelist tbody tr:odd').addClass('odd');
+		$(function(){
+				//选择框
+				$(".select3").uedSelect({
+					width : 150
+				});
+				/**
+				 * 弹出页面
+				 */
+			});
+		var the_host = "<%=path%>/";
+		function upHtm(regionName,regionId){
+			$(".layui-layer-title").text("修改信息");
+			layer.open({
+			  type: 1,
+			  skin: 'layui-layer-rim', //加上边框
+			  area: ['420px', '240px'], //宽高
+			  content: '<form action="<%=path %>/patrolReg_update" method="post" id="editForm">'+
+						'<ul class="updul"><li>巡更区域名称:<input name="regionName" style="font-size:1.5rem" type="text" value="'+regionName+'"/></li>'+
+						'<input name="regionId" type="hidden" value="'+regionId+'"/>'+
+						'<li><input type="submit" class="btn" value="提交"/><label>&nbsp;</label><input type="reset" class="btn" value="重置"/> </li></ul></form>'
+			});
+		}
+
+		function addHtm(){
+			$(".layui-layer-title").text("增加信息");
+			layer.open({
+			  type: 1,
+			  skin: 'layui-layer-rim', //加上边框
+			  area: ['420px', '340px'], //宽高
+			  content: '<form action="<%=path %>/patrolReg_add" method="post" id="addForm">'+
+						'<ul class="updul">' +
+			  '<li>巡更区域名称:<input name="regionName" style="font-size:1.5rem" type="text" value=""/></li>' +
+			  '<li>颜色:<input name="color" style="font-size:1.5rem" type="text" value=""/></li>' +
+						'<li><input type="submit" class="btn" value="提交"/><label>&nbsp;</label><input type="reset" class="btn" value="重置"/> </li></ul></form>'
+			});
+		}
+
+
+		$('.tablelist tbody tr:odd').addClass('odd');
 	
 		$(document).ready(function(){
 			$(".m_berthOrder_l").attr("class","lhover");
@@ -204,10 +213,20 @@ $('.tablelist tbody tr:odd').addClass('odd');
 				}
 			});
 		});
-// 		function reload(type){
-// 			location.href=the_host+"berthOrder_list?event="+type;
-			
-// 		}
+
+
+
+		//点击进入绘制地图界面
+		var toPatrolMap = function (id) {
+			//点击进入绘制地图区域
+			if(id != undefined) {
+				window.location.href = '<%=basePath%>firePatrolMap?' + id;
+			}
+		};
+
+
+
+
 		/**
 		 * 删除
 		 */

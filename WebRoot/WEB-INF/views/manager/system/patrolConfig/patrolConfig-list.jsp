@@ -12,7 +12,7 @@
     <link href="<%=path %>/page/css/style.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="<%=path %>/page/js/jquery.js"></script>
     <%--<script type="text/javascript" src="<%=path %>/page/js/common.js"></script>--%>
-    <%--<script type="text/javascript" src="<%=path %>/page/layer/layer.js"></script>--%>
+    <script type="text/javascript" src="<%=path %>/page/layer/layer.js"></script>
     <%--<link rel="stylesheet" href="<%=path %>/page/css/common-PC.css" />--%>
     <link rel="stylesheet" href="<%=path %>/page/css/Tstyle.css" />
     <%--<script src="<%=path %>/page/js/jquery.min.js" type="text/javascript"></script>--%>
@@ -117,7 +117,7 @@
                                 </div>
                                 <div class="control-content-three">
 								<span class="mark">
-									（设置后，系统每<span class="input-result">x</span>秒获取一次巡更人员的位置信息）
+									（设置后,系统每秒<span class="input-result">${patrolConfig.uploadTime }</span>获取一次巡更人员的位置信息）
 								</span>
                                 </div>
                             </div>
@@ -139,7 +139,7 @@
                                 </div>
                                 <div class="control-content-three">
 								<span class="mark">
-									（设置后，管理端每<span class="input-result">5</span>秒更新一次巡更人员的位置信息）
+									（设置后,系统每<span class="input-result">${patrolConfig.refreshTime }</span>秒更新一次巡更人员的位置信息）
 								</span>
                                 </div>
                             </div>
@@ -161,7 +161,7 @@
                                 </div>
                                 <div class="control-content-three">
 								<span class="mark">
-									（设置后，巡更人员在点击开始巡更后，允许在<span class="input-result">5</span>分钟内到达巡更区域）
+									（设置后，巡更人员在点击开始巡更后，允许在<span class="input-result">${patrolConfig.startPatrolTime }</span>分钟后到达巡更区域）
 								</span>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@
                                 </div>
                                 <div class="control-content-three">
 								<span class="mark">
-									（设置后，巡更人员在第<span class="input-result">20</span>分钟位置仍没有变动，系统讲给管理员发送预警提醒）
+									（设置后，巡更人员在<span class="input-result">${patrolConfig.lazyTime }</span>分钟内位置没有变动，系统将给管理员发送预警提醒）
 								</span>
                                 </div>
                             </div>
@@ -206,7 +206,7 @@
                                 </div>
                                 <div class="control-content-three">
 								<span class="mark">
-									（设置后，巡更人员在离开巡更范围<span class="input-result">20</span>分钟后，系统讲给管理员发送预警提醒）
+									（设置后，巡更人员在离开巡更范围<span class="input-result">${patrolConfig.leaveRegionTime }</span>分钟后，系统将给管理员发送预警提醒）
 								</span>
                                 </div>
                             </div>
@@ -228,7 +228,7 @@
                                 </div>
                                 <div class="control-content-three">
 								<span class="mark">
-									（设置后，巡更人员在离开巡更区域<span class="input-result">20</span>米后，系统讲给管理员发送预警提醒）
+									（设置后,系统将允许巡更人员离开巡逻范围<span class="input-result">${patrolConfig.leaveRegionDistance }</span>米，系统讲给管理员发送预警提醒）
 								</span>
                                 </div>
                             </div>
@@ -251,7 +251,7 @@
                                 </div>
                                 <div class="control-content-three">
 								<span class="mark">
-									（设置后，超过<span class="input-result">20</span>分钟获取不到巡更人员位置，系统讲给管理员发送预警提醒）
+									（设置后，超过<span class="input-result">${patrolConfig.personnelLossTime }</span>分钟获取不到巡更人员位置，系统讲给管理员发送预警提醒）
 								</span>
                                 </div>
                             </div>
@@ -273,7 +273,7 @@
                                 </div>
                                 <div class="control-content-three">
 								<span class="mark">
-									（设置后，巡更发现异常，将在<span class="input-result">20</span>分钟后进行二次推送提醒[首次发现异常，会立即推送告知]）
+									（设置后，巡更发现异常，将在<span class="input-result">${patrolConfig.exceptionPushTime }</span>分钟后进行二次推送提醒[首次发现异常，会立即推送告知]）
 								</span>
                                 </div>
                             </div>

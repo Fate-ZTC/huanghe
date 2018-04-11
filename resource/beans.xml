@@ -113,7 +113,7 @@
 		    <tx:method name="takeEffectOrder*" propagation="REQUIRED" read-only="false"/>
 		    <tx:method name="weixinRecharge*" propagation="REQUIRED" read-only="false"/>
 		     <tx:method name="ebOrderPayAmount*" propagation="REQUIRED" read-only="false"/>
-			<tx:method name="*" read-only="true"/>
+			<tx:method name="*" read-only="false"/>
 		</tx:attributes>
 	</tx:advice>
 	

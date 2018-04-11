@@ -59,7 +59,7 @@ public class FirePatrolInfo implements Serializable{
 	 */
 	private String description;
 	/**
-	 * 是否是最新的一条
+	 * 是否是最新的一条 0 不是  1 是
 	 */
 	private Short isNewest;
 	@Id

@@ -3,38 +3,24 @@ package com.parkbobo.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.parkbobo.model.FireFightEquipment;
-import com.parkbobo.model.FireFightEquipmentHistory;
-import com.parkbobo.model.FirePatrolConfig;
-import com.parkbobo.model.FirePatrolException;
-import com.parkbobo.model.FirePatrolImg;
-import com.parkbobo.model.FirePatrolInfo;
-import com.parkbobo.model.FirePatrolUser;
-import com.parkbobo.service.FireFightEquipmentHistoryService;
-import com.parkbobo.service.FireFightEquipmentService;
-import com.parkbobo.service.FirePatrolConfigService;
-import com.parkbobo.service.FirePatrolExceptionService;
-import com.parkbobo.service.FirePatrolImgService;
-import com.parkbobo.service.FirePatrolInfoService;
-import com.parkbobo.service.FirePatrolUserService;
+import com.parkbobo.model.*;
+import com.parkbobo.service.*;
 import com.parkbobo.utils.GisUtil;
 
 /**
@@ -145,6 +131,8 @@ public class FirePatrolUserController {
 		}
 	}
 
+
+	//TODO 这里上传的图片保存的地址是有问题的,是项目的相关地址
 	public String upload(HttpServletRequest request,
 			@RequestParam("file") MultipartFile file) throws Exception {
 		//如果文件不为空，写入上传路径
@@ -160,11 +148,13 @@ public class FirePatrolUserController {
 			}
 			//将上传文件保存到一个目标文件当中
 			file.transferTo(new File(path + File.separator + filename));
-			return path + File.separator + filename;
+			String basePath =
+					request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
+							request.getContextPath() + File.separator + "images" + File.separator + filename ;
+			return basePath;
 		} else {
 			return "error";
 		}
-
 	}
 
 	/**
@@ -175,7 +165,7 @@ public class FirePatrolUserController {
 	 * @throws IOException 
 	 */
 	@RequestMapping("normalUpload")
-	public void normalUpload(MultipartFile[] file,Double lon,Double lat,Integer userId,Integer equipmentId,HttpServletResponse response,HttpServletRequest request) throws IOException{
+	public void normalUpload(@RequestParam("file") MultipartFile[] file,Double lon,Double lat,Integer userId,Integer equipmentId,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		PrintWriter out = null;
 		try {
 
@@ -184,18 +174,22 @@ public class FirePatrolUserController {
 			FirePatrolConfig patrolConfig = this.firePatrolConfigService.getById(1);
 			FireFightEquipment fireFightEquipment = this.fireFightEquipmentService.getById(equipmentId);
 			GisUtil g = GisUtil.getInstance();
-			if(g.distanceByLngLat(lon, lat, (double)fireFightEquipment.getLon(), (double)fireFightEquipment.getLat())>patrolConfig.getDistance()){
+			double flon = fireFightEquipment.getLon();
+			double flat = fireFightEquipment.getLat();
+			double distance = g.distanceByLngLat(lon, lat, flon,flat);
+			if( distance > patrolConfig.getDistance()) {
 				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"请在指定区域内上传数据\"}");
 				return;
 			}
 			Date date = new Date();
 			FirePatrolInfo newest = this.firePatrolInfoService.getNewest(equipmentId);
-			if(newest!=null&&isEquals(date, newest.getTimestamp())){
+			if(newest != null && isEquals(date, newest.getTimestamp())) {
 				newest.setIsNewest((short)0);
 				this.firePatrolInfoService.update(newest);
 			}
+
 			FirePatrolUser patrolUser = this.firePatrolUserService.getById(userId);
-			if(patrolUser!=null){
+			if(patrolUser!=null) {
 				FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
 				firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
 				firePatrolInfo.setFirePatrolUser(patrolUser);
@@ -205,10 +199,13 @@ public class FirePatrolUserController {
 				firePatrolInfo.setIsNewest((short)1);
 				firePatrolInfo.setTimestamp(date);
 				firePatrolInfo.setUserName(patrolUser.getUsername());
+
+				Integer id = fireFightEquipment.getId();
+				List<FireFightEquipmentHistory> fireFightEquiHistory = fireFightEquipmentHistoryService.getByProperty("oldId", fireFightEquipment.getId(), "lastUpdateTime", false);
 				fireFightEquipment.setCheckStatus((short)1);
 				fireFightEquipment.setStatus((short)1);
 				fireFightEquipment.setLastUpdateTime(date);
-				List<FireFightEquipmentHistory> fireFightEquiHistory = fireFightEquipmentHistoryService.getByProperty("oldId", fireFightEquipment.getId(), "lastUpdateTime", false);
+				System.out.println(fireFightEquiHistory);
 				if (fireFightEquiHistory!=null && fireFightEquiHistory.size()>0) {
 					FireFightEquipmentHistory fireFightEquipmentHistory = fireFightEquiHistory.get(0);
 					fireFightEquipmentHistory.setCheckStatus((short)1);
@@ -244,6 +241,7 @@ public class FirePatrolUserController {
 				out=response.getWriter();
 			}
 			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"未知异常,请技术人员\"}");
+			e.printStackTrace();
 		}finally{
 			out.flush();
 			out.close();
@@ -261,7 +259,7 @@ public class FirePatrolUserController {
 	 * @throws IOException
 	 */
 	@RequestMapping("abnormalUpload")
-	public void abnormalUpload(MultipartFile[] file,Double lon,Double lat,Integer userId,Integer equipmentId,String exceptionTypes,String description,HttpServletResponse response,HttpServletRequest request) throws IOException{
+	public void abnormalUpload(@RequestParam("file") MultipartFile[] file,Double lon,Double lat,Integer userId,Integer equipmentId,String exceptionTypes,String description,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		PrintWriter out = null;
 		try {
 			response.setCharacterEncoding("UTF-8");
@@ -286,7 +284,8 @@ public class FirePatrolUserController {
 				firePatrolInfo.setFirePatrolUser(patrolUser);
 				firePatrolInfo.setFireFightEquipment(fireFightEquipment);
 				if (description != null) {
-					firePatrolInfo.setDescription(URLDecoder.decode(URLEncoder.encode(description, "ISO8859_1"), "UTF-8"));
+//					firePatrolInfo.setDescription(URLDecoder.decode(URLEncoder.encode(description, "ISO8859_1"), "UTF-8"));
+					firePatrolInfo.setDescription(description);
 				}else{
 					firePatrolInfo.setDescription(description);
 				}
@@ -295,10 +294,10 @@ public class FirePatrolUserController {
 				firePatrolInfo.setIsNewest((short)1);
 				firePatrolInfo.setTimestamp(date);
 				firePatrolInfo.setUserName(patrolUser.getUsername());
+				List<FireFightEquipmentHistory> fireFightEquiHistory = fireFightEquipmentHistoryService.getByProperty("oldId", fireFightEquipment.getId(), "lastUpdateTime", false);
 				fireFightEquipment.setCheckStatus((short)1);
 				fireFightEquipment.setStatus((short)0);
 				fireFightEquipment.setLastUpdateTime(date);
-				List<FireFightEquipmentHistory> fireFightEquiHistory = fireFightEquipmentHistoryService.getByProperty("oldId", fireFightEquipment.getId(), "lastUpdateTime", false);
 				if (fireFightEquiHistory!=null && fireFightEquiHistory.size()>0) {
 					FireFightEquipmentHistory fireFightEquipmentHistory = fireFightEquiHistory.get(0);
 					fireFightEquipmentHistory.setCheckStatus((short)1);
@@ -334,10 +333,31 @@ public class FirePatrolUserController {
 				out=response.getWriter();
 			}
 			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"未知异常,请技术人员\"}");
+			e.printStackTrace();
 		}finally{
 			out.flush();
 			out.close();
 		}
+	}
+
+
+	/**
+	 * 测试上传相关内容
+	 * @param file
+	 * @param request
+	 * @throws Exception
+     */
+	@RequestMapping(value = "test",method = RequestMethod.POST)
+	public void test(@RequestParam("file") MultipartFile[] file,HttpServletRequest request) throws Exception {
+
+		if(file!=null && file.length > 0) {
+			for (MultipartFile f:file) {
+				String filePath = upload(request,f);
+				System.out.println(filePath);
+			}
+		}
+
+		System.out.println(file.length);
 	}
 
 	/**

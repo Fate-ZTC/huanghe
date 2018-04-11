@@ -2,14 +2,7 @@ package com.parkbobo.model;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="fire_fight_equipment_history")
@@ -40,11 +33,11 @@ public class FireFightEquipmentHistory implements Serializable{
 	/**
 	 * 经度
 	 */
-	private Float lon;
+	private double lon;
 	/**
 	 * 纬度
 	 */
-	private Float lat;
+	private double lat;
 	/**
 	 * 巡查状态 0未检查 1已检查
 	 */
@@ -57,6 +50,10 @@ public class FireFightEquipmentHistory implements Serializable{
 	 * 校区
 	 */
 	private Integer campusNum;
+	/**
+	 * 异常信息
+	 */
+	private Integer fpid;
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -81,17 +78,17 @@ public class FireFightEquipmentHistory implements Serializable{
 		this.name = name;
 	}
 	@Column(name="lon")
-	public Float getLon() {
+	public double getLon() {
 		return lon;
 	}
-	public void setLon(Float lon) {
+	public void setLon(double lon) {
 		this.lon = lon;
 	}
 	@Column(name="lat")
-	public Float getLat() {
+	public double getLat() {
 		return lat;
 	}
-	public void setLat(Float lat) {
+	public void setLat(double lat) {
 		this.lat = lat;
 	}
 	@Column(name="check_status")
@@ -121,6 +118,13 @@ public class FireFightEquipmentHistory implements Serializable{
 	}
 	public void setOldId(Integer oldId) {
 		this.oldId = oldId;
+	}
+	@Transient
+	public Integer getFpid() {
+		return fpid;
+	}
+	public void setFpid(Integer fpid) {
+		this.fpid = fpid;
 	}
 	
 }

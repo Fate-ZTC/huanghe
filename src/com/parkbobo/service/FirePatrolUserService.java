@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 
 import com.parkbobo.dao.FirePatrolUserDao;
 import com.parkbobo.model.FirePatrolUser;
+import com.parkbobo.model.PatrolUser;
 import com.parkbobo.utils.PageBean;
+
+import static gnu.inet.encoding.DecompositionMappings.m;
 
 @Service
 public class FirePatrolUserService {
@@ -34,8 +37,8 @@ public class FirePatrolUserService {
 	 * 获取所有用户信息
 	 * @return 用户信息集合
 	 */
-	public List<FirePatrolUser> getAllUser(){
-		return this.firePatrolUserDao.getAll();
+	public List<FirePatrolUser> getAllUser(String hql){
+		return this.firePatrolUserDao.getByHQL(hql);
 	}
 	/**
 	 * 分页查询
@@ -71,7 +74,7 @@ public class FirePatrolUserService {
 	 * @return  0 工号已存在  1成功   2未知错误
 	 */
 	public int addUser(FirePatrolUser patrolUser){
-		boolean isExist = this.firePatrolUserDao.existsByProperty("jobNum",patrolUser.getJobNum());
+		boolean isExist = this.firePatrolUserDao.existsByPropertys(new String[]{"jobNum","isDel"},new Object[]{patrolUser.getJobNum(),(short)0});
 		if(isExist){
 			return 0;
 		}
@@ -94,7 +97,7 @@ public class FirePatrolUserService {
 			return 0;
 		}
 		try {
-			this.firePatrolUserDao.update(patrolUser);
+			this.firePatrolUserDao.merge(patrolUser);
 		} catch (Exception e) {
 			return 2;
 		}

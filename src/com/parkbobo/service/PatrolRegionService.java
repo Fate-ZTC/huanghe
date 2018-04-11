@@ -1,13 +1,8 @@
 package com.parkbobo.service;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.List;
-
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.parkbobo.dao.PatrolRegionDao;
@@ -40,8 +35,8 @@ public class PatrolRegionService {
 	}
 	
 	public PageBean<PatrolRegion> getBySth(Integer regionId,Integer campusNum,Integer pageSize,Integer page){
-		String hql = "from PatrolRegion where 1= 1";
-		if(regionId!=null){
+		String hql = "from PatrolRegion where isDel=0";
+		if(regionId!=null && regionId > 0){
 			hql += " and id = "+regionId;
 		}
 		if(campusNum!=null){

@@ -16,7 +16,20 @@
 	<context:component-scan base-package="com.system.controller,com.parkbobo.weixin.controller,com.parkbobo.controller" />
 
 	<!-- 开启MVC注解支持 -->
-	<mvc:annotation-driven />
+	<!--<mvc:annotation-driven />-->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+						<value>*/*;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
 
 	<!-- 静态资源访问 -->
 	<mvc:default-servlet-handler />
@@ -25,9 +38,10 @@
 	<bean id="multipartResolver"  
           class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
         <!--1024*1024*5即5M-->  
-        <property name="maxUploadSize" value="5242880"/>  
+        <property name="maxUploadSize" value="100000000"/>
         <!--resolveLazily属性启用是为了推迟文件解析，以便在UploadAction 中捕获文件大小异常-->  
-        <property name="resolveLazily" value="true"/>    
+        <property name="resolveLazily" value="true"/>
+		<property name="defaultEncoding" value="utf-8"/>
     </bean> 
 	
 

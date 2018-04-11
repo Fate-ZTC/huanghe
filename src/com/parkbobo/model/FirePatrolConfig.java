@@ -23,6 +23,10 @@ public class FirePatrolConfig implements Serializable{
 	 * 最远扫码距离
 	 */
 	private Integer distance;
+	/**
+	 * 消防设备类型id
+     */
+	private String equipmentType;
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	public Integer getId() {
@@ -38,5 +42,12 @@ public class FirePatrolConfig implements Serializable{
 	public void setDistance(Integer distance) {
 		this.distance = distance;
 	}
-	
+	@Column(name = "equipment_type")
+	public String getEquipmentType() {
+		return equipmentType;
+	}
+
+	public void setEquipmentType(String equipmentType) {
+		this.equipmentType = equipmentType;
+	}
 }

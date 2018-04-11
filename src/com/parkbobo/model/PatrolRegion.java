@@ -2,21 +2,13 @@ package com.parkbobo.model;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKTWriter;
 
 @Entity
@@ -51,10 +43,16 @@ public class PatrolRegion implements Serializable{
 	private Date lastUpdateTime;
 
 	/**
+	 * 颜色16进制值
+     */
+	private String color;
+
+
+	/**
 	 * 空间几何信息
 	 */
 	@JSONField(serialize=false)
-	private MultiPolygon regionLocation;
+	private Geometry regionLocation;
 
 
 	/**
@@ -107,11 +105,11 @@ public class PatrolRegion implements Serializable{
 	@Type(type="org.hibernatespatial.GeometryUserType",parameters ={
 			@Parameter(name="dialect",value="postgis")
 	})
-	public MultiPolygon getRegionLocation() {
+	public Geometry getRegionLocation() {
 		return regionLocation;
 	}
 
-	public void setRegionLocation(MultiPolygon regionLocation) {
+	public void setRegionLocation(Geometry regionLocation) {
 		this.regionLocation = regionLocation;
 	}
 	@Column(name="is_del")
@@ -161,6 +159,17 @@ public class PatrolRegion implements Serializable{
 		this.lastUpdateTime = lastUpdateTime;
 	}
 
+	@Column(name = "color")
+	public String getColor() {
+		return color;
+	}
 
-
+	public void setColor(String color) {
+		if(color == null) {
+			//这只默认颜色
+			this.color = "#02a6cf";
+		}else {
+			this.color = color;
+		}
+	}
 }

@@ -1,0 +1,35 @@
+.patrol-query-tab-box{position: fixed;top: 0;left: 0;width: 100%;}
+
+.date-tab-list{width: 100%;height: 0.44rem;background: #00B4FF;display: flex;color: #fff;line-height: 0.44rem;text-align: center;position: relative;padding-right: 0.4rem;}
+.date-tab-list li{flex: 1;opacity: 0.6;}
+.date-tab-list li.active{opacity: 1;border-bottom: 3px solid #fff;}
+.date-tab-list .date-select-btn{background: url(../img/date-btn.png) no-repeat left center;background-size: 0.18rem;position: absolute;width: 0.4rem;height: 0.44rem;right:0;top:0;}
+
+.date-select-result{height: 0.44rem;background: #00B4FF;color: #fff;line-height: 0.44rem;padding-left: 0.2rem;display: none;}
+.delete-date-result{width: 0.44rem;height: 0.44rem;background: url(../img/delete.png) no-repeat center;background-size: 0.22rem; float: right;}
+
+.situation-tab-list{height: 0.52rem;background: #fff;text-align: center;line-height: 0.25rem;font-size: 0.1rem;color: #454545;padding: 0.1rem 0;}
+.situation-tab-list li{padding: 0 0.2rem;height: 0.26rem;border: 1px solid #E5E5E5;display: inline-block;border-radius: 0.14rem;margin: 0 0.08rem;}
+.situation-tab-list li.active{background: #00B4FF;color: #fff;border: 0;}
+
+.patrol-situation-list{padding: 0 0.16rem;}
+.patrol-situation-date{color: #999;line-height: 0.32rem;}
+.patrol-situation-person-mesg{padding: 0.12rem 0.2rem;}
+.patrol-situation-box{border: 1px solid #E3E3E3;border-radius: 0.03rem;margin-bottom: 0.06rem;}
+.patrol-situation-person-img{width: 0.7rem;height: 0.7rem;margin-right: 0.2rem;}
+.patrol-situation-person-img.region{background: url(../img/region.png) no-repeat center;background-size: 100%;}
+.patrol-situation-person-time{min-height: 0.28rem;line-height: 0.18rem;}
+.patrol-situation-person{line-height: 0.21rem;color: #333;font-size: 0.12rem;}
+
+.patrol-situation-mesg-box{border-top: 1px solid #E3E3E3;}
+.patrol-situation-mesg-normal{color: #00B4FF;line-height: 0.39rem;padding: 0 0.18rem;}
+
+.patrol-situation-mesg-abnormal{padding: 0.1rem 0.18rem;}
+.patrol-situation-mesg-abnormal-tit{color: #FF2929;line-height: 0.24rem;}
+.patrol-situation-abnormal-show{color: #666;}
+.hidden-latter li{display: none;}
+.hidden-latter li:first-of-type,.hidden-latter li:nth-of-type(2){display: block;}
+
+.patrol-situation-abnormal-more{text-decoration: underline;color: #00B4FF;text-align: center;line-height: 0.21rem;margin-top: 0.06rem;}
+
+

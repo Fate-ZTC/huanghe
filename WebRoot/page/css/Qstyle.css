@@ -3,26 +3,28 @@
 
 .xungeng-map-operation-box{padding: 7px 0;}
 .xungeng-map-operation-box button{width: 111px;height: 32px;color: #fff;padding-left: 30px;cursor: pointer;border-radius: 3px;}
-.xungeng-start-drawing{background: #48BAEE url(../img/drawing-btn.png) no-repeat 15px center;}
-.xungeng-start-drawing-prompt{padding: 0 15px 0 25px;background: url(../img/drawing-prompt.png) no-repeat left center;width: 157px;height: 30px;line-height: 30px;margin-left: 10px;color: #333;}
-.drawing-demo-btn{background: #48BAEE url(../img/demo-btn.png) no-repeat 15px center;}
+.xungeng-start-drawing{background: #48BAEE url(../images/img/drawing-btn.png) no-repeat 15px center;}
+.xungeng-start-drawing-prompt{padding: 0 15px 0 25px;background: url(../images/img/drawing-prompt.png) no-repeat left center;width: 157px;height: 30px;line-height: 30px;margin-left: 10px;color: #333;}
+.drawing-demo-btn{background: #48BAEE url(../images/img/demo-btn.png) no-repeat 15px center;}
 
-.xungeng-map-drawing-prompt-box{padding-left: 22px;background: url(../img/end-drawing.png) no-repeat left center;line-height: 46px;}
+.end-drawing-btn{width: 100px;height: 32px;padding-left: 33px;color: #fff;border-radius: 3px;margin-top: 7px;background: #48BAEE url(../images/img/demo-btn.png) no-repeat 15px center;cursor: pointer;}
+
+.xungeng-map-drawing-prompt-box{padding-left: 22px;background: url(../images/img/end-drawing.png) no-repeat left center;line-height: 46px;}
 
 .xungeng-map-drawing-end-box button{width: 86px;height: 32px;color: #fff;padding-left: 30px;cursor: pointer;border-radius: 3px;margin-right: 14px;margin-top: 7px;}
-.xungeng-drawing-result-del{background: #EA395E url(../img/delect-drawing.png) no-repeat 15px center;}
-.xungeng-drawing-submit{background: #48BAEE url(../img/drawing-submit.png) no-repeat 15px center;}
+.xungeng-drawing-result-del{background: #EA395E url(../images/img/delect-drawing.png) no-repeat 15px center;}
+.xungeng-drawing-submit{background: #48BAEE url(../images/img/drawing-submit.png) no-repeat 15px center;}
 
 .demo-video-box{width: 969px;height: 619px;position: fixed;top: 50%;left: 50%;margin: -310px 0 0 -484px;z-index: 9999999;display: none;}
 .demo-video-close-box{height: 44px;position: relative;}
-.demo-video-close-video{width: 44px;height: 44px;transition: all 0.5s;background: url(../img/close-video.png) no-repeat center;position: absolute;right: 0;top: 0;cursor: pointer;}
+.demo-video-close-video{width: 44px;height: 44px;transition: all 0.5s;background: url(../images/img/close-video.png) no-repeat center;position: absolute;right: 0;top: 0;cursor: pointer;}
 .close-show-video{transform: rotate(180deg);}
 .demo-video-box video{width: 100%;height: 575px;background: #000;}
 
 .xungeng-map-bomb{width: 226px;}
 .xungeng-map-bomb>p{background: #fff;border-radius: 4px;padding: 10px 15px;font-size: 14px;}
 .xungeng-map-bomb .span{color: #48BAEE;}
-.xungeng-map-bomb-jian{background: url(../img/xungeng-map-bomb-jian.png) no-repeat 20px center;height: 12px;}
+.xungeng-map-bomb-jian{background: url(../images/img/xungeng-map-bomb-jian.png) no-repeat 20px center;height: 12px;}
 
 
 .inspection-record-list>li{overflow: hidden;padding: 15px 0;}
@@ -34,10 +36,10 @@
 .inspection-record-btn{width: 75px;height: 30px;background: #169BD5;color: #fff;border-radius: 3px;cursor: pointer;}
 
 /*安防巡更地图*/
-.xungeng-map{background: #A3D79B;height: 100%}
+.xungeng-map{height: 100%}
 
 /*地图缩放*/
 .right-tool-box{width: 48px;position: fixed;right: 15px;bottom: 20px;z-index: 999;transition: right 0.3s;}
 .right-tool-box.moreRight{right: 372px;}
-.index-zoom{height: 98px;background:url(../img/zoom.png) no-repeat;background-position: 0 0;overflow: hidden;margin-bottom:4px;}
+.index-zoom{height: 98px;background:url(../images/img/zoom.png) no-repeat;background-position: 0 0;overflow: hidden;margin-bottom:4px;}
 .index-zoom span{display: block;width: 100%;height: 42px;cursor: pointer;}

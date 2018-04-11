@@ -70,7 +70,7 @@ public class PatrolUserService {
 	 * @return  0 工号已存在  1成功   2未知错误
 	 */
 	public int addUser(PatrolUser patrolUser){
-		boolean isExist = this.patrolUserDao.existsByProperty("jobNum",patrolUser.getJobNum());
+		boolean isExist = this.patrolUserDao.existsByPropertys(new String[]{"jobNum","isDel"},new Object[]{patrolUser.getJobNum(),(short)0});
 		if(isExist){
 			return 0;
 		}
@@ -112,8 +112,8 @@ public class PatrolUserService {
 		return this.patrolUserDao.getUniqueByProperty("jobNum", jobNum);
 	}
 	
-	public List<PatrolUser> getAll(){
-		return this.patrolUserDao.getAll();
+	public List<PatrolUser> getAll(String hql){
+		return this.patrolUserDao.getByHQL(hql);
 	}
 		
 	public void update(PatrolUser patrolUser) {

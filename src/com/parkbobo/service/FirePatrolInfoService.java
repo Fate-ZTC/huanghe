@@ -42,7 +42,7 @@ public class FirePatrolInfoService {
 	public FirePatrolInfo getNewest(Integer equipmentId){
 		String hql = " from FirePatrolInfo where fireFightEquipment.id = "+equipmentId+" order by timestamp desc limit 1";
 		List<FirePatrolInfo> list = this.firePatrolInfoDao.getByHQL(hql);
-		if(list!=null&&list.size()>0){
+		if(list!=null && list.size()>0) {
 			return list.get(0);
 		}
 		return null;
@@ -129,4 +129,11 @@ public class FirePatrolInfoService {
 		String hql = " from FirePatrolInfo where firePatrolUser.jobNum = '" +jobNum+"' order by timestamp desc";
 		return this.firePatrolInfoDao.getByHQL(hql);
 	}
+
+	public List<FirePatrolInfo> getByHqlPatrolInfo(String hql) {
+
+		return this.firePatrolInfoDao.getByHQL(hql);
+	}
+
+
 }

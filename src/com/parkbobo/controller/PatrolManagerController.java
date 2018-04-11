@@ -7,7 +7,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,16 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.parkbobo.model.PatrolConfig;
-import com.parkbobo.model.PatrolEmergency;
-import com.parkbobo.model.PatrolLocationInfo;
-import com.parkbobo.model.PatrolUser;
-import com.parkbobo.model.PatrolUserRegion;
-import com.parkbobo.service.PatrolConfigService;
-import com.parkbobo.service.PatrolEmergencyService;
-import com.parkbobo.service.PatrolLocationInfoService;
-import com.parkbobo.service.PatrolUserRegionService;
-import com.parkbobo.service.PatrolUserService;
+import com.parkbobo.model.*;
+import com.parkbobo.service.*;
 import com.parkbobo.utils.PageBean;
 
 /**
@@ -51,6 +42,7 @@ public class PatrolManagerController {
 	@Resource
 	private PatrolEmergencyService patrolEmergencyService;
 
+
 	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect};
 	/**
 	 * 获取所有巡查员
@@ -63,7 +55,8 @@ public class PatrolManagerController {
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
-			List<PatrolUser> allUser = this.patrolUserService.getAll();
+			String hql = "FROM PatrolUser WHERE isDel=0";
+			List<PatrolUser> allUser = this.patrolUserService.getAll(hql);
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(allUser,features)+"}");
 		} catch (IOException e) {
 			if(out==null){
@@ -303,7 +296,6 @@ public class PatrolManagerController {
 	 * 实时获取位置
 	 * @param campusNum 校区id
 	 * @param jobNum 工号
-	 * @param usregId 用户区域id
 	 * @param response
 	 * @throws IOException
 	 */
@@ -363,7 +355,8 @@ public class PatrolManagerController {
 	public void regionCurrentCrew(HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		List<PatrolUser> allUsers = patrolUserService.getAll();
+		String hql = "FROM PatrolUser WHERE isDel=0";
+		List<PatrolUser> allUsers = patrolUserService.getAll(hql);
 		List<PatrolUserRegion> patrolUsersRe = new ArrayList<PatrolUserRegion>();
 		List<PatrolLocationInfo> patrolLocationInfos = new ArrayList<PatrolLocationInfo>();
 		for (PatrolUser patrolUser : allUsers) {
@@ -371,23 +364,27 @@ public class PatrolManagerController {
 			List<PatrolUserRegion> patrolUserRegions = patrolUserRegionService.getByProperty("jobNum", jobNum,"startTime",false);
 			if (patrolUserRegions!=null && patrolUserRegions.size()>0) {
 				PatrolUserRegion patrolUserRegion = patrolUserRegions.get(0);
-				patrolUsersRe.add(patrolUserRegion);
+				//这里进行判断是否存在结束时间,结束时间为null说明没有正在巡查的人员
+				if(null == patrolUserRegion.getEndTime()) {
+					patrolUsersRe.add(patrolUserRegion);
+				}
 			}
 		}
 		if (patrolUsersRe!=null && patrolUsersRe.size()>0) {
 			for (PatrolUserRegion patrolUserRegion : patrolUsersRe) {
 				List<PatrolLocationInfo> patrolLocationInfo = patrolLocationInfoService.getByProperty("usregId", patrolUserRegion.getId(), "timestamp", false);
-				if (patrolLocationInfo!=null && patrolLocationInfo.size()>0) {
+				if(patrolLocationInfo!=null && patrolLocationInfo.size()>0) {
 					patrolLocationInfos.add(patrolLocationInfo.get(0));
 				}
 			}
 
 			//获取刷新时间
+			PatrolConfig patrolConfig = patrolConfigService.getById(1);
+			Integer refreshTime = patrolConfig.getRefreshTime();
+			if(refreshTime == null) {refreshTime = 5;}//设置默认为5秒
 
-
-
-			if (patrolLocationInfos != null && patrolLocationInfos.size()>0) {
-				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolLocationInfos,features)+"}");
+			if(patrolLocationInfos != null && patrolLocationInfos.size()>0) {
+				out.print("{\"status\":\"true\",\"Code\":1,\"refreshTime\":"+refreshTime+",\"data\":"+JSONObject.toJSONString(patrolLocationInfos,features)+"}");
 			}else{
 				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"暂无信息\"}");
 			}

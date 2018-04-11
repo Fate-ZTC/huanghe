@@ -49,7 +49,7 @@ public class PatrolUser implements Serializable{
 	 */
 	private String clientId;
 	/**
-	 * 是否删除
+	 * 是否删除 0未删除 1删除
 	 */
 	private Short isDel;
 	/**

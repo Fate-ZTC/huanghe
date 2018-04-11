@@ -22,4 +22,9 @@ public class FirePatrolImgService {
 	public List<FirePatrolImg> getByProperty(String propertyName ,Object value) {
 		return this.firePatrolImgDao.getByProperty(propertyName, value);
 	}
+
+
+	public List<FirePatrolImg> getByHql(String hql) {
+		return firePatrolImgDao.getByHQL(hql);
+	}
 }

@@ -10,6 +10,10 @@ public class PatrolUserRegionShow extends PatrolUserRegion{
 	
 	private Long patrolTime;
 
+	public PatrolUserRegionShow(String username, String jobNum) {
+		super(username, jobNum);
+	}
+
 	public String getExceptionName() {
 		return exceptionName;
 	}
