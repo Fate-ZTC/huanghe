@@ -209,7 +209,8 @@ public class PatrolUserRegion implements Serializable{
 	public String getRegionName() {
 		return regionName;
 	}
-	public void setRegionName(String ronName) {
+
+	public void setRegionName(String regionName) {
 		this.regionName = regionName;
 	}
 

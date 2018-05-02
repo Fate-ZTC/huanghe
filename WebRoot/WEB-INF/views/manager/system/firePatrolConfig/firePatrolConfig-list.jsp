@@ -68,6 +68,7 @@ String path = request.getContextPath();
     <div class="box">
         <form action="<%=path %>/firePatrolConfig_edit" method="post" id="addForm">
             <input type="hidden" name="id" value="${firePatrolConfig.id }"/>
+            <input type="hidden" name="equipmentType" value="${firePatrolConfig.equipmentType}"/>
             <div class="setting">
                 <div class="top-bar">
                     <div class="left">

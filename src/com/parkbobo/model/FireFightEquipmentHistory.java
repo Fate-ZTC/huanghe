@@ -54,6 +54,20 @@ public class FireFightEquipmentHistory implements Serializable{
 	 * 异常信息
 	 */
 	private Integer fpid;
+
+	/**
+	 * 巡查人姓名
+     */
+	private String userName;
+	/**
+	 * 巡查人工号
+     */
+	private String jobNum;
+
+	/**
+	 *  楼层id
+     */
+	private String floorid;
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -126,5 +140,29 @@ public class FireFightEquipmentHistory implements Serializable{
 	public void setFpid(Integer fpid) {
 		this.fpid = fpid;
 	}
-	
+
+	@Column(name = "username")
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	@Column(name = "job_num")
+	public String getJobNum() {
+		return jobNum;
+	}
+
+	public void setJobNum(String jobNum) {
+		this.jobNum = jobNum;
+	}
+
+	@Column(name = "floorid")
+	public String getFloorid() {
+		return floorid;
+	}
+
+	public void setFloorid(String floorid) {
+		this.floorid = floorid;
+	}
 }

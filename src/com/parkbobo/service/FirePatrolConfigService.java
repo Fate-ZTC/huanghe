@@ -18,7 +18,7 @@ public class FirePatrolConfigService {
 	}
 
 	public void updateConfig(FirePatrolConfig config) {
-		this.firePatrolConfigDao.merge(config);
+		this.firePatrolConfigDao.update(config);
 	}
 
 	public FirePatrolConfig getById(Integer configId) {

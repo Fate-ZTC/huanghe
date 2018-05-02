@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSON;
 import com.parkbobo.model.PatrolRegion;
 import com.parkbobo.model.PatrolUserRegion;
 import com.parkbobo.service.*;
@@ -64,13 +65,19 @@ public class PatrolBackstageController {
 	@RequestMapping("patrolUserRegionList")
 	public ModelAndView getPatrolUserRegionsBySth(String username,Integer regionId,Integer exceptionType,String startTime,String endTime,Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
 		ModelAndView mv = new ModelAndView();
+		page = (page != null && page > 0 ? page : 1);
+		pageSize = (pageSize != null && pageSize > 0 ? pageSize : 10);
 		String hql = "from PatrolRegion where isDel != 1 order by id asc";
 		List<PatrolRegion> patrolRegions = patrolRegionService.getByHQL(hql);
 		PageBean<PatrolUserRegion> patrolUserRegions = this.patrolUserRegionService.getPatrolUserBySth(username, regionId, exceptionType, startTime, endTime, page, pageSize);
+
 		for (PatrolUserRegion patrolUserRegion : patrolUserRegions.getList()) {
 			PatrolRegion patrolRegion = patrolRegionService.getById(patrolUserRegion.getRegionId());
-			patrolUserRegion.setRegionName(patrolRegion.getRegionName());
+			if( patrolRegion != null && null != patrolRegion.getRegionName()) {
+				patrolUserRegion.setRegionName(patrolRegion.getRegionName());
+			}
 		}
+		//将数据添加到进
 		mv.addObject("patrolUserRegions", patrolUserRegions);
 		mv.addObject("patrolRegions", patrolRegions);
 		mv.setViewName("manager/system/patrol/patrolUserRegionList");
@@ -154,12 +161,9 @@ public class PatrolBackstageController {
 		String hql = "from PatrolRegion where isDel != 1 order by id asc";
 		List<PatrolRegion> patrolRegions = patrolRegionService.getByHQL(hql);
 		PageBean<PatrolRegion> patrolRegionPage = new PageBean<>();
-		if(regionId == null) {
-			patrolRegionPage.setList(patrolRegions);
-		}else {
-			patrolRegionPage = this.patrolRegionService.getBySth(regionId, campusNum, pageSize, page);
-		}
+		patrolRegionPage = this.patrolRegionService.getBySth(regionId, campusNum, pageSize, page);
 		mv.addObject("patrolRegionPage",patrolRegionPage);
+//		mv.addObject("patrolReg\"patrolRegionPage\"ionPage",patrolRegionPage);
 		mv.addObject("patrolRegions",patrolRegions);
 		mv.setViewName("manager/system/patrol/patrolRegList");
 		return mv;
@@ -184,12 +188,14 @@ public class PatrolBackstageController {
 		mv.setViewName("redirect:/patrolRegList?method=deleteSuccess");
 		return mv;
 	}
+
+
 	/**
 	 * 安防巡更区域增加
 	 * @param regionName 区域名
 	 */
 	@RequestMapping("patrolReg_add")
-	public ModelAndView patrolRegAdd(String regionName,String color){
+	public ModelAndView patrolRegAdd(String regionName,String color) {
 		ModelAndView mv = new ModelAndView();
 		PatrolRegion patrolRegion = new PatrolRegion();
 		Date date = new Date();
@@ -199,7 +205,14 @@ public class PatrolBackstageController {
 		patrolRegion.setIsDel((short)0);
 		patrolRegion.setLastUpdateTime(date);
 		patrolRegion.setRegionName(regionName);
-		patrolRegion.setColor(color);
+
+		//进行判断color
+		if("#".equals(color.substring(0,1))) {
+			patrolRegion.setColor(color.trim());
+		}else {
+			patrolRegion.setColor("#"+color.trim());
+		}
+
 		patrolRegionService.addRecord(patrolRegion);
 		mv.setViewName("redirect:/patrolRegList?method=addSuccess");
 		return mv;
@@ -210,10 +223,17 @@ public class PatrolBackstageController {
 	 * @param regionName 区域名
 	 */
 	@RequestMapping("patrolReg_update")
-	public ModelAndView patrolRegUpdate(Integer regionId,String regionName){
+	public ModelAndView patrolRegUpdate(Integer regionId,String regionName,String color) {
 		ModelAndView mv = new ModelAndView();
 		PatrolRegion patrolRegion = patrolRegionService.getById(regionId);
 		patrolRegion.setRegionName(regionName);
+		if(color != null) {
+			if("#".equals(color.substring(0,1))) {
+				patrolRegion.setColor(color.trim());
+			}else {
+				patrolRegion.setColor("#"+color.trim());
+			}
+		}
 		patrolRegion.setLastUpdateTime(new Date());
 		patrolRegionService.update(patrolRegion);
 		mv.setViewName("redirect:/patrolRegList?method=editSuccess");
@@ -227,15 +247,122 @@ public class PatrolBackstageController {
 	 * @return
      */
 	@RequestMapping("/firePatrolMap")
-	public ModelAndView patrolMap(Integer id) {
+	public ModelAndView patrolMap(Integer id,HttpServletResponse response) {
 		ModelAndView mv = new ModelAndView();
 		if(id != null && id > 0) {
 			mv.addObject("id",id);
 		}
+		//查询区域相关信息
+		if(id == null && id <= 0) {
+			return null;
+		}
+		String hql = "FROM PatrolRegion WHERE isDel=0 AND id=" + id;
+		List<PatrolRegion> patrolRegions = patrolRegionService.getByHQL(hql);
+		if(patrolRegions != null && patrolRegions.size() > 0) {
+			mv.addObject("patrolRegion", JSON.toJSONString(patrolRegions.get(0)));
+			mv.addObject("color",patrolRegions.get(0).getColor());
+		}
+		mv.addObject("id",id);
 		mv.setViewName("manager/system/firePatrolMap/map");
 		return mv;
 	}
-	
+
+	/**
+	 * 添加绘制的巡更区域
+	 * @param id			区域id
+	 * @param polygon		区域信息
+     */
+	@RequestMapping("/addDrawRegion")
+	public ModelAndView addFrawRegion(Integer id,String polygon) {
+		ModelAndView mv = new ModelAndView();
+		if(polygon != null && !"".equals(polygon) && id != null && !"".equals(id)) {
+			String sql = "UPDATE patrol_region SET region_location = st_geomfromtext('"+polygon+"')  WHERE id=" + id;
+			int result = patrolRegionService.updateBySql(sql);
+			if(result > 0) {
+				mv.addObject("message","数据上传成功");
+			}
+		}
+		String hql = "FROM PatrolRegion WHERE isDel=0 AND id=" + id;
+		List<PatrolRegion> patrolRegions = patrolRegionService.getByHQL(hql);
+		if(patrolRegions != null && patrolRegions.size() > 0) {
+			mv.addObject("patrolRegion", JSON.toJSONString(patrolRegions.get(0)));
+			mv.addObject("color",patrolRegions.get(0).getColor());
+		}
+		mv.addObject("id",id);
+		mv.setViewName("manager/system/firePatrolMap/map");
+		return mv;
+	}
+
+
+	/**
+	 * 将该区域内的区域范围进行清空
+	 * @param id
+     */
+	@RequestMapping("/deleteRegionLocation")
+	public ModelAndView deleteRegionLocation(Integer id) {
+		ModelAndView mv = new ModelAndView();
+		if(id != null && !"".equals(id)) {
+			String sql = "UPDATE patrol_region SET region_location=null WHERE id=" + id;
+			int result = patrolRegionService.updateBySql(sql);
+		}
+		String hql = "FROM PatrolRegion WHERE isDel=0 AND id=" + id;
+		List<PatrolRegion> patrolRegions = patrolRegionService.getByHQL(hql);
+		if(patrolRegions != null && patrolRegions.size() > 0) {
+			mv.addObject("patrolRegion", JSON.toJSONString(patrolRegions.get(0)));
+			mv.addObject("color",patrolRegions.get(0).getColor());
+		}
+		mv.addObject("id",id);
+		mv.setViewName("manager/system/firePatrolMap/map");
+		return mv;
+	}
+
+
+    /**
+	 * 根据校区id进行显示所有区域内容
+	 * @param campusNum		校区id
+	 * @return
+     */
+	@RequestMapping("/toShowAllDrawPage")
+	public ModelAndView toShowAllDrawPage(Integer campusNum) {
+		ModelAndView mv = new ModelAndView();
+		//通过校区id进行查询所有区域信息
+		String hql = "FROM PatrolRegion WHERE isDel=0 AND campusNum=" + campusNum;
+		List<PatrolRegion> patrolRegions = patrolRegionService.getByHQL(hql);
+		mv.addObject("patrolRegions",JSON.toJSONString(patrolRegions));
+		mv.setViewName("manager/system/firePatrolMap/showAllRegionMap");
+		return mv;
+	}
+
+
+	//这里进行跳转页面
+
+	/**
+	 * 跳转到设置颜色页面
+	 * @return
+	 */
+	@RequestMapping("/toSelectColorPage")
+	public ModelAndView toSelectColorPage() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("manager/system/patrol/color-selection");
+		return mv;
+	}
+
+	/**
+	 * 跳转到更新页面
+	 * @param regionId
+	 * @param regionName
+	 * @param color
+	 * @return
+	 */
+	@RequestMapping("/toSelectColorPageUpdate")
+	public ModelAndView toSelectColorUpdatePage(Integer regionId,String regionName,String color) {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("regionName",regionName);
+		mv.addObject("regionId",regionId);
+		mv.addObject("color",color);
+		mv.setViewName("manager/system/patrol/color-selection-update");
+		return mv;
+	}
 
 }
 

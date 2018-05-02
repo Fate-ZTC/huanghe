@@ -55,7 +55,7 @@ if(message != '' && message != 'null'){
       <div id="cloud2" class="cloud"></div>
     </div>  
     <div class="loginbody">
-    <span class="systemlogo" style="background:url(page/images/logo.png) no-repeat center;"></span> 
+    <span class="systemlogo" style="background:url(page/images/school-logo.png) no-repeat center;"></span>
     <form action="<%=path %>/j_spring_security_check" method="post" autocomplete="off"> 
     <div class="loginbox loginbox3">
     <ul>

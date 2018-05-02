@@ -12,6 +12,7 @@ public class FirePatrolEquipmentVO {
     private Integer pointid;        //id
     private float lon;              //经度
     private float lat;              //纬度
+    private ThematicPointCategory thematicPointCategory;
 
 
     public FirePatrolEquipmentVO() {}
@@ -72,6 +73,14 @@ public class FirePatrolEquipmentVO {
         this.lat = lat;
     }
 
+    public ThematicPointCategory getThematicPointCategory() {
+        return thematicPointCategory;
+    }
+
+    public void setThematicPointCategory(ThematicPointCategory thematicPointCategory) {
+        this.thematicPointCategory = thematicPointCategory;
+    }
+
     @Override
     public String toString() {
         return "FirePatrolEquipmentVO{" +
@@ -80,6 +89,9 @@ public class FirePatrolEquipmentVO {
                 ", icon='" + icon + '\'' +
                 ", name='" + name + '\'' +
                 ", pointid=" + pointid +
+                ", lon=" + lon +
+                ", lat=" + lat +
+                ", thematicPointCategory=" + thematicPointCategory +
                 '}';
     }
 }

@@ -42,7 +42,16 @@ import com.parkbobo.utils.PageBean;
 public class PatrolEmergencyController {
 	@Resource
 	private PatrolEmergencyService patrolEmergencyService;
-	
+
+	/**
+	 * 突发事件
+	 * @param startTime
+	 * @param endTime
+	 * @param page
+	 * @param pageSize
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	@RequestMapping("patrolEmergency_list")
 	public ModelAndView list(String startTime,String endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException
 	{

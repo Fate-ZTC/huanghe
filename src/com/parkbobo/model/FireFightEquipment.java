@@ -65,6 +65,11 @@ public class FireFightEquipment implements Serializable{
      */
 	private Integer pointid;
 
+	/**
+	 * 消防设备分类id
+     */
+	private Integer categoryid;
+
 
 
 
@@ -159,5 +164,13 @@ public class FireFightEquipment implements Serializable{
 
 	public void setPointid(Integer pointid) {
 		this.pointid = pointid;
+	}
+
+	public Integer getCategoryid() {
+		return categoryid;
+	}
+
+	public void setCategoryid(Integer categoryid) {
+		this.categoryid = categoryid;
 	}
 }

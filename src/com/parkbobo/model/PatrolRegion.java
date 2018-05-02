@@ -1,7 +1,9 @@
 package com.parkbobo.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 import org.hibernate.annotations.Parameter;
@@ -48,6 +50,7 @@ public class PatrolRegion implements Serializable{
 	private String color;
 
 
+
 	/**
 	 * 空间几何信息
 	 */
@@ -63,6 +66,11 @@ public class PatrolRegion implements Serializable{
 	 * 面图元几何中心点
 	 */
 	private String geometryCentroid;
+
+	/**
+	 * 区域面
+     */
+	private List coordinates;
 	/**
 	 * 是否删除
 	 */
@@ -166,10 +174,46 @@ public class PatrolRegion implements Serializable{
 
 	public void setColor(String color) {
 		if(color == null) {
-			//这只默认颜色
+			//设置默认颜色
 			this.color = "#02a6cf";
 		}else {
 			this.color = color;
 		}
 	}
+
+	@Transient
+	public List getCoordinates() {
+		return formatCoordinates();
+	}
+
+	public void setCoordinates() {
+		this.coordinates = formatCoordinates();
+	}
+
+	/**
+	 * 进行格式化操作
+	 * @return
+     */
+	public List formatCoordinates() {
+		String geometry = getGeometry();
+		String[] geometrys = null;
+		List array = new ArrayList();
+		if(geometry != null && !"".equals(geometry)) {
+			geometrys = geometry.replace("POLYGON","")
+					.replace("(","")
+					.replace(")","")
+					.trim()
+					.split(",");
+			for(int i = 0;i < geometrys.length;i++) {
+				List temp = new ArrayList();
+				String[] point = geometrys[i].split(" ");
+				temp.add(point[0]);
+				temp.add(point[1]);
+				array.add(temp);
+			}
+		}
+
+		return array;
+	}
+
 }

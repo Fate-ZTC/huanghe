@@ -51,10 +51,10 @@ public class MyUserDetailService implements UserDetailsService {
 		boolean accountNonExpired = true;//用户账号过期
 		boolean credentialsNonExpired = true;//用户凭证过期
 		boolean accountNonLocked =false;//账号是否未锁定
-		if(manager.getIsAuth() == 1){
+		if(manager.getIsAuth() == 1) {
 			enables = true;
 		}
-		if(manager.getStatus() == 0){
+		if(manager.getStatus() == 0) {
 			accountNonLocked = true;
 		}
 		//封装成spring security的user
@@ -79,7 +79,7 @@ public class MyUserDetailService implements UserDetailsService {
 			Set<RoleResources> roleResourcees  = role.getRoleResourceses();
 			for (RoleResources roleResources : roleResourcees) {
 				Resources resources = roleResources.getResources();
-				if(resources.getEnable() == 1){
+				if(resources.getEnable() == 1) {
 					authSet.add(new GrantedAuthorityImpl(resources.getEnname()));
 				}
 			}

@@ -406,6 +406,8 @@ public class FirePatrolManagerController {
 				if (StringUtils.equals("checkEqui", checkEqui)) {
 					hql += " and checkStatus = 0";
 				}
+				//这里进行排序操作
+				hql += " ORDER BY lastUpdateTime DESC";
 				PageBean<FireFightEquipmentHistory> fireFightEquis = fireFightEquipmentHistoryService.pageQuery(hql, pageSize, page);
 
 				if (fireFightEquis.getList()!=null && fireFightEquis.getList().size()>0) {

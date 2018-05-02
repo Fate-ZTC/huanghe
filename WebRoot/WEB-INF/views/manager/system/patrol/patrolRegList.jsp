@@ -73,7 +73,7 @@
 							</div>
 						</li>
 						<li><label>&nbsp;</label><input name="" type="submit" class="scbtn" value="搜索"/>
-						<input type="hidden" name="pageSize" value="${pageSize}" />
+						<input type="hidden" name="pageSize" value="${pageSize}"/>
 						<input type="hidden" name="page" id="page" value="${page}"/>
 						</li>
 					</ul>
@@ -86,25 +86,33 @@
 				    	<sec:authorize ifAnyGranted="patrolReg_delete">
 				        <li onclick="bulkDelete('<%=path %>/patrolReg_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>删除</li>
 				        </sec:authorize>
+						<sec:authorize ifAnyGranted="patrolReg_add">
+							<li onclick="showAllDraw();"><span><img src="<%=path %>/page/images/t01.png"/></span>显示所有区域</li>
+						</sec:authorize>
 			        </ul>
 			    </div>
 				<table width="100%" class="tablelist">
 		            <tbody width="100%">
 		            	<thead>
 					    	<tr>
-					        	<th class="tbt1"><input type="checkbox" name="checkAll" value="checkbox" id="checkAll" class="checkAll"/></th>
+					        	<th class="tbt1">
+									<input type="checkbox" name="checkAll" value="checkbox" id="checkAll" class="checkAll"/></th>
 			            		<th>巡更区域名称</th>
+								<th>绘制颜色</th>
 			            		<th>更新时间</th>
 			            		<th>操作</th>
 					        </tr>
 				        </thead>
 		            	<c:forEach items="${patrolRegionPage.list}" var="m">
 					        <tr>
-					        <td><input type="checkbox" name="checkbox" value="${m.id}" id="checkbox_${m.id}" class="checkItem"/></td>
+					        <td>
+								<input type="checkbox" name="checkbox" value="${m.id}" id="checkbox_${m.id}" class="checkItem"/>
+							</td>
 					        <td>${m.regionName}</td>
+								<td>${m.color}</td>
 					        <td>${m.lastUpdateTime}</td>
 					        <td style="color:#16c2ea;">
-								<a  style="color:#16c2ea;" href="javascript:void(0);" onclick="upHtm('${m.regionName}',${m.id});">修改名称</a>
+								<a  style="color:#16c2ea;" href="javascript:void(0);" onclick="upHtm('${m.regionName}',${m.id},'${m.color}');">修改名称</a>
 								<a style="color:#16c2ea;" href="javascript:void(0);" onclick="toPatrolMap(${m.id})">配置巡更范围</a>
 							</td>
 					        </tr> 
@@ -127,7 +135,7 @@
 			    <!-- 分页结束 -->
 </div>
 <script type="text/javascript">
-		$(function(){
+		$(function() {
 				//选择框
 				$(".select3").uedSelect({
 					width : 150
@@ -137,43 +145,56 @@
 				 */
 			});
 		var the_host = "<%=path%>/";
-		function upHtm(regionName,regionId){
-			$(".layui-layer-title").text("修改信息");
-			layer.open({
-			  type: 1,
-			  skin: 'layui-layer-rim', //加上边框
-			  area: ['420px', '240px'], //宽高
-			  content: '<form action="<%=path %>/patrolReg_update" method="post" id="editForm">'+
-						'<ul class="updul"><li>巡更区域名称:<input name="regionName" style="font-size:1.5rem" type="text" value="'+regionName+'"/></li>'+
-						'<input name="regionId" type="hidden" value="'+regionId+'"/>'+
-						'<li><input type="submit" class="btn" value="提交"/><label>&nbsp;</label><input type="reset" class="btn" value="重置"/> </li></ul></form>'
-			});
+		function upHtm(regionName,regionId,color) {
+
+			window.location.href = "<%=basePath%>toSelectColorPageUpdate?regionId=" + regionId
+				+ "&regionName=" + encodeURIComponent(regionName) + "&color=" + encodeURIComponent(color);
+
+		    //TODO 下面是之前在当前页面显示的弹框（废弃）
+			<%--$(".layui-layer-title").text("修改信息");--%>
+			<%--layer.open({--%>
+			  <%--type: 1,--%>
+			  <%--skin: 'layui-layer-rim', //加上边框--%>
+			  <%--area: ['420px', '340px'], //宽高--%>
+			  <%--content: '<form action="<%=path %>/patrolReg_update" method="post" id="editForm">'+--%>
+						<%--'<ul class="updul">' +--%>
+			  <%--'<li>巡更区域名称:<input name="regionName" style="font-size:1.5rem" type="text" value="'+ regionName +'"/></li>'+--%>
+					  <%--'<li>绘制颜色:<input name="color" style="font-size:1.5rem" type="text" value="'+ color +'"/></li>'+--%>
+						<%--'<input name="regionId" type="hidden" value="'+ regionId +'"/>'+--%>
+						<%--'<li><input type="submit" class="btn" value="提交"/><label>&nbsp;</label><input type="reset" class="btn" value="重置"/> </li></ul></form>'--%>
+			<%--});--%>
 		}
 
-		function addHtm(){
-			$(".layui-layer-title").text("增加信息");
-			layer.open({
-			  type: 1,
-			  skin: 'layui-layer-rim', //加上边框
-			  area: ['420px', '340px'], //宽高
-			  content: '<form action="<%=path %>/patrolReg_add" method="post" id="addForm">'+
-						'<ul class="updul">' +
-			  '<li>巡更区域名称:<input name="regionName" style="font-size:1.5rem" type="text" value=""/></li>' +
-			  '<li>颜色:<input name="color" style="font-size:1.5rem" type="text" value=""/></li>' +
-						'<li><input type="submit" class="btn" value="提交"/><label>&nbsp;</label><input type="reset" class="btn" value="重置"/> </li></ul></form>'
-			});
+		/**
+		 * 添加颜色
+		 */
+		function addHtm() {
+
+		    window.location.href = '<%=basePath%>toSelectColorPage';
+            //TODO 下面是之前在当前页面显示的弹框（废弃）
+			<%--$(".layui-layer-title").text("增加信息");--%>
+			<%--layer.open({--%>
+			  <%--type: 1,--%>
+			  <%--skin: 'layui-layer-rim', //加上边框--%>
+			  <%--area: ['420px', '340px'],//宽高--%>
+			  <%--content: '<form action="<%=path %>/patrolReg_add" method="post" id="addForm">'+--%>
+						<%--'<ul class="updul">' +--%>
+			  <%--'<li>巡更区域名称:<input name="regionName" style="font-size:1.5rem" type="text" value=""/></li>' +--%>
+			  <%--'<li>颜色:<input name="color" style="font-size:1.5rem" type="text" value=""/></li>' +--%>
+						<%--'<li><input type="submit" class="btn" value="提交"/><label>&nbsp;</label><input type="reset" class="btn" value="重置"/> </li></ul></form>'--%>
+			<%--});--%>
 		}
 
 
 		$('.tablelist tbody tr:odd').addClass('odd');
 	
-		$(document).ready(function(){
+		$(document).ready(function() {
 			$(".m_berthOrder_l").attr("class","lhover");
 			/**
 			 * 分页
 			 */
-			$(".sabrosus a").each(function(){  
-		        $(this).click(function(){ 
+			$(".sabrosus a").each(function() {
+		        $(this).click(function() {
 		        	$('#page').val($(this).attr("rel"));
 		        	$('#pageform').submit();
 		        });  
@@ -220,7 +241,7 @@
 		var toPatrolMap = function (id) {
 			//点击进入绘制地图区域
 			if(id != undefined) {
-				window.location.href = '<%=basePath%>firePatrolMap?' + id;
+				window.location.href = '<%=basePath%>firePatrolMap?id=' + id;
 			}
 		};
 
@@ -230,8 +251,8 @@
 		/**
 		 * 删除
 		 */
-		function bulkDelete(url,ids){
-			if(ids == 0){
+		function bulkDelete(url,ids) {
+			if(ids == 0) {
 				var ids = "";
 				$("[name='checkbox']:checked").each(function(){
 					ids += $(this).val()+",";
@@ -249,6 +270,14 @@
 					window.location.href=the_host+"patrolReg_delete?ids="+ids;
 				});
 			}
+		}
+
+
+		/**
+		 * 跳转到显示所有区域页面根据校区id
+         */
+		function showAllDraw(campusNum) {
+			window.location.href = '<%=basePath%>toShowAllDrawPage?campusNum=1'
 		}
 
 </script>

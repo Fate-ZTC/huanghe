@@ -2,15 +2,12 @@ package com.system.controller;
 
 import java.util.Date;
 import java.util.List;
-
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.parkbobo.utils.PageBean;
@@ -52,7 +49,7 @@ public class ManagerController {
 	public ModelAndView list(Manager manager,Integer pageSize,Integer page){
 		ModelAndView mv = new ModelAndView();
 		String hql = "from Manager as u where 1 = 1 ";
-		if(manager != null && StringUtil.isNotEmpty(manager.getUsername())){
+		if(manager != null && StringUtil.isNotEmpty(manager.getUsername())) {
 			hql += " and u.username like '%" + manager.getUsername() + "%'";
 		}
 		if(manager != null && StringUtil.isNotEmpty(manager.getRealname())){

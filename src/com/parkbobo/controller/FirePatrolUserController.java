@@ -13,12 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.parkbobo.VO.FirePatrolEquipmentStatusVO;
 import com.parkbobo.model.*;
 import com.parkbobo.service.*;
 import com.parkbobo.utils.GisUtil;
@@ -47,6 +47,11 @@ public class FirePatrolUserController {
 	private FireFightEquipmentHistoryService fireFightEquipmentHistoryService;
 	@Resource
 	private FirePatrolConfigService firePatrolConfigService;
+	@Resource
+	private FirePatrolEquipmentSychService firePatrolEquipmentSychService;
+	@Resource
+	private ExceptionPushService exceptionPushService;
+
 	/**
 	 * 登录
 	 * @param jobNum 工号
@@ -157,6 +162,7 @@ public class FirePatrolUserController {
 		}
 	}
 
+	//TODO 正常上报需要对历史记录中设备进行同步
 	/**
 	 * 正常上报
 	 * @param userId  用户id
@@ -205,19 +211,57 @@ public class FirePatrolUserController {
 				fireFightEquipment.setCheckStatus((short)1);
 				fireFightEquipment.setStatus((short)1);
 				fireFightEquipment.setLastUpdateTime(date);
+
+				//进行和消防专题图进行设备检测数据同步
+				FirePatrolEquipmentStatusVO statusVO = new FirePatrolEquipmentStatusVO();
+				statusVO.setPatrolUser(patrolUser.getUsername());						//巡查员姓名
+				statusVO.setDeviceStatus("1");											//巡查状态
+				statusVO.setDeviceId(fireFightEquipment.getPointid().toString());		//设备消防专题图id
+				firePatrolEquipmentSychService.updateFirePatrolEquipmentVOStatus(statusVO);
+
+
 				System.out.println(fireFightEquiHistory);
+
+				List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
+
+				//这里进行补充
+				firePatrolInfo.setFloorid(fireFightEquipment.getFloorid());
+				firePatrolInfo.setLon(fireFightEquipment.getLon());
+				firePatrolInfo.setLat(fireFightEquipment.getLat());
+				firePatrolInfo.setJobNum(patrolUser.getJobNum());
+
+				FirePatrolInfo add = this.firePatrolInfoService.add(firePatrolInfo);
+
+				//设备历史记录添加
 				if (fireFightEquiHistory!=null && fireFightEquiHistory.size()>0) {
 					FireFightEquipmentHistory fireFightEquipmentHistory = fireFightEquiHistory.get(0);
 					fireFightEquipmentHistory.setCheckStatus((short)1);
 					fireFightEquipmentHistory.setStatus((short)1);
 					fireFightEquipmentHistory.setLastUpdateTime(date);
+					fireFightEquipmentHistory.setUserName(patrolUser.getUsername());
+					fireFightEquipmentHistory.setJobNum(patrolUser.getJobNum());
 					fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
+				}else {
+					//没有查询到设备表中数据,进行添加新的数据
+					FireFightEquipmentHistory fireFightEquipmentHistory = new FireFightEquipmentHistory();
+					fireFightEquipmentHistory.setName(fireFightEquipment.getName());
+					fireFightEquipmentHistory.setCampusNum(fireFightEquipment.getCampusNum());
+					fireFightEquipmentHistory.setCheckStatus((short)1);
+					fireFightEquipmentHistory.setStatus((short)1);
+					fireFightEquipmentHistory.setLon(lon);
+					fireFightEquipmentHistory.setLat(lat);
+					fireFightEquipmentHistory.setLastUpdateTime(new Date());
+					fireFightEquipmentHistory.setOldId(add.getId());
+					fireFightEquipmentHistory.setJobNum(patrolUser.getJobNum());
+					fireFightEquipmentHistory.setUserName(patrolUser.getUsername());
+					fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
+
 				}
-				List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
-				FirePatrolInfo add = this.firePatrolInfoService.add(firePatrolInfo);
+
+
 				this.fireFightEquipmentService.update(fireFightEquipment);
-				if(file!=null&&file.length>0){
-					for(int i = 0;i<file.length;i++){
+				if(file!=null&&file.length > 0) {
+					for(int i = 0;i<file.length;i++) {
 						FirePatrolImg firePatrolImg = new FirePatrolImg();
 						firePatrolImg.setFireFightEquipment(fireFightEquipment);
 						firePatrolImg.setImgUrl(upload(request,file[i]));
@@ -236,8 +280,8 @@ public class FirePatrolUserController {
 				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"用户不存在\"}");
 				return;
 			}
-		}catch(Exception e){
-			if(out==null){
+		}catch(Exception e) {
+			if(out==null) {
 				out=response.getWriter();
 			}
 			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"未知异常,请技术人员\"}");
@@ -248,6 +292,9 @@ public class FirePatrolUserController {
 		}
 	}
 
+
+
+	//TODO 异常上报需要对历史记录中设备进行同步
 	/**
 	 * 异常上报
 	 * @param userId 用户id
@@ -273,12 +320,12 @@ public class FirePatrolUserController {
 				return;
 			}
 			FirePatrolInfo newest = this.firePatrolInfoService.getNewest(equipmentId);
-			if(newest!=null&&isEquals(date, newest.getTimestamp())){
+			if(newest!=null&&isEquals(date, newest.getTimestamp())) {
 				newest.setIsNewest((short)0);
 				this.firePatrolInfoService.update(newest);
 			}
 			FirePatrolUser patrolUser = this.firePatrolUserService.getById(userId);
-			if(patrolUser!=null){
+			if(patrolUser!=null) {
 				FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
 				firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
 				firePatrolInfo.setFirePatrolUser(patrolUser);
@@ -298,18 +345,64 @@ public class FirePatrolUserController {
 				fireFightEquipment.setCheckStatus((short)1);
 				fireFightEquipment.setStatus((short)0);
 				fireFightEquipment.setLastUpdateTime(date);
-				if (fireFightEquiHistory!=null && fireFightEquiHistory.size()>0) {
+
+				//进行和消防专题图进行设备检测数据同步
+				FirePatrolEquipmentStatusVO statusVO = new FirePatrolEquipmentStatusVO();
+				statusVO.setPatrolUser(patrolUser.getUsername());						//巡查员姓名
+				statusVO.setDeviceStatus("0");											//巡查状态
+				statusVO.setDeviceId(fireFightEquipment.getPointid().toString());					//设备消防专题图id
+				firePatrolEquipmentSychService.updateFirePatrolEquipmentVOStatus(statusVO);
+
+
+				List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
+
+				//进行异常设备推送
+				String adminUserIdsStr = exceptionPushService.getPartrolAdminUserId("1");
+				//这里进行推送
+				if(description == null) {
+					description = "设备出现故障,请注意,及时进行处理!";
+				}
+				exceptionPushService.pushSend("1","消防设备异常",description,adminUserIdsStr);
+
+				//这里进行补充
+				firePatrolInfo.setFloorid(fireFightEquipment.getFloorid());
+				firePatrolInfo.setLon(fireFightEquipment.getLon());
+				firePatrolInfo.setLat(fireFightEquipment.getLat());
+				firePatrolInfo.setJobNum(patrolUser.getJobNum());
+
+
+				FirePatrolInfo add = this.firePatrolInfoService.add(firePatrolInfo);
+
+
+				if (fireFightEquiHistory!=null && fireFightEquiHistory.size() > 0) {
+					//查询到设备表中有数据
 					FireFightEquipmentHistory fireFightEquipmentHistory = fireFightEquiHistory.get(0);
 					fireFightEquipmentHistory.setCheckStatus((short)1);
 					fireFightEquipmentHistory.setStatus((short)0);
 					fireFightEquipmentHistory.setLastUpdateTime(date);
+					fireFightEquipmentHistory.setUserName(patrolUser.getUsername());
+					fireFightEquipmentHistory.setJobNum(patrolUser.getJobNum());
+					fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
+				}else {
+					//没有查询到设备表中数据,进行添加新的数据
+					FireFightEquipmentHistory fireFightEquipmentHistory = new FireFightEquipmentHistory();
+					fireFightEquipmentHistory.setName(fireFightEquipment.getName());
+					fireFightEquipmentHistory.setCampusNum(fireFightEquipment.getCampusNum());
+					fireFightEquipmentHistory.setCheckStatus((short)1);
+					fireFightEquipmentHistory.setStatus((short)0);
+					fireFightEquipmentHistory.setLon(lon);
+					fireFightEquipmentHistory.setLat(lat);
+					fireFightEquipmentHistory.setLastUpdateTime(new Date());
+					fireFightEquipmentHistory.setOldId(fireFightEquipment.getId());
+					fireFightEquipmentHistory.setUserName(patrolUser.getUsername());
+					fireFightEquipmentHistory.setJobNum(patrolUser.getJobNum());
 					fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
 				}
-				List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
-				FirePatrolInfo add = this.firePatrolInfoService.add(firePatrolInfo);
+
+
 				this.fireFightEquipmentService.update(fireFightEquipment);
-				if(file!=null&&file.length>0){
-					for(int i = 0;i<file.length;i++){
+				if(file!=null&&file.length>0) {
+					for(int i = 0;i<file.length;i++) {
 						FirePatrolImg firePatrolImg = new FirePatrolImg();
 						firePatrolImg.setFireFightEquipment(fireFightEquipment);
 						firePatrolImg.setImgUrl(upload(request,file[i]));
@@ -342,25 +435,6 @@ public class FirePatrolUserController {
 
 
 	/**
-	 * 测试上传相关内容
-	 * @param file
-	 * @param request
-	 * @throws Exception
-     */
-	@RequestMapping(value = "test",method = RequestMethod.POST)
-	public void test(@RequestParam("file") MultipartFile[] file,HttpServletRequest request) throws Exception {
-
-		if(file!=null && file.length > 0) {
-			for (MultipartFile f:file) {
-				String filePath = upload(request,f);
-				System.out.println(filePath);
-			}
-		}
-
-		System.out.println(file.length);
-	}
-
-	/**
 	 * 初始化所有设备为未检查状态
 	 * @param response
 	 */
@@ -380,6 +454,7 @@ public class FirePatrolUserController {
 			this.fireFightEquipmentHistoryService.add(history);
 		}
 	}
+
 	/**
 	 * 判断两个日期是否在同一个月
 	 * @param date1

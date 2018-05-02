@@ -113,23 +113,41 @@ public class PatrolUserStatisticsService {
                 //这里进行封装数据
                 PatrolStatisticsAreaVO vo = new PatrolStatisticsAreaVO();
                 //id
-                vo.setId(Integer.parseInt(obj[0].toString()));
+                if(obj[0] != null) {
+                    vo.setId(Integer.parseInt(obj[0].toString()));
+                }
                 //username
-                vo.setUsername(obj[1].toString());
+                if(obj[1] != null) {
+                    vo.setUsername(obj[1].toString());
+                }
                 //job_num
-                vo.setJobNum(obj[2].toString());
+                if(obj[2] != null) {
+                    vo.setJobNum(obj[2].toString());
+                }
                 //region_id
-                vo.setRegionId(Integer.parseInt(obj[3].toString()));
+                if(obj[3] != null) {
+                    vo.setRegionId(Integer.parseInt(obj[3].toString()));
+                }
                 //start_time
-                vo.setStartTime(obj[4].toString());
+                if(obj[4] != null) {
+                    vo.setStartTime(obj[4].toString());
+                }
                 //end_time
-                vo.setEndTime(obj[5].toString());
+                if(obj[5] != null) {
+                    vo.setEndTime(obj[5].toString());
+                }
                 //status
-                vo.setStatus(Integer.parseInt(obj[6].toString()));
+                if(obj[6] != null) {
+                    vo.setStatus(Integer.parseInt(obj[6].toString()));
+                }
                 //date
-                vo.setDate(obj[7].toString());
+                if(obj[7] != null) {
+                    vo.setDate(obj[7].toString());
+                }
                 //campus_num
-                vo.setCampusNum(Integer.parseInt(obj[8].toString()));
+                if(obj[8] != null) {
+                    vo.setCampusNum(Integer.parseInt(obj[8].toString()));
+                }
                 statisticsAreaVOs.add(vo);
             }
         }
@@ -305,25 +323,45 @@ public class PatrolUserStatisticsService {
                 //这里进行封装数据
                 PatrolStatisticsAreaVO vo = new PatrolStatisticsAreaVO();
                 //id
-                vo.setId(Integer.parseInt(obj[0].toString()));
+                if(obj[0] != null) {
+                    vo.setId(Integer.parseInt(obj[0].toString()));
+                }
                 //username
-                vo.setUsername(obj[1].toString());
+                if(obj[1] != null) {
+                    vo.setUsername(obj[1].toString());
+                }
                 //job_num
-                vo.setJobNum(obj[2].toString());
+                if(obj[2] != null) {
+                    vo.setJobNum(obj[2].toString());
+                }
                 //region_id
-                vo.setRegionId(Integer.parseInt(obj[3].toString()));
+                if(obj[3] != null) {
+                    vo.setRegionId(Integer.parseInt(obj[3].toString()));
+                }
                 //start_time
-                vo.setStartTime(obj[4].toString());
+                if(obj[4] != null) {
+                    vo.setStartTime(obj[4].toString());
+                }
                 //end_time
-                vo.setEndTime(obj[5].toString());
+                if(obj[5] != null) {
+                    vo.setEndTime(obj[5].toString());
+                }
                 //status
-                vo.setStatus(Integer.parseInt(obj[6].toString()));
+                if(obj[6] != null) {
+                    vo.setStatus(Integer.parseInt(obj[6].toString()));
+                }
                 //date
-                vo.setDate(obj[7].toString());
+                if(obj[7] != null) {
+                    vo.setDate(obj[7].toString());
+                }
                 //campus_num
-                vo.setCampusNum(Integer.parseInt(obj[8].toString()));
+                if(obj[8] != null) {
+                    vo.setCampusNum(Integer.parseInt(obj[8].toString()));
+                }
                 //region_name
-                vo.setRegionName(obj[9].toString());
+                if(obj[9] != null) {
+                    vo.setRegionName(obj[9].toString());
+                }
                 statisticsAreaVOs.add(vo);
             }
         }

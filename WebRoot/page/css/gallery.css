@@ -50,7 +50,7 @@
     bottom: 0px;
     left: 49px;
     padding: 4px 28px 4px 28px;
-    background-image: url('../img/tbg2.png');
+    background-image: url('../images/img/tbg2.png');
 }
 .tn3-thumb {
     border: 1px solid #3e3e3e;
@@ -72,7 +72,7 @@
 }
 .tn3-next {
     position: absolute;
-    background-image: url('../img/tn3.png');
+    background-image: url('../images/img/tn3.png');
     background-position: -39px -2px;
     width: 30px;
     height: 31px;
@@ -84,7 +84,7 @@
 }
 .tn3-prev {
     position: absolute;
-    background-image: url('../img/tn3.png');
+    background-image: url('../images/img/tn3.png');
     background-position: -4px -2px;
     width: 30px;
     height: 31px;
@@ -96,7 +96,7 @@
 }
 .tn3-next-page {
     position: absolute;
-    background-image: url('../img/tn3.png');
+    background-image: url('../images/img/tn3.png');
     background-position: -153px -5px;
     width: 25px;
     height: 25px;
@@ -109,7 +109,7 @@
 }
 .tn3-prev-page {
     position: absolute;
-    background-image: url('../img/tn3.png');
+    background-image: url('../images/img/tn3.png');
     background-position: -129px -5px;
     width: 25px;
     height: 25px;
@@ -130,7 +130,7 @@
     top: 0px;
     width: 100%;
     font-size: medium;
-    background-image: url('../img/bg.png');
+    background-image: url('../images/img/bg.png');
     padding-bottom: 1.1em;
 }
 .tn3-image{
@@ -172,7 +172,7 @@
 }
 .tn3-play {
     position: absolute;
-    background-image: url('../img/tn3.png');
+    background-image: url('../images/img/tn3.png');
     background-position: -74px -5px;
     left: 13px;
     bottom: 9px;
@@ -191,7 +191,7 @@
 }
 .tn3-show-albums {
     position: absolute;
-    background-image: url('../img/tn3.png');
+    background-image: url('../images/img/tn3.png');
     background-position: -177px -6px;
     bottom: 9px;
     right: 59px;
@@ -204,7 +204,7 @@
 }
 .tn3-fullscreen {
     position: absolute;
-    background-image: url('../img/tn3.png');
+    background-image: url('../images/img/tn3.png');
     background-position: -203px -5px;
     bottom: 9px;
     right: 11px;
@@ -223,7 +223,7 @@
     top: 0px;
     color: #e0dcdc;
     font-family: Tahoma, Helvetica, sans-serif;
-    background-image:url('../img/bg.png');
+    background-image:url('../images/img/bg.png');
     background: rgba(0, 0, 0, 0.7);
 }
 .tn3-inalbums {
@@ -272,7 +272,7 @@
 }
 .tn3-albums-next {
     position:absolute;
-    background-image:url('../img/tn3.png');
+    background-image:url('../images/img/tn3.png');
     background-position: -43px -9px;
     width: 20px;
     height: 20px;
@@ -285,7 +285,7 @@
 }
 .tn3-albums-prev {
     position:absolute;
-    background-image:url('../img/tn3.png');
+    background-image:url('../images/img/tn3.png');
     background-position: -9px -9px;
     width: 20px;
     height: 20px;
@@ -298,7 +298,7 @@
 }
 .tn3-albums-close {
     position: absolute;
-    background-image: url('../img/tn3.png');
+    background-image: url('../images/img/tn3.png');
     background-position: -237px -9px;
     width: 20px;
     height: 20px;
@@ -311,21 +311,21 @@
 }
 .tn3-sep1 {
     position: absolute;
-    background-image: url('../img/tn3.png');
+    background-image: url('../images/img/tn3.png');
     width: 2px;
     height: 47px;
     left: 47px;
 }
 .tn3-sep2 {
     position: absolute;
-    background-image: url('../img/tn3.png');
+    background-image: url('../images/img/tn3.png');
     width: 2px;
     height: 47px;
     right: 96px;
 }
 .tn3-sep3 {
     position: absolute;
-    background-image: url('../img/tn3.png');
+    background-image: url('../images/img/tn3.png');
     width: 2px;
     height: 47px;
     right: 47px;

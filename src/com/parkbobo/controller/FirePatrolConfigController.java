@@ -28,10 +28,10 @@ public class FirePatrolConfigController {
 		return mv;
 	}
 	@RequestMapping("firePatrolConfig_edit")
-	public ModelAndView edit(FirePatrolConfig firePatrolConfig){
+	public ModelAndView edit(FirePatrolConfig firePatrolConfig) {
 		ModelAndView mv = new ModelAndView();
-		if(firePatrolConfig!=null){
-			if(firePatrolConfig.getDistance()==null){
+		if(firePatrolConfig!=null) {
+			if(firePatrolConfig.getDistance() == null) {
 				mv.addObject("msg","请输入距离");
 				mv.setViewName("redirect:/firePatrolConfig_list");
 				return mv;

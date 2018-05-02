@@ -5,5 +5,8 @@ import java.util.List;
 import com.parkbobo.model.PatrolUserRegion;
 
 public interface PatrolUserRegionDao extends BaseDao<PatrolUserRegion>{
-	public abstract List<Object[]> getBySql(String sql);
+	List<Object[]> getBySql(String sql);
+
+
+	double getDistanceBySql(String sql);
 }

@@ -4,7 +4,7 @@ var refresher = {
 	"pullingDownLable":"下拉刷新...",
 	"pullUpLable":"上拉查看更多内容...",
 	"pullingUpLable":"松开加载...",
-	"loadingLable":"<img src='img/bg.gif' alt=''>"},
+	"loadingLable":"<img src='../img/bg.gif' alt=''>"},
 	init:function(parameter){		
 	var wrapper=document.getElementById(parameter.id);
 	

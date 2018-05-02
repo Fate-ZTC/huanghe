@@ -81,7 +81,7 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 		session.setAttribute("loginUser", manager);
 		session.setAttribute("systemConfig", sysconfigService.getConfig());
 		setDetails(request, authRequest);
-		if(remember){
+		if(remember) {
 			addCookie("xygisadminrememberUserInfo", DESHelper.encryptDES("{\"username\":\"" + username+ "\"," +
 					"\"password\":\"" + password + "\"}", "lqkj*gis"), 60 * 60 * 24 * 7,request.getServerName(),response);
 		}else{

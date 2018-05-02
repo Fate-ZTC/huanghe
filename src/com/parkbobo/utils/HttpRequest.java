@@ -1,20 +1,11 @@
 package com.parkbobo.utils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
 
 public class HttpRequest {
 	    /**
@@ -41,6 +32,7 @@ public class HttpRequest {
 	            connection.setRequestProperty("connection", "Keep-Alive");
 	            connection.setRequestProperty("user-agent",
 	                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+				connection.setConnectTimeout(5000);					//设置超时时间
 	            
 	            //connection.set
 	            // 建立实际的连接
@@ -163,6 +155,7 @@ public class HttpRequest {
 	            conn.setRequestProperty("connection", "Keep-Alive");
 	            conn.setRequestProperty("user-agent",
 	                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+				conn.setConnectTimeout(5000);
 	            // 发送POST请求必须设置如下两行
 	            conn.setDoOutput(true);
 	            conn.setDoInput(true);

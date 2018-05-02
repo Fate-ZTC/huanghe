@@ -43,7 +43,7 @@ public class PatrolExceptionInfo implements Serializable{
 	/**
 	 * 异常类型
 	 */
-	private String exceptionType;
+	private Integer exceptionType;
 	/**
 	 * 时间戳
 	 */
@@ -57,7 +57,7 @@ public class PatrolExceptionInfo implements Serializable{
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	@Column(name="usreg_id")
+	@Column(name="usregid")
 	public Integer getUsregId() {
 		return usregId;
 	}
@@ -86,13 +86,13 @@ public class PatrolExceptionInfo implements Serializable{
 		this.exceptionName = exceptionName;
 	}
 	@Column(name="exception_type")
-	public String getExceptionType() {
+	public Integer getExceptionType() {
 		return exceptionType;
 	}
-	public void setExceptionType(String exceptionType) {
+	public void setExceptionType(Integer exceptionType) {
 		this.exceptionType = exceptionType;
 	}
-	@Column(name="create_time")
+	@Column(name="createtime")
 	public Date getCreateTime() {
 		return createTime;
 	}

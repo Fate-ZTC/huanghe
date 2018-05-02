@@ -16,7 +16,7 @@ String path = request.getContextPath();
 <body style="background:url(<%=path %>/page/images/topbg.gif) repeat-x;">
 
     <div class="topleft">
-    <a href="<%=path %>/main_index" target="_parent"><img src="<%=path %>/page/images/logo.png" title="系统首页" /></a>
+    <a href="<%=path %>/main_index" target="_parent"><img src="<%=path %>/page/images/school-logo.png" title="系统首页" /></a>
     </div>
         
             

@@ -24,7 +24,8 @@
     <script src="https://cdn.bootcss.com/html5media/1.1.8/html5media.js"></script>
 </head>
 <body>
-
+    <input type="hidden" name="id" value="${id}" id="regionId">
+    <input type="hidden" name="color" value="${color}" id="colorDraw">
     <div class="box f14 xungeng-map-box">
         <div class="xungeng-map-top">
             <!--绘制前操作-->
@@ -44,8 +45,8 @@
 
             <!--绘制成功后操作-->
             <div class="xungeng-map-drawing-end-box" style="display: none;">
-                <button class="xungeng-drawing-result-del float-L">删除</button>
-                <button class="xungeng-drawing-submit float-L">提交</button>
+                <button class="xungeng-drawing-result-del float-L" id="delete">删除</button>
+                <button class="xungeng-drawing-submit float-L" id="submit">提交</button>
             </div>
         </div>
         <div class="xungeng-map" id="xungeng-map">
@@ -98,8 +99,8 @@
     <%--<br><br>--%>
 
     <%--<input type="button" value="开始画多边形" onclick="startDrawPolygon()">--%>
-    <input type="button" value="停止画多边形" onclick="stopDrawPolygon()">
-    <input type="button" value="加载多边形" onclick="loadPolygon()">
+    <%--<input type="button" value="停止画多边形" onclick="stopDrawPolygon()">--%>
+    <%--<input type="button" value="加载多边形" onclick="loadPolygon()">--%>
 
     <script>
 
@@ -136,8 +137,13 @@
 
 
 
+
+
+
+
         LMap.APIURL = "<%=LMap_APIURL%>";
         LMap.MAPSERVERURL = "<%=LMap_MAPSERVERURL%>";
+
         var map = new LMap.Map2D("map", 1001);
         /**
          * 放大地图比例
@@ -168,7 +174,7 @@
         /**
          * 测距结果回调
          */
-        map.addMeasureDistanceControl(function (e) {
+        map.addMeasureDistanceControl(function(e) {
             LqUtil.log(e);
         });
 
@@ -199,8 +205,8 @@
                         symbolizer: {
                             "Point": {
                                 pointRadius: 6,
-                                graphicName: "circle",
-                                fillColor: "white",
+                                graphicName: "#02a6cf",
+                                fillColor: "#02a6cf",
                                 fillOpacity: 1,
                                 strokeWidth: 2,
                                 strokeOpacity: 1,
@@ -214,8 +220,8 @@
                             "Polygon":{
                                 strokeWidth: 2,
                                 strokeOpacity: 1,
-                                fillColor: "#02a6cf",
-                                strokeColor: "#02a6cf"
+                                fillColor: "#02a6c0",
+                                strokeColor: "#02a6c0"
                             }
                         }
                     })
@@ -269,34 +275,18 @@
                             "Polygon":{
                                 strokeWidth: 2,
                                 strokeOpacity: 1,
-                                strokeColor: "#00ccff"
+                                strokeColor: "#02a6cf"
                             }
                         }
                     })
                 ]
             })
         });
-        var layer = new LMap.Layer.Vector("ttt",{
-            styleMap:new LMap.StyleMap({
-                "default":new LMap.Style({
-                    cursor:'pointer',
-                    fillColor: "#ff0000",
-                    fillOpacity: 0.4,
-                    strokeColor: "#fac807",
-                    strokeWidth: 1
-                }),
-                "select":new LMap.Style({
-                }),
-                "temporary":new LMap.Style({
-                    fillColor: "#ffffff",
-                    fillOpacity: 0.4,
-                    strokeColor: "#fac807",
-                    strokeWidth: 1
-                })
-            })
 
-        });
-        map.addLayers([layer]);
+
+
+
+
 
 
         var drawLayer = new LMap.Layer.Vector("Draw Layer",{styleMap: styles});
@@ -346,18 +336,8 @@
             drawControls['modify'].selectFeature(e);
             //drawControls['modify'].setFeatureState();
         };
-        //画面
-        drawControls['polygon'].featureAdded = function(e) {
-            LqUtil.log("line：" + e.geometry.transform(map.getProjectionObject(), new LMap.Projection("EPSG:4326")).toString());
 
 
-            stopDrawLine();
-            startEdit();
-            //alert("长度：" + map.distanceLine(e) +"米");
-
-            drawControls['modify'].selectFeature(e);
-            //drawControls['modify'].setFeatureState();
-        };
         var startDrawLine = function(){
             var control = drawControls['line'];
             drawControls['line'].activate();
@@ -397,7 +377,9 @@
             drawControls['polygon'].activate();
         };
 
-        //结束绘制
+        /**
+         * 结束绘制
+         */
         var stopDrawPolygon = function(){
             drawControls['polygon'].deactivate();
             //显示提交相关内容
@@ -438,24 +420,87 @@
             }
         });
 
+
+//        "geometry":{
+//            "type": "GeometryCollection",
+//                    "geometries": [
+//                {"type":"Polygon","coordinates":[[[104.119335337292,30.61427111586],[104.120869560857,30.6141972486362],[104.120869560857,30.6127937606711],[104.119174404755,30.6127014252239],[104.119335337292,30.61427111586]]]}
+//            ]
+//        },
+//        "type": "Feature",
+//                "properties": {
+//            "gid":4,
+//                    "name":'绘制测试',
+//                    "color":'#ffff00'
+//        }
+
+
+        /**
+         *
+         * 画面
+         *
+         */
+        drawControls['polygon'].featureAdded = function(e) {
+//            LqUtil.log("line：" + e.geometry.transform(map.getProjectionObject(), new LMap.Projection("EPSG:4326")).toString());
+            //进行保存数据
+//            console.log(e.geometry.transform(map.getProjectionObject(), new LMap.Projection("EPSG:4326")).toString());
+            polygon = e.geometry.transform(map.getProjectionObject(),new LMap.Projection("EPSG:4326")).toString();
+
+            stopDrawLine();
+            startEdit();
+            //alert("长度：" + map.distanceLine(e) +"米");
+            drawControls['modify'].selectFeature(e);
+            //drawControls['modify'].setFeatureState();
+
+
+        };
+
+
+        //数据回显所需要的样式
+        var color = $("#colorDraw").val();
+        var layer = new LMap.Layer.Vector("showDrawRegion",{
+            styleMap:new LMap.StyleMap({
+                "default":new LMap.Style({
+                    cursor:'pointer',
+                    fillColor: (color == "" || color == undefined) ? "#02a6cf" : color ,
+                    fillOpacity: 0.4,
+                    strokeColor: (color == "" || color == undefined) ? "#02a6cf" : color ,
+                    strokeWidth: 1
+                }),
+                "select":new LMap.Style({
+                }),
+                "temporary":new LMap.Style({
+                    fillColor: (color == "" || color == undefined) ? "#02a6cf" : color ,
+                    fillOpacity: 0.4,
+                    strokeColor: (color == "" || color == undefined) ? "#02a6cf" : color ,
+                    strokeWidth: 1
+                })
+            })
+
+        });
+        map.addLayers([layer]);
+
+        //下面进行数据回显操作
         var geoJson =  {
             "type": "FeatureCollection",
-            "features": [
-                {
-                    "geometry":{
-                        "type": "GeometryCollection",
-                        "geometries": [
-                            {"type":"Polygon","coordinates":[[[104.119335337292,30.61427111586],[104.120869560857,30.6141972486362],[104.120869560857,30.6127937606711],[104.119174404755,30.6127014252239],[104.119335337292,30.61427111586]]]}
-                        ]
-                    },
-                    "type": "Feature",
-                    "properties": {
-                        "gid":4,
-                        "name":'绘制测试',
-                        "color":'#ffff00'
-                    }
-                }
-            ]
+            "features": []
+        };
+
+        var features = {
+            "geometry":{
+                "type": "GeometryCollection",
+                "geometries": []
+            },
+            "type": "Feature",
+            "properties": {
+                "gid":4,
+                "name":'绘制测试',
+                "color":'#ffff00'
+            }
+        };
+        var geomentrie = {
+            "type":"Polygon",
+            "coordinates":[]
         };
         var geojsonFormat = new LMap.Format.GeoJSON(
                 {
@@ -464,9 +509,105 @@
                 }
         );
 
+        /**
+         * 重回数据
+         */
         function loadPolygon(){
             layer.addFeatures(geojsonFormat.read(geoJson));
         }
+
+
+
+
+        //这里是进行初始化区域相关内容
+        var patrolRegion = '';
+        <c:if test="${not empty patrolRegion}">
+        patrolRegion = '${patrolRegion}';
+        </c:if>
+        var polygon = "";
+        $(function () {
+            var patrol = showData(patrolRegion);
+            //下面进行数据展示
+            showRegion(patrol);
+
+        });
+
+
+        /**
+         * 将json字符串转化成对象
+         * @param data
+         */
+        var showData = function (data) {
+            if(data != undefined && data != "") {
+                var showData = JSON.parse(data);
+                return showData;
+            }
+        };
+
+
+        /**
+         * 进行区域坐标设置并且进行绘制
+         * @param patrol
+         */
+        var showRegion = function (patrol) {
+            if(patrol != undefined && patrol != "") {
+                if(patrol.coordinates != undefined && patrol.coordinates != '') {
+                    //这里进行数据格式化
+                    geomentrie.type = 'Polygon';
+                    //设置相关坐标
+                    geomentrie.coordinates.push(patrol.coordinates);
+                    //设置绘制颜色
+                    features.geometry.geometries.push(geomentrie);
+                    geoJson.features.push(features);
+                    //设置完成进行加载数据
+                    loadPolygon();
+                }
+            }
+        };
+
+        //进行数据提交
+        var deleteRegion = function () {
+            var id = $("#regionId").val();
+            polygon = "";
+        };
+
+
+        /**
+         * 删除数据
+         */
+        $("#delete").click(function () {
+            var id = $("#regionId").val();
+            polygon = "";
+            //删除已经绘制的内容
+            drawLayer.removeAllFeatures();
+            //删除区域的同时删除已经存在的数据
+            window.location.href = '<%=basePath%>deleteRegionLocation?id=' + id;
+            <%--$.ajax({--%>
+                <%--url: '<%=basePath%>deleteRegionLocation?id=' + id,--%>
+                <%--type: 'get',--%>
+<%--//					contentType:'application/json',--%>
+<%--//					dataType:'json',--%>
+                <%--success:function(data) {},--%>
+                <%--error:function() {}--%>
+            <%--});--%>
+        });
+
+        /**
+         * 提交区域数据
+         */
+        $("#submit").click(function () {
+            var id = $("#regionId").val();
+            var value = polygon;
+            window.location.href = '<%=basePath%>addDrawRegion?id=' + id + "&polygon=" + value;
+            <%--$.ajax({--%>
+                <%--url: '<%=basePath%>addDrawRegion?id=' + id + "&polygon=" + value,--%>
+                <%--type: 'get',--%>
+<%--//					contentType:'application/json',--%>
+<%--//					dataType:'json',--%>
+                <%--success:function(data) {},--%>
+                <%--error:function() {}--%>
+            <%--});--%>
+        });
 
 
     </script>

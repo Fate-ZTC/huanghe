@@ -24,7 +24,7 @@ public class PatrolEmergencyService {
 		this.patrolEmergencyDao.update(patrolEmergency);
 	}
 	public PatrolEmergency getNewest(Integer campusNum){
-		String hql = "from PatrolEmergency where campusNum =" +campusNum +" and endTime is null order by startTime desc limit1";
+		String hql = "from PatrolEmergency where campusNum =" +campusNum +" and endTime is null order by startTime desc limit 1";
 		List<PatrolEmergency> list = this.patrolEmergencyDao.getByHQL(hql);
 		PatrolEmergency p = null;
 		if(list!=null&&list.size()>0){

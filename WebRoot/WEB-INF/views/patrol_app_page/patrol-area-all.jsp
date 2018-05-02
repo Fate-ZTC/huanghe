@@ -18,6 +18,7 @@
 		<link rel="stylesheet" href="<%=basePath%>patrol_app_page/css/chuanshi.css" />
 		<script src="<%=basePath%>patrol_app_page/js/jquery.min.js"></script>
 		<script src="<%=basePath%>patrol_app_page/js/datePicker.js"></script>
+		<script src="<%=basePath%>patrol_app_page/js/jquery.cookie.js"></script>
 	</head>
 	<body>
 		<div class="box f14">
@@ -148,13 +149,15 @@
 			var pageSize = 20;	//pageSize
 			var regionId = '';	//区域id
 			var type = 0;		//获取类型(全部,异常,正常)
-			var dateType = 0;	//时间类型
+			var dateType = 1;	//时间类型
 			var startDate = ''; //开始时间
 			var endDate = '';	//结束时间
 			var totalCount = '';//数据总条数
 			var totalPage = '';	//数据总页数
 
 			$(function () {
+			    //获取cookie
+                getCookie();
 				<%--下面进行加载数据--%>
 				<c:if test="${not empty data}">
 				requestData = '${data}';
@@ -170,6 +173,32 @@
 				</c:if>
 				initDate(requestData);
 			});
+
+
+
+
+			/**
+			 * 保存cookie
+			 */
+			var saveCookie = function (c_dateType,c_type) {
+				//这里进行保存cookie
+				$.cookie("dateType",c_dateType);
+				$.cookie("type",c_type);
+            };
+
+			/**
+			 * 获取cookie的值
+			 */
+			var getCookie = function () {
+				var cookie_dateType = $.cookie("dateType");
+				var cookie_type = $.cookie("type");
+				if(cookie_dateType != undefined && cookie_dateType != null) {
+				    dateType = cookie_dateType;
+				}
+				if(cookie_type != undefined && cookie_type != null) {
+				    type = cookie_type;
+				}
+            };
 
 			/**
 			 *
@@ -197,7 +226,10 @@
 						var item = showData[i];
 						var titleDate = item.date;
 						var starttime = item.startTime.split(' ')[1];
-						var endtime = item.endTime.split(' ')[1];
+						var endtime = "";
+						if(item.endTime != undefined && item.endTime != null) {
+                            endtime = item.endTime.split(' ')[1];
+                        }
 						var time = starttime + "~" + endtime;
 						var id = item.id;
 						var username = item.username;
@@ -251,6 +283,7 @@
 							}
 							itemAppend += '</div></div></li>';
 							_this.append(itemAppend);
+                            myScroll.refresh();
 						} else {
 							//存在
 							var liObj = $("#" + titleDate);
@@ -291,6 +324,7 @@
 							}
 							itemAppend += '</div></div>';
 							liObj.append(itemAppend);
+                            myScroll.refresh();
 						}
 					}
 				}
@@ -326,7 +360,9 @@
 			var dateOnclick = function (dateTypeValue) {
 				page = 1;
 				dateType = dateTypeValue;
-				clearDate();
+				//设置cookie
+                saveCookie(dateType,type);
+                clearDate();
 				ajaxRequestDate(type,dateType,page,pageSize,regionId,null,null);
 				//进行选择
 				activeChange();
@@ -351,6 +387,9 @@
 					startDate = dateValue + " " + "00:00:00";
 					endDate = dateValue + " " + "23:59:59";
 				}
+
+				//设置cookie
+                saveCookie(dateType,type);
 
 				ajaxRequestDate(type,dateType,page,pageSize,regionId,startDate,endDate);
 				activeChange();
@@ -447,7 +486,11 @@
 						var item = showData[i];
 						var titleDate = item.date;
 						var starttime = item.startTime.split(' ')[1];
-						var endtime = item.endTime.split(' ')[1];
+
+						var endtime = "";
+						if(item.endTime != undefined && item.endTime != null) {
+                            endtime = item.endTime.split(' ')[1];
+						}
 						var time = starttime + "~" + endtime;
 						var id = item.id;
 						var username = item.username;
@@ -500,6 +543,7 @@
 							}
 							itemAppend += '</div></div></li>';
 							_this.append(itemAppend);
+                            myScroll.refresh();
 						} else {
 							//存在
 							var liObj = $("#" + titleDate);
@@ -540,6 +584,7 @@
 							}
 							itemAppend += '</div></div>';
 							liObj.append(itemAppend);
+                            myScroll.refresh();
 						}
 					}
 				}
@@ -617,19 +662,18 @@
 
 
 			//上拉加载，下拉刷新
-			$(function(){
-				refresher.init({
-					id:"wrapperList",
-					pullDownAction:Refresh,
-					pullUpAction:Load
-				});
-						
-				function Refresh() {
-					setTimeout(function () {
-						window.location.reload();
-					}, 1000);
-				}
-				
+			refresher.init({
+				id:"wrapperList",
+				pullDownAction:Refresh,
+				pullUpAction:Load
+			});
+
+			function Refresh() {
+				setTimeout(function () {
+					window.location.reload();
+				}, 1000);
+			}
+
 			//首次执行
 			Load();
 
@@ -663,7 +707,7 @@
 				} else{
 					$(".pullUpLabel").text("没有更多内容了...")
 				}
-			}});
+			};
 			
 		</script>
 	</body>

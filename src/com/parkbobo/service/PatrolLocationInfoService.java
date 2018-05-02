@@ -27,16 +27,16 @@ public class PatrolLocationInfoService {
 	}
 	/**
 	 * 获取当前位置信息
-	 * @param userid
+	 * @param jobNum
 	 * @param usregId
 	 * @param campusNum
 	 * @return
 	 */
 	public PatrolLocationInfo getLocation(String jobNum,Integer usregId,Integer campusNum){
 		String hql = "from PatrolLocationInfo where jobNum = '"+jobNum+"' and usregId="+usregId+
-				" and campusNum = "+campusNum +" order by timestamp desc limit 1";
-		List<PatrolLocationInfo> list = this.patrolLocationInfoDao.getByHQL(hql);
-		if(list.size()>0&&list!=null){
+				" and campusNum = "+campusNum +" order by timestamp desc";
+		List<PatrolLocationInfo> list = this.patrolLocationInfoDao.getPage(hql,0,1);
+		if(list.size()>0&&list!=null) {
 			return list.get(0);
 		}
 		return null;
@@ -62,5 +62,7 @@ public class PatrolLocationInfoService {
 		String hql = "from PatrolLocationInfo where status!=1";
 		return this.patrolLocationInfoDao.pageQuery(hql, pageSize==null?20:pageSize, page==null?1:page);
 	}
+
+
 	
 }

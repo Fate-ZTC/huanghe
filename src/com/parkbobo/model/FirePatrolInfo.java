@@ -62,6 +62,27 @@ public class FirePatrolInfo implements Serializable{
 	 * 是否是最新的一条 0 不是  1 是
 	 */
 	private Short isNewest;
+
+	/**
+	 * 楼层id
+     */
+	private String floorid;
+
+	/**
+	 * 经度
+     */
+	private double lon;
+
+	/**
+	 * 纬度
+     */
+	private double lat;
+
+	/**
+	 * 巡查人员工号
+     */
+	private String jobNum;
+
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -136,5 +157,41 @@ public class FirePatrolInfo implements Serializable{
 	public void setIsNewest(Short isNewest) {
 		this.isNewest = isNewest;
 	}
-	
+
+
+	@Column(name = "floorid")
+	public String getFloorid() {
+		return floorid;
+	}
+
+	public void setFloorid(String floorid) {
+		this.floorid = floorid;
+	}
+
+	@Column(name = "lon")
+	public double getLon() {
+		return lon;
+	}
+
+	public void setLon(double lon) {
+		this.lon = lon;
+	}
+
+	@Column(name = "lat")
+	public double getLat() {
+		return lat;
+	}
+
+	public void setLat(double lat) {
+		this.lat = lat;
+	}
+
+	@Column(name = "job_num")
+	public String getJobNum() {
+		return jobNum;
+	}
+
+	public void setJobNum(String jobNum) {
+		this.jobNum = jobNum;
+	}
 }

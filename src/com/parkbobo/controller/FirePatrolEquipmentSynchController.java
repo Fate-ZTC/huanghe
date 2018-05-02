@@ -1,6 +1,10 @@
 package com.parkbobo.controller;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,6 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.parkbobo.VO.ModifyFireEquipmentVO;
 import com.parkbobo.dao.FireFightEquipmentDao;
+import com.parkbobo.model.FireFightEquipment;
+import com.parkbobo.model.FireFightEquipmentHistory;
+import com.parkbobo.service.FireFightEquipmentHistoryService;
 import com.parkbobo.service.FirePatrolEquipmentSychService;
 import com.parkbobo.utils.message.MessageBean;
 
@@ -25,10 +32,10 @@ public class FirePatrolEquipmentSynchController {
 
     @Resource
     private FirePatrolEquipmentSychService firePatrolEquipmentSychService;
-
-
     @Resource(name="fireFightEquipmentDaoImpl")
     private FireFightEquipmentDao fireFightEquipmentDao;
+    @Resource
+    private FireFightEquipmentHistoryService equipmentHistoryService;
 
 
     /**
@@ -60,6 +67,59 @@ public class FirePatrolEquipmentSynchController {
     }
 
 
+    /**
+     * 设备历史记录同步
+     * @param response
+     */
+    @RequestMapping("/sychequipmentHistory")
+    public void  sychEquipmentHistory(HttpServletResponse response) {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        MessageBean messageBean = new MessageBean();
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+            List<FireFightEquipment> fireFightEquipments = this.fireFightEquipmentDao.getAll();
+            if(fireFightEquipments != null && fireFightEquipments.size() > 0) {
+                List<FireFightEquipmentHistory> fireFightEquipmentHistories = new ArrayList<>(fireFightEquipments.size());
+                for(FireFightEquipment fightEquipment : fireFightEquipments) {
+                    FireFightEquipmentHistory fireFightEquipmentHistory = new FireFightEquipmentHistory();
+                    fireFightEquipmentHistory.setName(fightEquipment.getName());
+                    fireFightEquipmentHistory.setStatus(fightEquipment.getStatus());
+                    fireFightEquipmentHistory.setCheckStatus((short)0);//0未检查 1已检查
+                    fireFightEquipmentHistory.setLastUpdateTime(new Date());
+                    fireFightEquipmentHistory.setLon(fightEquipment.getLon());
+                    fireFightEquipmentHistory.setLat(fightEquipment.getLat());
+                    fireFightEquipmentHistory.setCampusNum(fightEquipment.getCampusNum());
+                    fireFightEquipmentHistory.setOldId(fightEquipment.getId());
+                    fireFightEquipmentHistory.setFloorid(fightEquipment.getFloorid());
+                    fireFightEquipmentHistories.add(fireFightEquipmentHistory);
+                }
+                //进行数据同步
+                this.equipmentHistoryService.batchAdd(fireFightEquipmentHistories);
+                messageBean.setCode(200);
+                messageBean.setMessage("success");
+                messageBean.setStatus(true);
+                out.write(JSON.toJSONString(messageBean));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            messageBean.setCode(200);
+            messageBean.setMessage("同步消防设备出现错误");
+            messageBean.setStatus(false);
+            out.write(JSON.toJSONString(messageBean));
+        }finally {
+            out.flush();
+            out.close();
+        }
+    }
+
+
+    /**
+     * 对专题图进行消防设备增加删除修改进行同步
+     * @param equipmentVO
+     * @param response
+     */
     @RequestMapping("/modify")
     @ResponseBody
     public void modifyEquipment(@RequestBody ModifyFireEquipmentVO equipmentVO, HttpServletResponse response) {

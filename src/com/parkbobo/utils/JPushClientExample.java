@@ -146,8 +146,9 @@ public class JPushClientExample {
 	 * @param msgTitle
 	 * @param msgContent
 	 * @param map
+	 * @param alias 格式"123,123,123"
 	 */
-	public void aliasSendMsg(String msgTitle, String msgContent, Map<String, String> map,String alias){
+	public void aliasSendMsg(String msgTitle, String msgContent, Map<String, String> map,String alias) {
 		
 		try {
 			jpush = new JPushClient(masterSecret, appKey, timeToLive);
@@ -158,10 +159,8 @@ public class JPushClientExample {
 			
 			System.out.println(pushResult.toString());
 		} catch (APIConnectionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (APIRequestException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -300,7 +299,7 @@ public class JPushClientExample {
 	public static PushPayload buildPushObject_all_alias_alert(String msgTitle,
 			String msgContent, Map<String, String> map, String alias) {
 		return PushPayload.newBuilder()
-				.setAudience(Audience.alias(alias))
+				.setAudience(Audience.alias(alias.split(",")))
 				.setPlatform(Platform.android_ios())
                 .setNotification(Notification.newBuilder()
                         .addPlatformNotification(IosNotification.newBuilder()
@@ -320,7 +319,7 @@ public class JPushClientExample {
                                 .build())
                         .build())
                  .setOptions(Options.newBuilder()
-                         .setApnsProduction(true)//IOS推送环境，true生产环境，false开发环境
+                         .setApnsProduction(false)//IOS推送环境，true生产环境，false开发环境
                          .build())
                  .build();
 	}

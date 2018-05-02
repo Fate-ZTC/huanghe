@@ -1,7 +1,10 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ page language="java" import="java.util.*,java.text.*" pageEncoding="UTF-8"%>
 <%@include file="../../taglibs.jsp" %>
 <%
-String path = request.getContextPath();
+    String path = request.getContextPath();
+    String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+    DateFormat df = new SimpleDateFormat("yyyy年MM月dd日，EEE", Locale.CHINA);
+    String date ="今天是："+ df.format(new Date());
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -96,12 +99,12 @@ String path = request.getContextPath();
     	<thead>
     	<tr>
         <th width="40px"><input type="checkbox" name="checkAll" value="checkbox" id="checkAll" class="checkAll"/></th>
-        <th width="150px">设备名称</th>
-        <th width="150px">巡查人员姓名</th>
-        <th width="150px">巡查人员账号</th>
-        <th width="150px">巡查时间</th>
-        <th width="150px">巡查结果</th>
-        <th width="150px">操作</th>
+        <th width="100px">设备名称</th>
+        <th width="100px">巡查人员姓名</th>
+        <th width="100px">巡查人员账号</th>
+        <th width="100px">巡查时间</th>
+        <th width="100px">巡查结果</th>
+        <th width="200px">操作</th>
         </tr>
         </thead>
         <tbody>
@@ -177,25 +180,39 @@ String path = request.getContextPath();
 			};
 			laydate(end_time);
 	var the_host = "<%=path%>/";
+
+    /**
+     * 显示图片内容
+     */
 	function showImgs(id){
-		$.get(the_host+'showImgs',{'id':id}, function(json){
-		  layer.photos({
-		    photos: json
-		    ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
-		  });
-		}); 
+	    window.location.href = '<%=basePath%>showExceptionImages?id=' + id;
+
+
+//		$.get(the_host+'showImgs',{'id':id}, function(json){
+//		  layer.photos({
+//		    photos: json
+//		    ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+//		  });
+//		});
 	}
 	function excepDeta(name,exceptionTypes,id){
 	$.get(the_host+'showExcptions',{'exceptionTypes':exceptionTypes,'id':id},function(data){
  		console.log(data);
+        var content = '';
+ 		if(data.exceptions === data.description) {
+            content = '<ul class="excul"><li>'+data.exceptions+'</li>';
+        }else {
+            content = '<ul class="excul"><li>'+data.exceptions+'</li>'+
+                '<li>'+data.description+'</li></ul>';
+        }
+
    		if(data.status=='true'){
 			$(".layui-layer-title").text(name + "-异常描述");
 			layer.open({
 			  type: 1,
 			  skin: 'layui-layer-rim', //加上边框
 			  area: ['420px', '240px'], //宽高
-			  content: '<ul class="excul"><li>'+data.exceptions+'</li>'+
-		   				'<li>'+data.description+'</li></ul>'
+			  content: content
 			});
    		}
    	},'json');

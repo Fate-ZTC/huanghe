@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.parkbobo.VO.FirePatrolEquipmentStatusVO;
 import com.parkbobo.VO.FirePatrolEquipmentVO;
 import com.parkbobo.VO.ModifyFireEquipmentVO;
 import com.parkbobo.dao.FireFightEquipmentDao;
@@ -16,6 +17,8 @@ import com.parkbobo.model.FireFightEquipment;
 import com.parkbobo.model.FirePatrolConfig;
 import com.parkbobo.utils.Configuration;
 import com.parkbobo.utils.HttpRequest;
+
+import static com.alibaba.fastjson.JSON.parseObject;
 
 /**
  * Created by lijunhong on 18/4/8.
@@ -26,6 +29,7 @@ public class FirePatrolEquipmentSychService {
 
 
     public static final String CDLQURL = Configuration.getInstance().getValue("FirePatrolEquipmentSych");
+    public static final String FIRE_PATROL_UPATE_STATUS_URL = Configuration.getInstance().getValue("FirePatrolEquiStatusSych");
 
     @Resource
     private FirePatrolConfigService firePatrolConfigService;
@@ -165,9 +169,11 @@ public class FirePatrolEquipmentSychService {
         String midParamValue = "";
         //进行获取相关消防设备配置信息
         FirePatrolConfig firePatrolConfig = firePatrolConfigService.getById(1);
-        if(firePatrolConfig == null) {
+        if(firePatrolConfig != null && firePatrolConfig.getEquipmentType() == null) {
             //设置一个默认值
             midParamValue = "301";
+        }else {
+            midParamValue = firePatrolConfig.getEquipmentType();
         }
 
         try {
@@ -178,15 +184,31 @@ public class FirePatrolEquipmentSychService {
             for (FirePatrolEquipmentVO vo : voList) {
                 //进行设置相关内容
                 FireFightEquipment fightEquipment = new FireFightEquipment();
-                fightEquipment.setLat(vo.getLat());
-                fightEquipment.setLon(vo.getLon());
-                fightEquipment.setName(vo.getName());
+
+                String[] lonLat = null;
+                //这里进行处理经纬度
+                if(vo.getCoordinate() != null) {
+                    lonLat = vo.getCoordinate().trim().replace("[","").replace("]","").split(",");
+                    if(lonLat != null && lonLat.length == 2) {
+                        fightEquipment.setLon(Float.parseFloat(lonLat[0]));
+                        fightEquipment.setLat(Float.parseFloat(lonLat[1]));
+                    }
+                }
+                if(vo.getThematicPointCategory() != null) {
+                    fightEquipment.setName(vo.getThematicPointCategory().getName());
+                    fightEquipment.setCategoryid(vo.getThematicPointCategory().getCategoryid());
+                }
                 //这里进行设置默认校区id
                 fightEquipment.setCampusNum(1);
                 fightEquipment.setFloorid(vo.getFloorid());
                 fightEquipment.setIcon(vo.getIcon());
                 //设置同步库的id
                 fightEquipment.setPointid(vo.getPointid());
+                fightEquipment.setLastUpdateTime(new Date());
+                //设置消防设备(同步时默认正常)
+                fightEquipment.setStatus((short)1);
+                //设置是否检查(默认未检查)
+                fightEquipment.setCheckStatus((short)0);
 
 
                 boolean isExist = fireFightEquipmentDao.existsByProperty("pointid",vo.getPointid());
@@ -216,10 +238,11 @@ public class FirePatrolEquipmentSychService {
         String params = "mid=" + param;
         String result = httpRequest.sendGet(CDLQURL,params);
         if(result != null && !"".equals(result)) {
-            JSONObject jsonObject = JSONObject.parseObject(result);
+            JSONObject jsonObject = parseObject(result);
             if(jsonObject != null && !"".equals(jsonObject)) {
                 Integer code = jsonObject.getInteger("code");
                 if(code == 200) {
+                    System.out.println(JSON.parseArray(jsonObject.getString("data"),FirePatrolEquipmentVO.class));
                     return JSON.parseArray(jsonObject.getString("data"), FirePatrolEquipmentVO.class);
                 }
             }
@@ -251,10 +274,40 @@ public class FirePatrolEquipmentSychService {
     }
 
 
-//    public String getgemotry() {
-//        Coordinate coordinate = new Coordinate(Double.parseDouble("112.54908981160592"), Double.parseDouble("32.96925319191549"));
-//        Point geom =  JTSFactoryFinder.getGeometryFactory( null ).createPoint(coordinate);
-//        return null;
-//    }
+    /**
+     * 巡查时和专题图进行状态更新
+     * @param statusVO  跟新对象
+     * @return 是否跟新成功
+     */
+    public boolean updateFirePatrolEquipmentVOStatus(FirePatrolEquipmentStatusVO statusVO) {
+        HttpRequest request = new HttpRequest();
+        if(statusVO != null && !"".equals(statusVO)) {
+            String json = JSON.toJSONString(statusVO);
+            StringBuffer sb = new StringBuffer();
+            if(statusVO.getDeviceId() != null && !"".equals(statusVO.getDeviceId())) {
+                sb.append("deviceId="+statusVO.getDeviceId());
+            }
+            if(statusVO.getPatrolUser() != null && !"".equals(statusVO.getPatrolUser())) {
+                sb.append("&patrolUser="+statusVO.getPatrolUser());
+            }
+            if(statusVO.getDeviceStatus() != null && !"".equals(statusVO.getDeviceStatus())) {
+                sb.append("&deviceStatus="+statusVO.getDeviceStatus());
+            }
+            try {
+                String result = request.postPort(FIRE_PATROL_UPATE_STATUS_URL,sb.toString());
+                if(result != null && !"".equals(result)) {
+                    JSONObject resultObject = JSONObject.parseObject(result);
+                    int code = resultObject.getInteger("code");
+                    if(code == 200) {
+                        return true;
+                    }
+                }
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 
 }

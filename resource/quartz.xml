@@ -32,6 +32,8 @@
 		</property>
 		<property name="cronExpression">
 			<value>0 0 2 1 * ?</value>
+            <!--TODO 下面定时器是进行测试用的-->
+			<!--<value>0/1 * * * * ?</value>-->
 		</property>
 	</bean>
 	
@@ -54,6 +56,8 @@
 		</property>
 		<property name="cronExpression">
 			<value>0 0 2 1 * ?</value>
+            <!--TODO 下面定时器是进行测试用的-->
+            <!--<value>0/1 * * * * ?</value>-->
 		</property>
 	</bean>
 	

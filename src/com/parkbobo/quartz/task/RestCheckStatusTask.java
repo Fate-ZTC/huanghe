@@ -11,8 +11,7 @@ public class RestCheckStatusTask {
 	 * */
 	@Resource
 	private FireFightEquipmentService fireFightEquipmentService;
-	public void startJob() throws ParseException
-	{
+	public void startJob() throws ParseException {
 		getRestCheckStatusTask();
 	}
 	/**
@@ -20,9 +19,7 @@ public class RestCheckStatusTask {
 	 */
 	@SuppressWarnings("deprecation")
 	private void getRestCheckStatusTask() {
-//		System.out.println("执行重置");
+		System.out.println("执行重置");
 		this.fireFightEquipmentService.updateAll();
-	}
-	public static void main(String[] args) {
 	}
 }

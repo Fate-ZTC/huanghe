@@ -3,6 +3,7 @@ package com.parkbobo.quartz.task;
 import java.text.ParseException;
 import java.util.List;
 import javax.annotation.Resource;
+
 import com.parkbobo.model.FireFightEquipment;
 import com.parkbobo.model.FireFightEquipmentHistory;
 import com.parkbobo.service.FireFightEquipmentHistoryService;
@@ -32,7 +33,9 @@ public class CopeToHistoryTask {
 		for (FireFightEquipment fireFightEquipment: fireFightEquipments) {
 			FireFightEquipmentHistory history = new FireFightEquipmentHistory();
 			history.setCampusNum(fireFightEquipment.getCampusNum());
-			history.setCheckStatus(fireFightEquipment.getCheckStatus());
+			//这里每个月需要进行对巡查状态进行变更,所有设备为未巡查状态
+//			history.setCheckStatus(fireFightEquipment.getCheckStatus());
+			history.setCheckStatus((short)0);			//改为为巡查状态
 			history.setOldId(fireFightEquipment.getId());
 			history.setLastUpdateTime(fireFightEquipment.getLastUpdateTime());
 			history.setLat(fireFightEquipment.getLat());
@@ -42,6 +45,5 @@ public class CopeToHistoryTask {
 			this.fireFightEquipmentHistoryService.add(history);
 		}
 	}
-	public static void main(String[] args) {
-	}
+
 }

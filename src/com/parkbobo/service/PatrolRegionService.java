@@ -52,4 +52,22 @@ public class PatrolRegionService {
 	public void addRecord(PatrolRegion patrolRegion) {
 		this.patrolRegionDao.add(patrolRegion);
 	}
+
+
+	/**
+	 * 通过sql进行更新区域对象
+	 * @param sql
+	 * @return
+     */
+	public int updateBySql(String sql) {
+		if(sql != null && !"".equals(sql)) {
+			int result = this.patrolRegionDao.updatePatrolRegionDao(sql);
+			return result;
+		}
+		return 0;
+	}
+
+
+
+
 }

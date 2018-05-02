@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,11 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,14 +25,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.fastjson.JSONObject;
+import com.parkbobo.model.FirePatrolException;
 import com.parkbobo.model.FirePatrolImg;
 import com.parkbobo.model.FirePatrolInfo;
 import com.parkbobo.service.FirePatrolExceptionService;
 import com.parkbobo.service.FirePatrolImgService;
 import com.parkbobo.service.FirePatrolInfoService;
 import com.parkbobo.utils.PageBean;
-import com.system.utils.StringUtil;
 
 /**
  * 巡查记录
@@ -86,8 +80,7 @@ public class FirePatrolInfoController {
 	 * @return
 	 */
 	@RequestMapping("firePatrolInfo_delete")
-	public ModelAndView delete(String ids,HttpSession session)
-	{
+	public ModelAndView delete(String ids,HttpSession session) {
 		ModelAndView mv = new ModelAndView();
 		this.firePatrolInfoService.bulkDelete(ids);
 		mv.setViewName("redirect:/firePatrolInfo_list?method=deleteSuccess");
@@ -125,39 +118,82 @@ public class FirePatrolInfoController {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping("showImgs")
-	public void showImgs(Integer id,HttpServletResponse response,HttpServletRequest request){
-		response.setCharacterEncoding("UTF-8");
-		try {
-			PrintWriter out = response.getWriter();
-			List<FirePatrolImg> firePatrolImgs = this.firePatrolImgService.getByProperty("infoId", id);
-			StringBuilder sb =new StringBuilder();
-			sb.append("{\"title\":\"照片\",\"id\":1,\"start\":0,\"data\":[");
-			if(firePatrolImgs!=null && firePatrolImgs.size()>0){
-				int i = 0;
-				for (FirePatrolImg firePatrolImg : firePatrolImgs) {
-					sb.append("{");
-					sb.append("\"alt\":\"设备图\",");
-					sb.append("\"pid\":"+firePatrolImg.getId()+",");
-					sb.append("\"src\":\""+firePatrolImg.getImgUrl()+"\",");
-					sb.append("\"thumb\":\""+firePatrolImg.getImgUrl()+"\"");
-					if(i==firePatrolImgs.size()-1){
-						sb.append("}");
-					}else{
-						sb.append("},");
+	@RequestMapping("/showExceptionImages")
+	public ModelAndView showImgs(Integer id) {
+		ModelAndView mv = new ModelAndView();
+		//查询异常图片
+		String hql = "FROM FirePatrolImg WHERE ";
+		List<FirePatrolImg> firePatrolImgs = null;
+		if(id != null && id > 0) {
+			hql += " infoId=" + id;
+			firePatrolImgs = firePatrolImgService.getByHql(hql);
+			mv.addObject("firePatrolImgs",firePatrolImgs);
+		}
+
+
+		//下面进行获取异常类型并查询异常类型
+		String infoHql = "FROM FirePatrolInfo WHERE";
+		List<FirePatrolInfo> firePatrolInfos = null;
+		String[] exceptionTypes = null;
+		if(id != null && id > 0) {
+			infoHql += " id=" + id;
+			firePatrolInfos = firePatrolInfoService.getByHqlPatrolInfo(infoHql);
+			if(firePatrolInfos != null && firePatrolInfos.size() > 0) {
+				FirePatrolInfo firePatrolInfo = firePatrolInfos.get(0);
+				if(firePatrolInfo != null) {
+					String description = firePatrolInfo.getDescription();
+					mv.addObject("description",description);
+					String exception_types = firePatrolInfo.getExceptionTypes();
+					if(exception_types != null) {
+						exceptionTypes = exception_types.split(",");
 					}
-					i++;
 				}
 			}
-			sb.append("]}");
-			out.print(sb.toString()); 
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+
+		//进行查询
+		if(exceptionTypes != null && exceptionTypes.length > 0) {
+			StringBuffer sb = new StringBuffer();
+			sb.append("FROM FirePatrolException WHERE id IN (");
+			for (String v : exceptionTypes) {
+				if (v != null && !"".equals(v)) {
+					sb.append(v);
+					sb.append(",");
+				}
+			}
+			String regulation = sb.substring(sb.length()-1,sb.length());
+			String exehql = "";
+			if(regulation != null && ",".equals(regulation)) {
+				exehql = sb.substring(0,sb.length()-1) + ")";
+				List<FirePatrolException> exceptions = firePatrolExceptionService.getByHQL(exehql);
+				mv.addObject("exceptions",exceptions);
+			}
+
+		}
+
+		mv.setViewName("manager/system/firePatrolInfo/firepatrollinfo-image");
+		return mv;
 	}
+
+
+//	public static void main(String[] args) {
+//		String[] exceptionTypes = "123,123,123".split(",");
+//		StringBuffer exceHql = new StringBuffer();
+//		exceHql.append("FROM FirePatrolException WHERE id IN (");
+//		for (String v : exceptionTypes) {
+//			if (v != null && !"".equals(v)) {
+//				exceHql.append(v);
+//				exceHql.append(",");
+//			}
+//		}
+//		String test = exceHql.substring(exceHql.length()-1,exceHql.length());
+//		if(",".equals(test)) {
+//			String value = exceHql.substring(0,exceHql.length()-1);
+//			System.out.println(value);
+//		}
+//		System.out.println(test);
+//	}
+
 	/**
 	 * 消防巡查记录导出
 	 * @param response

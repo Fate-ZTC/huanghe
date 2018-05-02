@@ -56,19 +56,19 @@ $(function(){
     <dl class="leftmenu">
 	    <sec:authorize ifAnyGranted="userAuthManager_list,userAuthManager_auth,userAuthManager_delete">
 	    <!-- 应用管理START -->
-	    <dd>
-	    <div class="title">
-	    <span><img src="<%=path %>/page/images/leftico01.png" /></span>应用管理
-	    </div>
-	    	<ul class="menuson">
-	    	<sec:authorize ifAnyGranted="memberManager_list,userAuthManager_auth,userAuthManager_delete">
-	        <li><cite></cite><a href="<%=path %>/memberManager_list" target="rightFrame">会员用户管理</a><i></i></li>
-	        </sec:authorize>
-	    	<sec:authorize ifAnyGranted="userAuthManager_list,userAuthManager_auth,userAuthManager_delete">
-	        <li><cite></cite><a href="<%=path %>/userAuthManager_list" target="rightFrame">信息认证审核</a><i></i></li>
-	        </sec:authorize>
-	        </ul>    
-	    </dd>
+	    <%--<dd>--%>
+	    <%--<div class="title">--%>
+	    <%--<span><img src="<%=path %>/page/images/leftico01.png" /></span>应用管理--%>
+	    <%--</div>--%>
+	    	<%--<ul class="menuson">--%>
+	    	<%--<sec:authorize ifAnyGranted="memberManager_list,userAuthManager_auth,userAuthManager_delete">--%>
+	        <%--<li><cite></cite><a href="<%=path %>/memberManager_list" target="rightFrame">会员用户管理</a><i></i></li>--%>
+	        <%--</sec:authorize>--%>
+	    	<%--<sec:authorize ifAnyGranted="userAuthManager_list,userAuthManager_auth,userAuthManager_delete">--%>
+	        <%--<li><cite></cite><a href="<%=path %>/userAuthManager_list" target="rightFrame">信息认证审核</a><i></i></li>--%>
+	        <%--</sec:authorize>--%>
+	        <%--</ul>    --%>
+	    <%--</dd>--%>
 	    <!-- 应用管理END -->
 	    </sec:authorize>
 	    <sec:authorize ifAnyGranted="manager_list,manager_add,manager_edit,manager_delete,manager_resetPassword

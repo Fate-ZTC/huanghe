@@ -15,8 +15,15 @@ import com.parkbobo.utils.PageBean;
 @Service
 public class PatrolUserRegionService {
 
+//	final String PATROL_ADMIN_CONFIG_PARAM = Configuration.getInstance().getValue("patrolAdminConfigParam");
+//	final String patrolAdminConfigURL = Configuration.getInstance().getValue("patrolAdminConfigURL");
+//	final String APP_KEY = Configuration.getInstance().getValue("AppKey");
+//	final String SECRET = Configuration.getInstance().getValue("Secret");
+
 	@Resource(name="patrolUserRegionDaoImpl")
 	private PatrolUserRegionDao patrolUserRegionDao;
+
+
 
 	/**
 	 * 增加用户区域信息
@@ -124,5 +131,57 @@ public class PatrolUserRegionService {
 		String hql = "from PatrolUserRegion where jobNum ='"+ jobNum +"' and endTime is null order by startTime desc";
 		return   this.patrolUserRegionDao.getByHQL(hql);
 	}
+
+
+	/**
+	 * 根据sql查询距离
+	 * @param sql sql
+	 * @return		返回计算的距离度,需要乘111000才能转化为m
+     */
+	public double getDistanceBySql(String sql) {
+		return this.patrolUserRegionDao.getDistanceBySql(sql);
+	}
+
+
+//	/**
+//	 * 进行消息推送
+//	 * @param title		标题
+//	 * @param content	内容
+//     * @param alias		推送人员
+//	 * @param type 		1 消防 2 安防
+//     */
+//	public void pushSend(String type,String title,String content,String alias) {
+//		if(alias != null && !"".equals(alias)) {
+//			JPushClientExample push = new JPushClientExample(APP_KEY, SECRET);
+//			Map<String, String> map = new HashMap<String, String>();
+//			map.put("type", type);
+//			map.put("title", title);
+//			map.put("content", content);
+//			push.aliasSendMsg(title, content, map, alias);
+//		}
+//	}
+//
+//
+//	public String getPartrolAdminUserId() {
+//		HttpRequest httpRequest = new HttpRequest();
+//		String param = "moduleId=" + PATROL_ADMIN_CONFIG_PARAM;
+//		String result = httpRequest.sendGet(patrolAdminConfigURL,param);
+//		if(result != null && !"".equals(result)) {
+//			JSONObject resultObject = JSONObject.parseObject(result);
+//			if(resultObject != null) {
+//				int code = resultObject.getIntValue("code");
+//				boolean status = resultObject.getBoolean("status");
+//				if(code == 200 && status) {
+//					//获取data
+//					JSONObject dataObject = resultObject.getJSONObject("data");
+//					if(dataObject != null) {
+//						System.out.println(dataObject.getString("privateUsers"));
+//						return dataObject.getString("privateUsers");
+//					}
+//				}
+//			}
+//		}
+//		return null;
+//	}
 
 }

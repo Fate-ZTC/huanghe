@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -66,10 +65,12 @@ public class FirePatrolExceptionService {
 			this.firePatrolExceptionDao.bulkDelete(idArr);
 		}
 	}
+
 	public PageBean<FirePatrolException> getByHql(String hql, int pageSize, int page) {
 
 		return this.firePatrolExceptionDao.pageQuery(hql, pageSize, page);
 	}
+
 
 
 }

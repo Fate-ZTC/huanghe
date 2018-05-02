@@ -1,18 +1,13 @@
 package com.parkbobo.service;
 
 import java.util.Date;
+import java.util.List;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
 import com.parkbobo.dao.PatrolConfigDao;
-import com.parkbobo.model.PatrolConfig;
-import com.parkbobo.model.PatrolLocationInfo;
-import com.parkbobo.model.PatrolUser;
-import com.parkbobo.model.PatrolUserRegion;
-import com.parkbobo.utils.GisUtils;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Polygon;
+import com.parkbobo.model.*;
 
 @Service
 public class PatrolConfigService {
@@ -20,6 +15,7 @@ public class PatrolConfigService {
 
 
 	private final long ONE_MINUTE_MSEC = 60 * 1000;		//一分钟毫秒值
+	private final int SPEND_VALUE = 111000;				//在计算面和点的距离时候需要转化成m
 
 	@Resource(name="patrolConfigDaoImpl")
 	private PatrolConfigDao patrolConfigDao;
@@ -35,6 +31,9 @@ public class PatrolConfigService {
 
 	@Resource
 	private PatrolUserService patrolUserService;
+
+	@Resource
+	private PatrolExceptionService patrolExceptionService;
 
 	/**
 	 * 获取用于操作的配置信息
@@ -78,31 +77,33 @@ public class PatrolConfigService {
 		if(user != null && user.getCampusNum() != null) {
 			//获取位置信息
 			PatrolLocationInfo locationInfo = patrolLocationInfoService.getLocation(patrolUserRegion.getJobNum(),
-					patrolUserRegion.getRegionId(),user.getCampusNum());
+					patrolUserRegion.getId(),user.getCampusNum());
 			//这里进行判断位置是否发生变化
-			double lastLon = locationInfo.getLon();
-			double lastLat = locationInfo.getLat();
-			//TODO 这里进行判断位置(直接使用经纬度进行相等,将来可以改为位置范围内没有移动,比如两个经纬度一米内)
-			if(lastLat == lat && lon == lastLon) {
-				//说明经纬度相等
-				Date notChangeStartTime = patrolUserRegion.getLocationNotChangeStartTime();
-				if(notChangeStartTime == null) {
-					//第一次相等,设置开始时间
-					patrolUserRegion.setLocationNotChangeStartTime(new Date());
-					patrolUserRegionService.updateRecord(patrolUserRegion);
-				}else {
-					//这里进行判断
-					long lastNotChangeTimeInterval =
-							new Date().getTime() - patrolUserRegion.getLocationNotChangeStartTime().getTime();
-					if(lastNotChangeTimeInterval > locationNotChangeTime * ONE_MINUTE_MSEC) {
-						//超过指定时间
-						return true;
+			if(locationInfo != null) {
+				double lastLon = locationInfo.getLon();
+				double lastLat = locationInfo.getLat();
+				//TODO 这里进行判断位置(直接使用经纬度进行相等,将来可以改为位置范围内没有移动,比如两个经纬度一米内)
+				if (lastLat == lat && lon == lastLon) {
+					//说明经纬度相等
+					Date notChangeStartTime = patrolUserRegion.getLocationNotChangeStartTime();
+					if (notChangeStartTime == null) {
+						//第一次相等,设置开始时间
+						patrolUserRegion.setLocationNotChangeStartTime(new Date());
+						patrolUserRegionService.updateRecord(patrolUserRegion);
+					} else {
+						//这里进行判断
+						long lastNotChangeTimeInterval =
+								new Date().getTime() - patrolUserRegion.getLocationNotChangeStartTime().getTime();
+						if (lastNotChangeTimeInterval > locationNotChangeTime * ONE_MINUTE_MSEC) {
+							//超过指定时间
+							return true;
+						}
 					}
+				} else {
+					//这里如果不相等,将上次的时间设置为null
+					patrolUserRegion.setLocationNotChangeStartTime(null);
+					patrolUserRegionService.updateRecord(patrolUserRegion);
 				}
-			}else {
-				//这里如果不相等,将上次的时间设置为null
-				patrolUserRegion.setLocationNotChangeStartTime(null);
-				patrolUserRegionService.updateRecord(patrolUserRegion);
 			}
 
 		}
@@ -128,8 +129,12 @@ public class PatrolConfigService {
 		}else {
 			//进行判断是否超过指定时间
 			Date leaveRegionStartTime = patrolUserRegion.getLeaveRegionStartTime();
+			System.out.println("new Date:" + new Date().getTime());
+			System.out.println("leaveStartTime:" + leaveRegionStartTime.getTime());
+			System.out.println("config Start:" + leaveTime * ONE_MINUTE_MSEC);
 			if(new Date().getTime() - leaveRegionStartTime.getTime() > leaveTime * ONE_MINUTE_MSEC) {
 				//超过
+				System.out.println(new Date().getTime() - leaveRegionStartTime.getTime() > leaveTime * ONE_MINUTE_MSEC);
 				return true;
 			}
 		}
@@ -152,11 +157,17 @@ public class PatrolConfigService {
      */
 	public boolean isLeaveDistance(double lon,double lat,Integer configDistance,Integer regionId) {
 		try {
-			Polygon polygon = GisUtils.createCircle(lon, lat, configDistance, 50);
-			Geometry regionLocation = patrolRegionService.getById(regionId).getRegionLocation();
-			if(regionLocation.contains(polygon)) {
-				//在巡逻区域内
-				return false;
+			//进行计算是否超过指定距离
+			String sql = "SELECT st_distance((SELECT region_location FROM patrol_region WHERE id="+regionId+"), st_geometryfromtext('POINT("+lon+" "+lat+")')) AS distance";
+			double distance = patrolUserRegionService.getDistanceBySql(sql);
+			if(distance >= 0) {
+				distance = distance * 111000;
+				if(distance < configDistance) {
+					//没有离开指定范围
+					return false;
+				}
+			}else {
+				return true;
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -238,21 +249,31 @@ public class PatrolConfigService {
 	public boolean isArrivePushTime(PatrolUserRegion patrolUserRegion,Integer frequencyTime) {
 
 		if(patrolUserRegion != null && frequencyTime != null) {
-			long pushTimeInterval = new Date().getTime() -  patrolUserRegion.getExceptionPushTime().getTime();
-			if(pushTimeInterval > frequencyTime * ONE_MINUTE_MSEC) {
-				//这里推送时间超过频率时间,能进行推送
+			if(patrolUserRegion.getExceptionPushTime() == null) {
+				//第一次进行异常推送
 				return true;
+			}else {
+				long pushTimeInterval = new Date().getTime() - patrolUserRegion.getExceptionPushTime().getTime();
+				if (pushTimeInterval > frequencyTime * ONE_MINUTE_MSEC) {
+					//这里推送时间超过频率时间,能进行推送
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
-
-	//TODO 这里进行判断是否到达指定区域(第一次上传)
-	public boolean isArrive(double lon,double lat) {
-
-		return false;
+	/**
+	 * 这里根据异常类型获取异常信息
+	 * @param type	异常类型
+     */
+	public PatrolException exceptionAssembly(int type) {
+		String hql = "FROM PatrolException WHERE type=" + type;
+		List<PatrolException> patrolExceptions = patrolExceptionService.getByHQL(hql);
+		if(patrolExceptions != null && patrolExceptions.size() > 0) {
+			return patrolExceptions.get(0);
+		}
+		return null;
 	}
-
 
 }

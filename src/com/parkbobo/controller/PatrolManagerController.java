@@ -2,8 +2,6 @@ package com.parkbobo.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -238,17 +236,23 @@ public class PatrolManagerController {
 			PatrolEmergency patrolEmergency = new PatrolEmergency();
 			patrolEmergency.setJobNum(jobNum);
 			patrolEmergency.setStartTime(new Date());
-			if(username!=null){
-				patrolEmergency.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
+			if(username!=null) {
+//				patrolEmergency.setUsername(URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8"));
+				patrolEmergency.setUsername(username);
 			}
-			patrolEmergency.setCampusNum(campusNum);
+			//这里进行默认设置当小区id为null
+			if(campusNum != null && campusNum > 0) {
+				patrolEmergency.setCampusNum(campusNum);
+			}else {
+				patrolEmergency.setCampusNum(1);
+			}
 			PatrolEmergency emergency = this.patrolEmergencyService.add(patrolEmergency);
 			PatrolConfig config = this.patrolConfigService.getById(configId);
 			config.setIsEmergency(1);
 			this.patrolConfigService.updateConfig(config);
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolEmergency\":"+JSONObject.toJSONString(emergency,features)+",\"patrolConfig\":"+JSONObject.toJSONString(config,features)+"}}");
 		} catch (Exception e) {
-			if(out==null){
+			if(out==null) {
 				out=response.getWriter();
 			}
 			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
@@ -272,7 +276,7 @@ public class PatrolManagerController {
 			out = response.getWriter();
 			PatrolConfig config = this.patrolConfigService.getById(configId);
 			PatrolEmergency patrolEmergency = this.patrolEmergencyService.getNewest(campusNum);
-			if(patrolEmergency!=null){
+			if(patrolEmergency != null) {
 				patrolEmergency.setEndTime(new Date());
 			}else{
 				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"无开始信息,请联系管理员\"}");
@@ -335,10 +339,12 @@ public class PatrolManagerController {
 	 */
 	@RequestMapping("regionCrew")
 	public void regionCrew(Integer regionId,HttpServletResponse response) throws IOException{
+		//TODO 这里有所改动
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		List<PatrolUserRegion> patrolUserRegions = patrolUserRegionService.getByProperty("regionId", regionId);
-		if (patrolUserRegions != null && patrolUserRegions.size()>0) {
+		String hql = "FROM PatrolUserRegion WHERE regionId=" + regionId + " AND endTime is NULL";
+		List<PatrolUserRegion> patrolUserRegions = patrolUserRegionService.getByHQL(hql);
+		if (patrolUserRegions != null && patrolUserRegions.size() > 0) {
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolUserRegions,features)+"}");
 		}else{
 			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"暂无该区域巡查信息\"}");
@@ -395,6 +401,13 @@ public class PatrolManagerController {
 		out.close();
 	}
 
+
+
+	public static void main(String[] args) {
+		long time = 1524816248097l;
+		Date date = new Date(time);
+		System.out.println(date);
+	}
 	/**
 	 * 获取用户区域表
 	 * @param usregId
@@ -402,7 +415,7 @@ public class PatrolManagerController {
 	 * @throws IOException
 	 */
 	@RequestMapping("getUserRegion")
-	public void getUserRegion(Integer usregId,HttpServletResponse response) throws IOException{
+	public void getUserRegion(Integer usregId,HttpServletResponse response) throws IOException {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		PatrolUserRegion patrolUserRegion = patrolUserRegionService.getById(usregId);
