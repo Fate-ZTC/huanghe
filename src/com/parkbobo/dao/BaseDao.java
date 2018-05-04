@@ -2,6 +2,7 @@ package com.parkbobo.dao;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.LockMode;
 
@@ -245,4 +246,24 @@ public interface BaseDao<T> {
 	 * @param  ids 关键字ID数组
 	 */
 	public abstract int bulkDelete(final Object[] ids);
+	
+	/**
+	 * 通过JDBC查找对象集合 使用指定的检索标准检索数据返回数据
+	 */
+	public List<Map<String, Object>> findForJdbc(String sql, Object... objs);
+
+	/**
+	 * 通过JDBC查找对象集合 使用指定的检索标准检索数据返回数据
+	 * 
+	 * @param sql
+	 *            select * from t where name = :name and id = :id
+	 * @param params
+	 * @return
+	 */
+	public List<Map<String, Object>> findForJdbc(String sql, Map<String, Object> params);
+	
+	/**
+	 * 使用指定的检索标准检索数据并分页返回数据For JDBC
+	 */
+	public Long getCountForJdbc(String sql);
 }

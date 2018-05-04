@@ -3,6 +3,7 @@ package com.parkbobo.dao.impl;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Resource;
@@ -12,12 +13,17 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
@@ -40,12 +46,28 @@ public class BaseDaoSupport<T> implements BaseDao<T> {
 	private Class<T> entityClass = GenericsUtils.getSuperClassGenricType(this.getClass());
 	private HibernateTemplate hibernateTemplate;
 	
+	@Autowired
+	@Qualifier("jdbcTemplate")
+	private JdbcTemplate jdbcTemplate;
+	/**
+	 * 注入一个sessionFactory属性,并注入到父类(HibernateDaoSupport)
+	 **/
+	@Autowired
+	@Qualifier("sessionFactory")
+	protected SessionFactory sessionFactory;
+	
 	public HibernateTemplate getHibernateTemplate() {
 		return hibernateTemplate;
 	}
 	@Resource(name="hibernateTemplate")
 	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
 		this.hibernateTemplate = hibernateTemplate;
+	}
+	
+	public Session getSession() {
+		// 事务必须是开启的(Required)，否则获取不到
+//		return sessionFactory.getCurrentSession();
+		return sessionFactory.openSession();
 	}
 	/**
 	 * 
@@ -555,5 +577,25 @@ public class BaseDaoSupport<T> implements BaseDao<T> {
         int beginPos = hql.toLowerCase().indexOf("from");
         return hql.substring(beginPos);
     }
+	@Override
+	public List<Map<String, Object>> findForJdbc(String sql, Object... objs) {
+		return this.jdbcTemplate.queryForList(sql, objs);
+	}
+	
+	@Override
+	public List<Map<String, Object>> findForJdbc(String sql, Map<String, Object> params) {
+		SQLQuery query = this.getSession().createSQLQuery(sql);
+		if (params != null && !params.isEmpty()) {
+			for (String key : params.keySet()) {
+				query.setParameter(key, params.get(key));
+			}
+		}
+		List<Map<String, Object>> list = query.list();
+		return list;
+	}
+	@Override
+	public Long getCountForJdbc(String sql) {
+		return this.jdbcTemplate.queryForObject(sql, Long.class);
+	}
 	
 }
