@@ -92,7 +92,12 @@ public class FirePatrolEquipmentSynchController {
                     fireFightEquipmentHistory.setLat(fightEquipment.getLat());
                     fireFightEquipmentHistory.setCampusNum(fightEquipment.getCampusNum());
                     fireFightEquipmentHistory.setOldId(fightEquipment.getId());
-                    fireFightEquipmentHistory.setFloorid(fightEquipment.getFloorid());
+                    if(null != fightEquipment.getFloorid()) {
+                        fireFightEquipmentHistory.setFloorid(fightEquipment.getFloorid());
+                    }
+                    if(null != fightEquipment.getBuildingCode()) {
+                        fireFightEquipmentHistory.setBuildingCode(fightEquipment.getBuildingCode());
+                    }
                     fireFightEquipmentHistories.add(fireFightEquipmentHistory);
                 }
                 //进行数据同步

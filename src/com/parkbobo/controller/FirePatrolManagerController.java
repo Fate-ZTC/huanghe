@@ -346,19 +346,6 @@ public class FirePatrolManagerController {
 		if(objects!=null && objects.size()>0){
 			int i = 0;
 			for (Object[] object : objects) {
-//				sb.append("{");
-//				sb.append("\"normalEqui\":\""+object[0]+"\",");
-//				sb.append("\"abnormalEqui\":\""+object[1]+"\",");
-//				sb.append("\"patrolEqui\":\""+object[2]+"\",");
-//				sb.append("\"unPatrolEqui\":\""+object[3]+"\",");
-//				sb.append("\"totalEqui\":\""+object[4]+"\",");
-//				sb.append("\"month\":\""+object[5]+"\"");
-//				if(i==objects.size()-1){
-//					sb.append("}");
-//				}else{
-//					sb.append("},");
-//				}
-//				i++;
 				sb.append("{");
 				sb.append("\"totalEqui\":\""+object[0]+"\",");
 				sb.append("\"normalEqui\":\""+object[1]+"\",");

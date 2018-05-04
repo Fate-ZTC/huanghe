@@ -13,7 +13,9 @@ import com.parkbobo.VO.FirePatrolEquipmentStatusVO;
 import com.parkbobo.VO.FirePatrolEquipmentVO;
 import com.parkbobo.VO.ModifyFireEquipmentVO;
 import com.parkbobo.dao.FireFightEquipmentDao;
+import com.parkbobo.dao.FireFightEquipmentHistoryDao;
 import com.parkbobo.model.FireFightEquipment;
+import com.parkbobo.model.FireFightEquipmentHistory;
 import com.parkbobo.model.FirePatrolConfig;
 import com.parkbobo.utils.Configuration;
 import com.parkbobo.utils.HttpRequest;
@@ -36,6 +38,8 @@ public class FirePatrolEquipmentSychService {
 
     @Resource(name="fireFightEquipmentDaoImpl")
     private FireFightEquipmentDao fireFightEquipmentDao;
+    @Resource
+    private FireFightEquipmentHistoryDao fireFightEquipmentHistoryDao;
 
 
     /**
@@ -76,6 +80,30 @@ public class FirePatrolEquipmentSychService {
             //设置校区
             fireFightEquipment.setCampusNum(1);
             fireFightEquipmentDao.save(fireFightEquipment);
+
+            //TODO 这里要进行测试（这里进行了增加操作，需要进行测试）
+
+            //将上面添加的数据查询出来
+            List<FireFightEquipment> fireFightEquipments = fireFightEquipmentDao.getByProperty("pointid",fireFightEquipment.getPointid());
+            if(fireFightEquipments != null && fireFightEquipments.size() > 0) {
+                FireFightEquipment entity = fireFightEquipments.get(0);
+                //将设备同时添加到设备历史记录表中
+                FireFightEquipmentHistory fireFightEquipmentHistory = new FireFightEquipmentHistory();
+                fireFightEquipmentHistory.setName(fireFightEquipment.getName());
+                fireFightEquipmentHistory.setLastUpdateTime(new Date());
+                fireFightEquipmentHistory.setLon(fireFightEquipment.getLon());
+                fireFightEquipmentHistory.setLat(fireFightEquipment.getLat());
+                fireFightEquipmentHistory.setCheckStatus((short) 0);
+                //这里设置为默认校区为1
+                fireFightEquipmentHistory.setCampusNum(1);
+                fireFightEquipmentHistory.setOldId(entity.getId());
+
+                fireFightEquipmentHistory.setFloorid(fireFightEquipment.getFloorid());
+                if(fireFightEquipment.getBuildingCode() != null) {
+                    fireFightEquipmentHistory.setBuildingCode(fireFightEquipment.getBuildingCode());
+                }
+                fireFightEquipmentHistoryDao.save(fireFightEquipmentHistory);
+            }
             return true;
         }catch (Exception e) {
             e.printStackTrace();
@@ -209,6 +237,8 @@ public class FirePatrolEquipmentSychService {
                 fightEquipment.setStatus((short)1);
                 //设置是否检查(默认未检查)
                 fightEquipment.setCheckStatus((short)0);
+                //同步的时候进行设置大楼id
+                fightEquipment.setBuildingCode(vo.getBuildingCode());
 
 
                 boolean isExist = fireFightEquipmentDao.existsByProperty("pointid",vo.getPointid());

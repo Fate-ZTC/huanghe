@@ -22,10 +22,12 @@ public class ExceptionPushService {
     final String patrolAdminConfigURL = Configuration.getInstance().getValue("patrolAdminConfigURL");
     final String APP_KEY = Configuration.getInstance().getValue("AppKey");
     final String SECRET = Configuration.getInstance().getValue("Secret");
+    final String USE_PATROL_APP_KEY = Configuration.getInstance().getValue("UsePatrolAppKey");
+    final String USE_PATROL_SECRET = Configuration.getInstance().getValue("UsePatrolSecret");
 
 
     /**
-     * 进行消息推送
+     * 进行消息推送(消防安防管理端)
      * @param title		标题
      * @param content	内容
      * @param alias		推送人员
@@ -34,6 +36,25 @@ public class ExceptionPushService {
     public void pushSend(String type,String title,String content,String alias) {
         if(alias != null && !"".equals(alias)) {
             JPushClientExample push = new JPushClientExample(APP_KEY, SECRET);
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("type", type);
+            map.put("title", title);
+            map.put("content", content);
+            push.aliasSendMsg(title, content, map, alias);
+        }
+    }
+
+
+    /**
+     * 消息推送(安防巡更使用端)
+     * @param type      类型
+     * @param title     标题
+     * @param content   内容
+     * @param alias     推送人员
+     */
+    public void pushUsePatrolSend(String type,String title,String content,String alias) {
+        if(alias != null && !"".equals(alias)) {
+            JPushClientExample push = new JPushClientExample(USE_PATROL_APP_KEY, USE_PATROL_SECRET);
             Map<String, String> map = new HashMap<String, String>();
             map.put("type", type);
             map.put("title", title);

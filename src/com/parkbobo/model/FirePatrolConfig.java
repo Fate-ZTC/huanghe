@@ -27,6 +27,17 @@ public class FirePatrolConfig implements Serializable{
 	 * 消防设备类型id
      */
 	private String equipmentType;
+
+	/**
+	 * 室外所有正常设备经度
+	 */
+	private double outAllNormalSweepLon;
+
+	/**
+	 * 室外所有正常设备纬度
+	 */
+	private double outAllNormalSweepLat;
+
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	public Integer getId() {
@@ -49,5 +60,23 @@ public class FirePatrolConfig implements Serializable{
 
 	public void setEquipmentType(String equipmentType) {
 		this.equipmentType = equipmentType;
+	}
+
+	@Column(name = "out_all_normal_sweep_lon")
+	public double getOutAllNormalSweepLon() {
+		return outAllNormalSweepLon;
+	}
+
+	public void setOutAllNormalSweepLon(double outAllNormalSweepLon) {
+		this.outAllNormalSweepLon = outAllNormalSweepLon;
+	}
+
+	@Column(name = "out_all_normal_sweep_lat")
+	public double getOutAllNormalSweepLat() {
+		return outAllNormalSweepLat;
+	}
+
+	public void setOutAllNormalSweepLat(double outAllNormalSweepLat) {
+		this.outAllNormalSweepLat = outAllNormalSweepLat;
 	}
 }

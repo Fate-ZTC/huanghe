@@ -12,6 +12,7 @@ public class FirePatrolEquipmentVO {
     private Integer pointid;        //id
     private float lon;              //经度
     private float lat;              //纬度
+    private String buildingCode;    //大楼id
     private ThematicPointCategory thematicPointCategory;
 
 
@@ -79,6 +80,14 @@ public class FirePatrolEquipmentVO {
 
     public void setThematicPointCategory(ThematicPointCategory thematicPointCategory) {
         this.thematicPointCategory = thematicPointCategory;
+    }
+
+    public String getBuildingCode() {
+        return buildingCode;
+    }
+
+    public void setBuildingCode(String buildingCode) {
+        this.buildingCode = buildingCode;
     }
 
     @Override

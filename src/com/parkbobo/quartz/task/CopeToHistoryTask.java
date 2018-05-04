@@ -1,6 +1,7 @@
 package com.parkbobo.quartz.task;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 
@@ -37,11 +38,20 @@ public class CopeToHistoryTask {
 //			history.setCheckStatus(fireFightEquipment.getCheckStatus());
 			history.setCheckStatus((short)0);			//改为为巡查状态
 			history.setOldId(fireFightEquipment.getId());
-			history.setLastUpdateTime(fireFightEquipment.getLastUpdateTime());
+			//这里是每月的时间
+			history.setLastUpdateTime(new Date());
 			history.setLat(fireFightEquipment.getLat());
 			history.setLon(fireFightEquipment.getLon());
 			history.setStatus(fireFightEquipment.getStatus());
 			history.setName(fireFightEquipment.getName());
+			//设置楼层id
+			if(null != fireFightEquipment.getFloorid()) {
+				history.setFloorid(fireFightEquipment.getFloorid());
+			}
+			//设置大楼id
+			if(null != fireFightEquipment.getBuildingCode()) {
+				history.setBuildingCode(fireFightEquipment.getBuildingCode());
+			}
 			this.fireFightEquipmentHistoryService.add(history);
 		}
 	}

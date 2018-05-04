@@ -70,17 +70,10 @@ public class FireFightEquipment implements Serializable{
      */
 	private Integer categoryid;
 
-
-
-
-//	      "coordinate": "[112.54907589175903,32.96925426267295]",
-//				  "floorid": "103214",
-//				  "geometry": "POINT (112.54907589175903 32.96925426267295)",
-//				  "icon": "zhuantitu/icon/xfk.png",
-//				  "images": "",
-//				  "name": "消防栓",
-//				  "pointid": 333
-
+	/**
+	 * 大楼id
+	 */
+	private String buildingCode;
 
 
 	@Id
@@ -142,6 +135,16 @@ public class FireFightEquipment implements Serializable{
 		this.campusNum = campusNum;
 	}
 
+	@Column(name = "building_code")
+	public String getBuildingCode() {
+		return buildingCode;
+	}
+
+	public void setBuildingCode(String buildingCode) {
+		this.buildingCode = buildingCode;
+	}
+
+	@Column(name = "floorid")
 	public String getFloorid() {
 		return floorid;
 	}
@@ -150,6 +153,7 @@ public class FireFightEquipment implements Serializable{
 		this.floorid = floorid;
 	}
 
+	@Column(name = "icon")
 	public String getIcon() {
 		return icon;
 	}
@@ -158,6 +162,7 @@ public class FireFightEquipment implements Serializable{
 		this.icon = icon;
 	}
 
+	@Column(name = "pointid")
 	public Integer getPointid() {
 		return pointid;
 	}
@@ -166,6 +171,7 @@ public class FireFightEquipment implements Serializable{
 		this.pointid = pointid;
 	}
 
+	@Column(name = "categoryid")
 	public Integer getCategoryid() {
 		return categoryid;
 	}

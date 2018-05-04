@@ -1,0 +1,26 @@
+
+/*下拉刷新，上拉加载*/
+#wrapperList{position:absolute;z-index:1;top:0.96rem;bottom:0.01rem;left:0;width:100%;overflow:auto;}
+#inspection-record-wrapper-box{position:absolute;z-index:1;top:1.36rem;bottom:0.01rem;left:0;width:100%;overflow:auto;}
+#scroller {position:absolute;z-index:1;-webkit-tap-highlight-color:rgba(0,0,0,0);width:100%;padding:0;}
+#myFrame {position:absolute;top:0;left:0;}
+.pullUpLabel,.pullDownLabel {font-size:0.14rem;white-space: nowrap;text-align: center;}
+#pullDown,#pullUp {background:#fff;height:0.36rem;line-height:0.36rem;padding:0.05rem 0.1rem;color:#888;}
+#pullUp{padding:0;border-top: 1px solid #ccc;}
+.pullUpLabel{line-height:0.36rem;}
+#pullDown img,#pullUp img {width:0.2rem;height:0.2rem;margin-top: 0.05rem;}
+
+.loader span{display: inline;}
+
+#pullDown .pullDownIcon {-webkit-transform:rotate(0deg) translateZ(0);}
+#pullUp .pullUpIcon {-webkit-transform:rotate(-180deg) translateZ(0);}
+#pullDown.flip .pullDownIcon {-webkit-transform:rotate(-180deg) translateZ(0);}
+#pullUp.flip .pullUpIcon {-webkit-transform:rotate(0deg) translateZ(0);}
+#pullDown.loading .pullDownIcon,#pullUp.loading .pullUpIcon {background-position:0 100%;-webkit-transform:rotate(0deg) translateZ(0);-webkit-transition-duration:0ms;-webkit-animation-name:loading;-webkit-animation-duration:2s;-webkit-animation-iteration-count:infinite;-webkit-animation-timing-function:linear;}
+@-webkit-keyframes loading {from {-webkit-transform:rotate(0deg) translateZ(0);}
+to {-webkit-transform:rotate(360deg) translateZ(0);}
+}
+#thelist {width:100%;height:100%;background:#fff;}
+#thelist>li {margin-top:0.1rem;border-bottom:0.01rem solid #ccc;padding-bottom:0.08rem;overflow:hidden;}
+.pullUpLabel img {display:inline;}
+

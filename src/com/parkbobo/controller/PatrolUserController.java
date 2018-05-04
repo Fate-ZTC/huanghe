@@ -135,6 +135,9 @@ public class PatrolUserController {
 				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"当前有未结束巡更记录\"}");
 				return;
 			}
+
+			//TODO 这里需要进行推送，判断是否在巡更范围内，在范围内推送开始巡查，不在范围内推送巡查需要在指定时间内到达
+
 			this.patrolUserRegionService.addRecord(patrolUserRegion);
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+ toJSONString(patrolUserRegion,features)+"}");
 		} catch (Exception e) {

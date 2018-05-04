@@ -31,7 +31,8 @@
 			<ref bean="getRestCheckStatusTaskWork"/>
 		</property>
 		<property name="cronExpression">
-			<value>0 0 2 1 * ?</value>
+			<!--<value>0 0 2 1 * ?</value>-->
+			<value>0 2 2 1 * ? *</value>
             <!--TODO 下面定时器是进行测试用的-->
 			<!--<value>0/1 * * * * ?</value>-->
 		</property>
@@ -55,7 +56,8 @@
 			<ref bean="getCopeToHistoryTaskWork"/>
 		</property>
 		<property name="cronExpression">
-			<value>0 0 2 1 * ?</value>
+			<!--<value>0 0 2 1 * ?</value>-->
+            <value>0 4 2 1 * ? *</value>
             <!--TODO 下面定时器是进行测试用的-->
             <!--<value>0/1 * * * * ?</value>-->
 		</property>

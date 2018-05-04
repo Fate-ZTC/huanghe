@@ -68,6 +68,14 @@ public class FireFightEquipmentHistory implements Serializable{
 	 *  楼层id
      */
 	private String floorid;
+
+
+	/**
+	 * 大楼id
+	 */
+	private String buildingCode;
+
+
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -164,5 +172,14 @@ public class FireFightEquipmentHistory implements Serializable{
 
 	public void setFloorid(String floorid) {
 		this.floorid = floorid;
+	}
+
+	@Column(name = "building_code")
+	public String getBuildingCode() {
+		return buildingCode;
+	}
+
+	public void setBuildingCode(String buildingCode) {
+		this.buildingCode = buildingCode;
 	}
 }

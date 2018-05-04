@@ -1,0 +1,56 @@
+.patrol-query-tab-box{position: fixed;top: 0;left: 0;width: 100%;}
+
+.date-tab-list{width: 100%;height: 0.44rem;background: #00B4FF;display: flex;color: #fff;line-height: 0.44rem;text-align: center;position: relative;padding-right: 0.4rem;}
+.date-tab-list li{flex: 1;opacity: 0.6;}
+.date-tab-list li.active{opacity: 1;border-bottom: 3px solid #fff;}
+.date-tab-list .date-select-btn{background: url(../img/date-btn.png) no-repeat left center;background-size: 0.18rem;position: absolute;width: 0.4rem;height: 0.44rem;}
+
+.date-select-result{height: 0.44rem;background: #00B4FF;color: #fff;line-height: 0.44rem;padding-left: 0.2rem;display: none;}
+.delete-date-result{width: 0.44rem;height: 0.44rem;background: url(../img/delete.png) no-repeat center;background-size: 0.22rem; float: right;}
+
+.situation-tab-list{height: 0.52rem;background: #fff;text-align: center;line-height: 0.25rem;font-size: 0.1rem;color: #454545;padding: 0.1rem 0;}
+.situation-tab-list li{padding: 0 0.2rem;height: 0.26rem;border: 1px solid #E5E5E5;display: inline-block;border-radius: 0.14rem;margin: 0 0.08rem;}
+.situation-tab-list li.active{background: #00B4FF;color: #fff;border: 0;}
+
+.patrol-situation-list{padding: 0 0.16rem;}
+.patrol-situation-date{color: #999;line-height: 0.32rem;}
+.patrol-situation-person-mesg{padding: 0.12rem 0.2rem;}
+.patrol-situation-box{border: 1px solid #E3E3E3;border-radius: 0.03rem;margin-bottom: 0.06rem;}
+.patrol-situation-person-img{width: 0.7rem;height: 0.7rem;margin-right: 0.2rem;}
+.patrol-situation-person-img.region{background: url(../img/region.png) no-repeat center;background-size: 100%;}
+.patrol-situation-person-time{margin-bottom: 0.04rem;line-height: 0.24rem;}
+.patrol-situation-person{line-height: 0.21rem;color: #333;font-size: 0.12rem;}
+
+.patrol-situation-mesg-box{border-top: 1px solid #E3E3E3;}
+.patrol-situation-mesg-normal{color: #00B4FF;line-height: 0.39rem;padding: 0 0.18rem;display: none;}
+
+.patrol-situation-mesg-abnormal{padding: 0.1rem 0.18rem;}
+.patrol-situation-mesg-abnormal-tit{color: #FF2929;line-height: 0.24rem;}
+.patrol-situation-abnormal-show{color: #666;}
+.hidden-latter li{display: none;}
+.hidden-latter li:first-of-type,.hidden-latter li:nth-of-type(2){display: block;}
+
+.patrol-situation-abnormal-more{text-decoration: underline;color: #00B4FF;text-align: center;line-height: 0.21rem;margin-top: 0.06rem;}
+
+/*消防巡查记录*/
+.inspection-record-box{padding: 0 0.12rem;}
+.inspection-record-top{height: 0.92rem;background: #fff;}
+.month-select-box{height: 0.36rem;border-bottom: 1px solid #eee;line-height: 0.36rem;color: #666;}
+.month-select-box .date-select-btn{background: url(../img/month-btn.png) no-repeat right center;background-size: 0.18rem;width: 0.36rem;height: 0.36rem;float: right;}
+.inspection-record-sum{width: 100%;overflow: hidden;line-height: 0.21rem;color: #747474;font-size: 0.12rem;padding: 0.06rem 0;}
+.inspection-record-sum>li{width: 50%;float: left;}
+.inspection-record-list-box{color: #666;line-height: 0.2rem;font-size: 0.12rem;/*padding: 0 0.12rem;*/}
+.inspection-record-list{padding: 0 0.12rem;}
+.inspection-record-list>li{padding: 0.17rem 0.16rem 0.17rem 0.6rem;background: url(../img/inspection-record.png) no-repeat 0.16rem center;background-size: 0.34rem; border: 1px solid #eee;border-radius: 3px;margin-top: 0.1rem;}
+.inspection-record-basic-infor{line-height: 0.28rem;font-size: 0.14rem;}
+.inspection-record-basic-infor .inspection-record-name{color: #333;}
+.inspection-record-basic-infor .inspection-record-status{color: #00B4FF;float: right;}
+
+.swiper-slide {text-align: center;font-size: 0.14rem;display: -webkit-box;-webkit-box-align: center;}
+
+.listPage-swiper.swiper-container {width: 100%;height: 0.44rem;background: #00ACFF;}
+.listPage-swiper{display: flex;}
+.listPage-swiper .swiper-slide{border-bottom: 4px solid #fff;width: auto;padding: 0 0.12rem;color: #fff;opacity: 0.8;}
+.listPage-swiper .swiper-slide.flex{flex: 1;}
+.listPage-swiper .swiper-slide.active{border-bottom-color: #fff;height: 0.44rem;opacity: 1;}
+
