@@ -43,7 +43,7 @@ public class FirePatrolStatisticsController {
 		sb.append("from fire_fight_equipment_history A ");
 		sb.append("inner join fire_fight_equipment B on A.old_id = B.id ");
 		sb.append("left join fire_patrol_building_info C on B.building_code = C.building_id ");
-		if(type != null && type == 0){
+		if(type != null && type != 0){
 			if(type == 20){
 				sb.append("where C.\"type\" = ").append(type).append(" or C.building_id is null ");
 			} else {
@@ -58,7 +58,7 @@ public class FirePatrolStatisticsController {
 		sb.append("inner join fire_fight_equipment B on A.old_id = B.id ");
 		sb.append("left join fire_patrol_building_info C on B.building_code = C.building_id ");
 		sb.append("where A.check_status = 1 ");
-		if(type != null && type == 0){
+		if(type != null && type != 0){
 			if(type == 20){
 				sb.append("and ( C.\"type\" = ").append(type).append(" or C.building_id is null) ");
 			} else {
