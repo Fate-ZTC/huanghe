@@ -16,6 +16,7 @@ public class FirePatrolBuildingType {
     private String name;            //分类名称
     private Integer type;           //分类
     private Integer campusId;       //校区id
+    private Integer sort;           //排序
 
     public FirePatrolBuildingType() {}
 
@@ -56,5 +57,14 @@ public class FirePatrolBuildingType {
 
     public void setCampusId(Integer campusId) {
         this.campusId = campusId;
+    }
+
+    @Column(name = "sort")
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
     }
 }

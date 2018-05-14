@@ -119,6 +119,35 @@ public class PatrolUserRegionService {
 		
 		return this.patrolUserRegionDao.pageQuery(hql,pageSize==null?12:pageSize, page==null?1:page);
 	}
+
+
+	public List<PatrolUserRegion> getPatrolUserBySth(String username,Integer regionId,Integer exceptionType,String startTime,String endTime) throws UnsupportedEncodingException{
+		String hql = "from PatrolUserRegion where 1=1 ";
+		if (StringUtils.isNotBlank(username)) {
+			hql += " and username like '%"+username+"%'";
+		}
+		if (StringUtils.isNotBlank(startTime)) {
+			hql += " and startTime >= '"+startTime+"'";
+		}
+		if (StringUtils.isNotBlank(endTime)) {
+			hql += " and endTime < '"+endTime+"'";
+		}
+		if (regionId!=null&&regionId!=-1) {
+			hql += " and regionId = "+regionId;
+		}
+		if(exceptionType!=null&&exceptionType!=-1){
+			if(exceptionType==1){
+				hql += " and patrolException.type is not null ";
+			}else{
+				hql += " and patrolException is null ";
+			}
+		}
+		hql += "order by lastUpdateTime desc";
+
+		return this.getByHQL(hql);
+	}
+
+
 	public PatrolUserRegion getByJobNum(String jobNum) {
 		String hql = "from PatrolUserRegion where jobNum ='"+ jobNum +"' and endTime is null order by startTime desc limit 1";
 		List<PatrolUserRegion> list = this.patrolUserRegionDao.getByHQL(hql);
@@ -142,46 +171,5 @@ public class PatrolUserRegionService {
 		return this.patrolUserRegionDao.getDistanceBySql(sql);
 	}
 
-
-//	/**
-//	 * 进行消息推送
-//	 * @param title		标题
-//	 * @param content	内容
-//     * @param alias		推送人员
-//	 * @param type 		1 消防 2 安防
-//     */
-//	public void pushSend(String type,String title,String content,String alias) {
-//		if(alias != null && !"".equals(alias)) {
-//			JPushClientExample push = new JPushClientExample(APP_KEY, SECRET);
-//			Map<String, String> map = new HashMap<String, String>();
-//			map.put("type", type);
-//			map.put("title", title);
-//			map.put("content", content);
-//			push.aliasSendMsg(title, content, map, alias);
-//		}
-//	}
-//
-//
-//	public String getPartrolAdminUserId() {
-//		HttpRequest httpRequest = new HttpRequest();
-//		String param = "moduleId=" + PATROL_ADMIN_CONFIG_PARAM;
-//		String result = httpRequest.sendGet(patrolAdminConfigURL,param);
-//		if(result != null && !"".equals(result)) {
-//			JSONObject resultObject = JSONObject.parseObject(result);
-//			if(resultObject != null) {
-//				int code = resultObject.getIntValue("code");
-//				boolean status = resultObject.getBoolean("status");
-//				if(code == 200 && status) {
-//					//获取data
-//					JSONObject dataObject = resultObject.getJSONObject("data");
-//					if(dataObject != null) {
-//						System.out.println(dataObject.getString("privateUsers"));
-//						return dataObject.getString("privateUsers");
-//					}
-//				}
-//			}
-//		}
-//		return null;
-//	}
 
 }

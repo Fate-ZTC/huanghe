@@ -55,7 +55,7 @@ public class FirePatrolInfoController {
 		
 		String hql = "from  FirePatrolInfo f where 1=1";
 		if(StringUtils.isNotBlank(equipmentName)){
-			hql +=" and f.fireFightEquipment.name like '% "+equipmentName+"%'";
+			hql +=" and f.fireFightEquipment.name like '%"+equipmentName+"%'";
 		}
 		if(StringUtils.isNotBlank(username)){
 			hql += " and f.firePatrolUser.username like '%" + username +"%'";
@@ -71,6 +71,15 @@ public class FirePatrolInfoController {
 		}
 		hql += " order by timestamp desc";
 		PageBean<FirePatrolInfo> firePatrolInfoPage = this.firePatrolInfoService.getByHql(hql,pageSize==null?12:pageSize, page==null?1:page);
+
+		//返回结果显示
+		mv.addObject("equipmentName",equipmentName);
+		mv.addObject("patrolStatus",patrolStatus);
+		mv.addObject("startTime",startTime);
+		mv.addObject("endTime",endTime);
+		mv.addObject("patrolUserName",username);
+		mv.addObject("page",page);
+		mv.addObject("pageSize",pageSize);
 		mv.addObject("firePatrolInfoPage", firePatrolInfoPage);
 		mv.setViewName("manager/system/firePatrolInfo/firePatrolInfo-list");
 		return mv;
@@ -202,15 +211,15 @@ public class FirePatrolInfoController {
 	 * @throws IOException
 	 */
 	@RequestMapping("firePatrolInfo_excelOut")
-	public ResponseEntity<byte[]> excelOut(FirePatrolInfo firePatrolInfo,Date startTime,Date endTime,HttpServletResponse response,HttpServletRequest request) throws IOException{
+	public ResponseEntity<byte[]> excelOut(String username,String equipmentName,Integer status,String startTime,String endTime,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		Date today = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		//导出文件的标题
-		String title = "消防巡查人员记录"+df.format(today)+".xls";
+		String title = "消防巡查记录"+df.format(today)+".xls";
 		List<FirePatrolInfo> list = null;
 		try {
-			list = this.firePatrolInfoService.getBySth(firePatrolInfo,startTime,endTime);
+			list = this.firePatrolInfoService.getBySth(username,equipmentName,status,startTime,endTime);
 		} catch (Exception e1) {
 		}
 		//设置表格标题行

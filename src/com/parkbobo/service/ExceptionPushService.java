@@ -20,8 +20,12 @@ public class ExceptionPushService {
     final String PATROL_ADMIN_CONFIG_PARAM = Configuration.getInstance().getValue("patrolAdminConfigParam");
     final String FIRE_PATROL_ADMIN_CONFIG_PARAM = Configuration.getInstance().getValue("firePatrolAdminConfigParam");
     final String patrolAdminConfigURL = Configuration.getInstance().getValue("patrolAdminConfigURL");
+
+    //app管理段消防和安防推送相关key
     final String APP_KEY = Configuration.getInstance().getValue("AppKey");
     final String SECRET = Configuration.getInstance().getValue("Secret");
+
+    //app安防巡更使用端推送相关key
     final String USE_PATROL_APP_KEY = Configuration.getInstance().getValue("UsePatrolAppKey");
     final String USE_PATROL_SECRET = Configuration.getInstance().getValue("UsePatrolSecret");
 
@@ -40,6 +44,10 @@ public class ExceptionPushService {
             map.put("type", type);
             map.put("title", title);
             map.put("content", content);
+
+
+            //TODO 这里进行测试推送
+//            String test_al = "ydtest";
             push.aliasSendMsg(title, content, map, alias);
         }
     }
@@ -47,7 +55,7 @@ public class ExceptionPushService {
 
     /**
      * 消息推送(安防巡更使用端)
-     * @param type      类型
+     * @param type      类型(使用端推送：3)
      * @param title     标题
      * @param content   内容
      * @param alias     推送人员
@@ -62,6 +70,7 @@ public class ExceptionPushService {
             push.aliasSendMsg(title, content, map, alias);
         }
     }
+
 
 
     /**

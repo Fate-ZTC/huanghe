@@ -2,11 +2,14 @@ package com.parkbobo.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
 import com.parkbobo.dao.PatrolConfigDao;
+import com.parkbobo.dao.PatrolLocationInfoDao;
+import com.parkbobo.dao.PatrolUserDao;
 import com.parkbobo.model.*;
 
 @Service
@@ -34,6 +37,19 @@ public class PatrolConfigService {
 
 	@Resource
 	private PatrolExceptionService patrolExceptionService;
+
+	@Resource
+	private PatrolUserDao patrolUserDao;
+
+	@Resource
+	private PatrolConfigService patrolConfigService;
+
+	@Resource
+	private ExceptionPushService exceptionPushService;
+
+	@Resource
+	private PatrolLocationInfoDao patrolLocationInfoDao;
+
 
 	/**
 	 * 获取用于操作的配置信息
@@ -112,35 +128,41 @@ public class PatrolConfigService {
 	}
 
 	/**
-	 * 是否离开区域超过规定时间
+	 * 是否离开区域超过规定时间(在这里需要对距离进行判定)
 	 * @param leaveTime					配置表中规定的离开规定时间(分钟)
 	 * @param patrolUserRegion			巡查人员和区域相关信息
 	 * @param isInRegion 				是否在指定巡查区域
      * @return
      */
-	public boolean isLeaveTime(Integer leaveTime, PatrolUserRegion patrolUserRegion,boolean isInRegion) {
+	public boolean isLeaveTime(Double lon,Double lat,Integer regionId,Integer leaveTime,
+							   PatrolUserRegion patrolUserRegion,boolean isInRegion) {
 		if(patrolUserRegion == null)
 			return true;
 
-		if(patrolUserRegion.getLeaveRegionStartTime() == null) {
-			//进行添加离开指定区域开始时间
-			patrolUserRegion.setLeaveRegionStartTime(new Date());
-			patrolUserRegionService.updateRecord(patrolUserRegion);
-		}else {
-			//进行判断是否超过指定时间
-			Date leaveRegionStartTime = patrolUserRegion.getLeaveRegionStartTime();
-			System.out.println("new Date:" + new Date().getTime());
-			System.out.println("leaveStartTime:" + leaveRegionStartTime.getTime());
-			System.out.println("config Start:" + leaveTime * ONE_MINUTE_MSEC);
-			if(new Date().getTime() - leaveRegionStartTime.getTime() > leaveTime * ONE_MINUTE_MSEC) {
-				//超过
-				System.out.println(new Date().getTime() - leaveRegionStartTime.getTime() > leaveTime * ONE_MINUTE_MSEC);
-				return true;
+		//这里还需要进行距离判断，超过距离才进行时间判断
+		boolean isLeave = isLeaveDistance(lon,lat,600,regionId);
+		//离开
+		if(isLeave) {
+			if (patrolUserRegion.getLeaveRegionStartTime() == null) {
+				//进行添加离开指定区域开始时间
+				patrolUserRegion.setLeaveRegionStartTime(new Date());
+				patrolUserRegionService.updateRecord(patrolUserRegion);
+			} else {
+				//进行判断是否超过指定时间
+				Date leaveRegionStartTime = patrolUserRegion.getLeaveRegionStartTime();
+				System.out.println("new Date:" + new Date().getTime());
+				System.out.println("leaveStartTime:" + leaveRegionStartTime.getTime());
+				System.out.println("config Start:" + leaveTime * ONE_MINUTE_MSEC);
+				if (new Date().getTime() - leaveRegionStartTime.getTime() > leaveTime * ONE_MINUTE_MSEC) {
+					//超过
+					System.out.println(new Date().getTime() - leaveRegionStartTime.getTime() > leaveTime * ONE_MINUTE_MSEC);
+					return true;
+				}
 			}
 		}
 
 		//进入区域内,重置开始离开区域开始时间
-		if(isInRegion) {
+		if(isInRegion && patrolUserRegion.getLeaveRegionStartTime() != null) {
 			patrolUserRegion.setLeaveRegionStartTime(new Date());
 			patrolUserRegionService.updateRecord(patrolUserRegion);
 		}
@@ -160,7 +182,7 @@ public class PatrolConfigService {
 			//进行计算是否超过指定距离
 			String sql = "SELECT st_distance((SELECT region_location FROM patrol_region WHERE id="+regionId+"), st_geometryfromtext('POINT("+lon+" "+lat+")')) AS distance";
 			double distance = patrolUserRegionService.getDistanceBySql(sql);
-			if(distance >= 0) {
+			if(distance >= 0.0) {
 				distance = distance * 111000;
 				if(distance < configDistance) {
 					//没有离开指定范围
@@ -185,12 +207,14 @@ public class PatrolConfigService {
 	public boolean isLoseTime(PatrolUserRegion patrolUserRegion,Integer lossTime) {
 		if(patrolUserRegion != null && lossTime != null && lossTime >= 0) {
 			//计算最后一次上传的时间
-			long leaveTimeInterVal = new Date().getTime() - patrolUserRegion.getLastUpdateTime().getTime();
-			if(leaveTimeInterVal > lossTime * ONE_MINUTE_MSEC) {
-				//这里在判断时候需要将开始时间进行重置
-				patrolUserRegion.setLastUpdateTime(new Date());
-				patrolUserRegionService.updateRecord(patrolUserRegion);
-				return true;
+			if(patrolUserRegion.getLastUpdateTime() != null) {
+				long leaveTimeInterVal = new Date().getTime() - patrolUserRegion.getLastUpdateTime().getTime();
+				if (leaveTimeInterVal > lossTime * ONE_MINUTE_MSEC) {
+					//这里在判断时候需要将开始时间进行重置
+					patrolUserRegion.setLastUpdateTime(new Date());
+					patrolUserRegionService.updateRecord(patrolUserRegion);
+					return true;
+				}
 			}
 		}
 		return false;
@@ -246,7 +270,40 @@ public class PatrolConfigService {
 	 * @param frequencyTime		推送频率
 	 * @return
      */
-	public boolean isArrivePushTime(PatrolUserRegion patrolUserRegion,Integer frequencyTime) {
+	public boolean isArrivePushTime(PatrolUserRegion patrolUserRegion,Integer frequencyTime,Integer startPatrolTime) {
+
+		if(patrolUserRegion != null && frequencyTime != null) {
+			if(patrolUserRegion.getExceptionPushTime() == null) {
+				//第一次进行异常推送
+				return true;
+			}else {
+				//判断当前时间是否在指定到达时间内，在则不进行推送，不在则进行推送
+				if(patrolUserRegion.getStartTime() != null) {
+					long startTime = patrolUserRegion.getStartTime().getTime();
+					long nowTime = new Date().getTime();
+					long endTime = startTime + (startPatrolTime * ONE_MINUTE_MSEC);
+					if (startTime <= nowTime && nowTime <= endTime) {
+						return false;
+					}
+				}
+
+				long pushTimeInterval = new Date().getTime() - patrolUserRegion.getExceptionPushTime().getTime();
+				if (pushTimeInterval > frequencyTime * ONE_MINUTE_MSEC) {
+					//这里推送时间超过频率时间,能进行推送
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 是否能进行推送(在推送完成之后需要进行重置推送时间,这里没有加限制，有几分钟到达的时间的限制)
+	 * @param patrolUserRegion	区域用户对象
+	 * @param frequencyTime		推送频率
+	 * @return
+	 */
+	public boolean isArrivePushTimeNot(PatrolUserRegion patrolUserRegion,Integer frequencyTime) {
 
 		if(patrolUserRegion != null && frequencyTime != null) {
 			if(patrolUserRegion.getExceptionPushTime() == null) {
@@ -275,5 +332,56 @@ public class PatrolConfigService {
 		}
 		return null;
 	}
+
+
+
+
+
+	/**
+	 * 所有状态完成之后进行更新状态，将最新的数据进行更新
+	 * @param patrolLocationInfo	经纬度locationInfo
+	 * @param patrolUserRegion 		用户region
+	 */
+	public void updateTimeAndStatus(PatrolUserRegion patrolUserRegion,PatrolLocationInfo patrolLocationInfo) {
+
+		Date date = new Date();
+		if(patrolUserRegion.getLastUpdateTime() != null) {
+			patrolUserRegion.setLastUpdateTime(date);
+		}
+		if(patrolUserRegion.getLeaveRegionStartTime() != null) {
+			patrolUserRegion.setLeaveRegionStartTime(null);
+		}
+		if(patrolUserRegion.getLocationNotChangeStartTime() != null) {
+			StringBuffer sb = new StringBuffer();
+			sb.append("SELECT * FROM patrol_location_info WHERE job_num='")
+					.append(patrolUserRegion.getJobNum())
+					.append("' AND usreg_id=").append(patrolUserRegion.getId())
+					.append(" AND ORDER BY timestamp DESC LIMIT 1");
+
+			List<Map<String,Object>> list = this.patrolLocationInfoDao.findForJdbc(sb.toString());
+			patrolUserRegion.setLocationNotChangeStartTime(date);
+		}
+		//进行设置状态(将状态设置为正常，并且清空异常记录)
+		patrolUserRegion.setStatus(1);
+		patrolUserRegion.setPatrolException(null);
+
+		//设置经纬度info状态信息和异常信息
+		patrolLocationInfo.setStatus(1);
+		patrolLocationInfo.setPatrolException(null);
+
+		patrolUserRegionService.updateRecord(patrolUserRegion);
+		patrolLocationInfoService.add(patrolLocationInfo);
+	}
+
+
+
+	/**
+	 * 每隔
+	 */
+	public void patrolStatusTaskInspect() {
+
+
+	}
+
 
 }

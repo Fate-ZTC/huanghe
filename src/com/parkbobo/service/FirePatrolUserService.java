@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.aspectj.apache.bcel.generic.RET;
 import org.springframework.stereotype.Service;
 
 import com.parkbobo.dao.FirePatrolUserDao;
@@ -113,7 +114,13 @@ public class FirePatrolUserService {
 	 * 根据jobNum 获取用户
 	 */
 	public FirePatrolUser getByJobNum(String jobNum){
-		return this.firePatrolUserDao.getUniqueByProperty("jobNum", jobNum);
+		//这里进行查询用户
+		String hql = "FROM FirePatrolUser WHERE jobNum='" + jobNum +"' AND isDel=0";
+		List<FirePatrolUser> firePatrolUsers = this.firePatrolUserDao.getByHQL(hql);
+		if(firePatrolUsers != null && firePatrolUsers.size() > 0) {
+			return firePatrolUsers.get(0);
+		}
+		return null;
 	}
 	
 	public List<FirePatrolUser> getAll(){
@@ -121,7 +128,7 @@ public class FirePatrolUserService {
 	}
 		
 	public void update(FirePatrolUser patrolUser) {
-		this.firePatrolUserDao.update(patrolUser);
+		this.firePatrolUserDao.merge(patrolUser);
 	}
 	public List<FirePatrolUser> getBySth(String username, String jobNum) throws UnsupportedEncodingException {
 		String hql = " from FirePatrolUser where isDel = 0";

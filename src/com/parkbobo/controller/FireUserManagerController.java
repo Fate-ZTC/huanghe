@@ -2,24 +2,18 @@ package com.parkbobo.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,7 +23,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.parkbobo.model.FirePatrolException;
 import com.parkbobo.model.FirePatrolUser;
+import com.parkbobo.service.FirePatrolExceptionService;
 import com.parkbobo.service.FirePatrolUserService;
 import com.parkbobo.utils.PageBean;
 import com.system.utils.StringUtil;
@@ -44,6 +40,9 @@ public class FireUserManagerController {
 
 	@Resource
 	private FirePatrolUserService firePatrolUserService;
+
+	@Resource
+	private FirePatrolExceptionService firePatrolExceptionService;
 
 	/**
 	 * 巡查人员
@@ -71,8 +70,16 @@ public class FireUserManagerController {
 		mv.setViewName("manager/system/firePatrol/fireUser-list");
 		return mv;
 	}
+
+	/**
+	 * 添加消防巡查用户信息
+	 * @param method
+	 * @param firePatrolUser
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("firePatrolUser_add")
-	public ModelAndView add(String method,FirePatrolUser firePatrolUser,HttpSession session )
+	public ModelAndView add(String method,FirePatrolUser firePatrolUser,HttpSession session)
 	{
 		ModelAndView mv = new ModelAndView();
 		//添加
@@ -147,6 +154,72 @@ public class FireUserManagerController {
 		mv.setViewName("redirect:/firePatrolUserList?method=deleteSuccess");
 		return mv;
 	}
+
+	//下面市消防巡查术语管理相关内容
+
+	/**
+	 * 消防术语记录查询
+	 * @param keyWords	关键字
+	 * @return
+	 */
+	@RequestMapping("/firePatrolExceptionType_list")
+	public ModelAndView toFireExceptionTypeList(String keyWords,int page,int pageSize) {
+
+		ModelAndView mv = new ModelAndView();
+		//这里进行查询
+		page = (page <= 0 ? 1 : page);
+		pageSize = (pageSize <= 0 ? 10 : pageSize);
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("FROM FirePatrolException ");
+		if(keyWords != null && !"".equals(keyWords)) {
+			sb.append("  WHERE exceptionName LIKE '%").append(keyWords).append("%'");
+		}
+		sb.append(" ORDER BY sort DESC");
+		System.out.println(sb.toString());
+		PageBean<FirePatrolException> patrolExceptionPageBean = firePatrolExceptionService.getByHql(sb.toString(),pageSize,page);
+		//这里进行查询
+		mv.addObject("patrolExceptionPageBean",patrolExceptionPageBean);
+		mv.setViewName("manager/system/firePatrolExceptionType/firePatrol-exception-desc");
+		return mv;
+	}
+
+
+	/**
+	 * 单个删除和批量删除异常分类
+	 * @return
+	 */
+	@RequestMapping("firePatrolExceptionType_delete")
+	public ModelAndView deleteExceptionType(String ids,HttpSession session)
+	{
+		ModelAndView mv = new ModelAndView();
+		if(ids==null){
+			mv.setViewName("redirect:/firePatrolExceptionType_list");
+			mv.addObject("msg","请勾选信息");
+			return mv;
+		}
+		String[] idArr = ids.split(",");
+		for(int i = 0;i < idArr.length;i++) {
+			int id = Integer.parseInt(idArr[i]);
+			//这里是根据id进行删除
+			this.firePatrolExceptionService.deleteById(id);
+		}
+		mv.setViewName("redirect:/firePatrolExceptionType_list?method=deleteSuccess");
+		return mv;
+	}
+
+
+	//这里是进行添加
+	@RequestMapping("/addExceptionType")
+	public ModelAndView addFirePatrolExceptionType() {
+
+		return null;
+	}
+
+
+
+
+
 	/**
 	 * 导出excel
 	 */

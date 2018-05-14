@@ -72,10 +72,10 @@ public class FirePatrolInfoService {
 	}
 	public int countInfo(String equipName, String username, Integer status, Date startTime, Date endTime) throws UnsupportedEncodingException {
 		String hql = "from FirePatrolInfo where 1=1";
-		if(StringUtils.isNotBlank(equipName)){
+		if(StringUtils.isNotBlank(equipName)) {
 			hql += " and fireFightEquipment.name like '%"+URLDecoder.decode(URLEncoder.encode(equipName, "ISO8859_1"), "UTF-8")+"%'";
 		}
-		if(StringUtils.isNotBlank(username)){
+		if(StringUtils.isNotBlank(username)) {
 			hql += " and firePatrolUser.username like '%" + URLDecoder.decode(URLEncoder.encode(username, "ISO8859_1"), "UTF-8")+"%'";
 		}
 		if(status!=null){
@@ -96,7 +96,7 @@ public class FirePatrolInfoService {
 		return this.firePatrolInfoDao.pageQuery(hql, pageSize, page);
 	}
 	public void bulkDelete(String ids) {
-		if(ids.length() > 0){
+		if(ids.length() > 0) {
 			String[] strs = ids.split(",");
 			Integer[] idArr = new Integer[strs.length];
 			for (int i=0; i< strs.length; i++) {
@@ -105,26 +105,68 @@ public class FirePatrolInfoService {
 			this.firePatrolInfoDao.bulkDelete(idArr);
 		}
 	}
-	public List<FirePatrolInfo> getBySth(FirePatrolInfo firePatrolInfo, Date startTime, Date endTime) throws UnsupportedEncodingException {
-		String hql = "from FirePatrolInfo where 1=1";
-		if(StringUtils.isNotBlank(firePatrolInfo.getFireFightEquipment().getName())){
-			hql += " and fireFightEquipment.name like '%"+URLDecoder.decode(URLEncoder.encode(firePatrolInfo.getFireFightEquipment().getName(), "ISO8859_1"), "UTF-8")+"%'";
-		}
-		if(StringUtils.isNotBlank(firePatrolInfo.getFirePatrolUser().getUsername())){
-			hql += " and firePatrolUser.username like '%" + URLDecoder.decode(URLEncoder.encode(firePatrolInfo.getFirePatrolUser().getUsername(), "ISO8859_1"), "UTF-8")+"%'";
-		}
-		if(firePatrolInfo.getPatrolStatus()!=-1){
-			hql += " and patrolStatus ="+firePatrolInfo.getPatrolStatus();
-		}
-		if(startTime!=null){
-			hql += " and timestamp > '"+startTime+"'";
-		}
-		if(endTime!=null){
-			hql += " and timestamp < '"+endTime+"'";
-		}
-		hql +=" order by timestamp desc";
-		return this.firePatrolInfoDao.getByHQL(hql);
-	}
+
+
+//	public List<FirePatrolInfo> getBySth(FirePatrolInfo firePatrolInfo, Date startTime, Date endTime) throws UnsupportedEncodingException {
+//		String hql = "from FirePatrolInfo where 1=1";
+//		if(firePatrolInfo.getFireFightEquipment() != null) {
+//            if (StringUtils.isNotBlank(firePatrolInfo.getFireFightEquipment().getName())) {
+//                hql += " and fireFightEquipment.name like '%" + URLDecoder.decode(URLEncoder.encode(firePatrolInfo.getFireFightEquipment().getName(), "ISO8859_1"), "UTF-8") + "%'";
+//            }
+//        }
+//        if(firePatrolInfo.getFirePatrolUser() != null) {
+//            if (StringUtils.isNotBlank(firePatrolInfo.getFirePatrolUser().getUsername())) {
+//                hql += " and firePatrolUser.username like '%" + URLDecoder.decode(URLEncoder.encode(firePatrolInfo.getFirePatrolUser().getUsername(), "ISO8859_1"), "UTF-8") + "%'";
+//            }
+//        }
+//        if(firePatrolInfo.getPatrolStatus() != null) {
+//			if (firePatrolInfo.getPatrolStatus() != -1) {
+//				hql += " and patrolStatus =" + firePatrolInfo.getPatrolStatus();
+//			}
+//		}
+//		if(startTime != null){
+//			hql += " and timestamp > '"+startTime+"'";
+//		}
+//		if(endTime != null){
+//			hql += " and timestamp < '"+endTime+"'";
+//		}
+//		hql +=" order by timestamp desc";
+//		return this.firePatrolInfoDao.getByHQL(hql);
+//	}
+
+
+
+
+    //修改
+    public List<FirePatrolInfo> getBySth(String username,String equipmentName,Integer status, String startTime, String endTime) throws UnsupportedEncodingException {
+        String hql = "from FirePatrolInfo where 1=1";
+
+        if (StringUtils.isNotBlank(equipmentName)) {
+            hql += " and fireFightEquipment.name like '%" + equipmentName + "%'";
+        }
+
+        if (StringUtils.isNotBlank(username)) {
+            hql += " and firePatrolUser.username like '%" + username+ "%'";
+        }
+        if(status != null) {
+            if (status != -1) {
+                hql += " and patrolStatus =" + status;
+            }
+        }
+        if(startTime != null){
+            hql += " and timestamp > '"+startTime+"'";
+        }
+        if(endTime != null){
+            hql += " and timestamp < '"+endTime+"'";
+        }
+        hql +=" order by timestamp desc";
+        return this.firePatrolInfoDao.getByHQL(hql);
+    }
+
+
+
+
+
 	public List<FirePatrolInfo> getByHql(String jobNum) {
 		String hql = " from FirePatrolInfo where firePatrolUser.jobNum = '" +jobNum+"' order by timestamp desc";
 		return this.firePatrolInfoDao.getByHQL(hql);

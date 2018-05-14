@@ -22,7 +22,6 @@
 	<body>
 
 
-	<%--TODO 样式乱--%>
 	<div class="place">
 		<span>位置：</span>
 		<ul class="placeul">

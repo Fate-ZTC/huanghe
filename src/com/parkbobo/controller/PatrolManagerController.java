@@ -287,7 +287,7 @@ public class PatrolManagerController {
 			this.patrolEmergencyService.update(patrolEmergency);
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolEmergency\":"+JSONObject.toJSONString(patrolEmergency,features)+",\"patrolConfig\":"+JSONObject.toJSONString(config,features)+"}}");
 		} catch (Exception e) {
-			if(out==null){
+			if(out==null) {
 				out=response.getWriter();
 			}
 			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");
@@ -312,7 +312,7 @@ public class PatrolManagerController {
 			PatrolUserRegion byJobNum = this.patrolUserRegionService.getByJobNum(jobNum);
 			if(byJobNum!=null){
 				PatrolLocationInfo location = this.patrolLocationInfoService.getLocation(jobNum, byJobNum.getId(), campusNum);
-				if(location!=null){
+				if(location!=null) {
 					out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(location,features)+"}");
 				}else{
 					out.print("{\"status\":\"false\",\"Code\":-2,\"Msg\":\"此人暂无巡逻信息\"}");
@@ -321,7 +321,7 @@ public class PatrolManagerController {
 				out.println("{\"status\":\"false\",\"Code\":-2,\"Msg\":\"此人未开始巡逻\"}");
 			}
 		} catch (Exception e) {
-			if(out==null){
+			if(out==null) {
 				out=response.getWriter();
 			}
 			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未知异常,请技术人员\"}");

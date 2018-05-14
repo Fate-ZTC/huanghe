@@ -55,6 +55,7 @@ String path = request.getContextPath();
         <li onclick="bulkDelete('<%=path %>/firePatrolUser_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
         </sec:authorize>
         <sec:authorize ifAnyGranted="firePatrolUserList">
+        <%--<sec:authorize ifAnyGranted="firePatrolUser_excelOut">--%>
         <li onclick="forWardUrl('<%=path %>/firePatrolUser_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
         </sec:authorize>
         </ul>
@@ -81,7 +82,7 @@ String path = request.getContextPath();
         <td><fmt:formatDate value="${d.lastUpdateTime}" pattern="yyyy-MM-dd HH:mm"/></td>
         <td>
         	<sec:authorize ifAnyGranted="firePatrolUser_edit">
-        	<a href="<%=path %>/firePatrolUser_edit?id=${d.id}" class="tablelink">编辑人员信息</a> | 
+        	<a href="<%=path %>/firePatrolUser_edit?id=${d.id}" class="tablelink">编辑人员信息</a> |
         	</sec:authorize>
         	<sec:authorize ifAnyGranted="firePatrolUser_delete">
         	<a href="javascript:void(0);" onclick="bulkDelete('<%=path %>/firePatrolUser_delete','${d.id}');" class="tablelink"> 删除</a> 

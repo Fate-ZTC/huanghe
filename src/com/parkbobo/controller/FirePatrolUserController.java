@@ -3,10 +3,8 @@ package com.parkbobo.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,8 +19,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.parkbobo.VO.FirePatrolEquipmentStatusVO;
+import com.parkbobo.VO.FirePatrolUseBarListVO;
+import com.parkbobo.VO.FirePatrolUseEquNumVO;
+import com.parkbobo.VO.FirePatrolUseStatisticsVO;
+import com.parkbobo.dao.FireFightEquipmentHistoryDao;
+import com.parkbobo.dao.FirePatrolBuildingInfoDao;
 import com.parkbobo.model.*;
 import com.parkbobo.service.*;
+import com.parkbobo.utils.DateMUtils;
 import com.parkbobo.utils.GisUtil;
 import com.parkbobo.utils.message.MessageBean;
 import com.parkbobo.utils.message.MessageListBean;
@@ -61,6 +65,10 @@ public class FirePatrolUserController {
 	private FirePatrolTimeQuantumService firePatrolTimeQuantumService;
 	@Resource
 	private FirePatrolBuildingInfoService firePatrolBuildingInfoService;
+	@Resource
+	private FireFightEquipmentHistoryDao fireFightEquipmentHistoryDao;
+	@Resource
+	private FirePatrolBuildingInfoDao firePatrolBuildingInfoDao;
 
 	/**
 	 * 登录
@@ -180,11 +188,12 @@ public class FirePatrolUserController {
 	 * @param file 文件
 	 * @param lon 经纬度
 	 * @param lat 纬度
-	 * @param uploadType 上传类型,单个正常上报，1
 	 * @throws IOException
 	 */
 	@RequestMapping("normalUpload")
-	public void normalUpload(@RequestParam("file") MultipartFile[] file,int uploadType,Double lon,Double lat,Integer userId,Integer equipmentId,HttpServletResponse response,HttpServletRequest request) throws IOException {
+	public void normalUpload(@RequestParam("file") MultipartFile[] file,Double lon,Double lat,
+							 Integer userId,Integer equipmentId,String locationName,
+							 HttpServletResponse response,HttpServletRequest request) throws IOException {
 		PrintWriter out = null;
 		try {
 
@@ -192,6 +201,10 @@ public class FirePatrolUserController {
 			out=response.getWriter();
 			FirePatrolConfig patrolConfig = this.firePatrolConfigService.getById(1);
 			FireFightEquipment fireFightEquipment = this.fireFightEquipmentService.getById(equipmentId);
+			if(fireFightEquipment == null) {
+                out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"没有查找到设备信息\"}");
+                return;
+            }
 			GisUtil g = GisUtil.getInstance();
 			double flon = fireFightEquipment.getLon();
 			double flat = fireFightEquipment.getLat();
@@ -253,6 +266,12 @@ public class FirePatrolUserController {
 					fireFightEquipmentHistory.setLastUpdateTime(date);
 					fireFightEquipmentHistory.setUserName(patrolUser.getUsername());
 					fireFightEquipmentHistory.setJobNum(patrolUser.getJobNum());
+					if(locationName != null) {
+						fireFightEquipmentHistory.setLocationName(locationName);
+					}
+					//这里进行巡查次数设置
+					int count = fireFightEquipmentHistory.getCheckCount();
+					fireFightEquipmentHistory.setCheckCount(count + 1);
 					fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
 				}else {
 					//没有查询到设备表中数据,进行添加新的数据
@@ -267,8 +286,12 @@ public class FirePatrolUserController {
 					fireFightEquipmentHistory.setOldId(add.getId());
 					fireFightEquipmentHistory.setJobNum(patrolUser.getJobNum());
 					fireFightEquipmentHistory.setUserName(patrolUser.getUsername());
+					//设置巡查次数
+					fireFightEquipmentHistory.setCheckCount(1);
+					if(locationName != null) {
+						fireFightEquipmentHistory.setLocationName(locationName);
+					}
 					fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
-
 				}
 
 
@@ -317,12 +340,13 @@ public class FirePatrolUserController {
 	 * @param lon 经度
 	 * @param exceptionTypes 错误代码 格式         "3,4,5,"
 	 * @param description 描述
-	 * @param uploadType	单个异常上报2
-	 * @param response 
+	 * @param response
 	 * @throws IOException
 	 */
 	@RequestMapping("abnormalUpload")
-	public void abnormalUpload(@RequestParam("file") MultipartFile[] file,int uploadType,Double lon,Double lat,Integer userId,Integer equipmentId,String exceptionTypes,String description,HttpServletResponse response,HttpServletRequest request) throws IOException{
+	public void abnormalUpload(@RequestParam("file") MultipartFile[] file,Double lon,Double lat,
+							   Integer userId,Integer equipmentId,String exceptionTypes,String description,
+							   String locationName,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		PrintWriter out = null;
 		try {
 			response.setCharacterEncoding("UTF-8");
@@ -331,6 +355,10 @@ public class FirePatrolUserController {
 			FireFightEquipment fireFightEquipment = this.fireFightEquipmentService.getById(equipmentId);
 			FirePatrolConfig patrolConfig = this.firePatrolConfigService.getById(1);
 			GisUtil g = GisUtil.getInstance();
+            if(fireFightEquipment == null) {
+                out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"没有查找到设备信息\"}");
+                return;
+            }
 			if(g.distanceByLngLat(lon, lat, (double)fireFightEquipment.getLon(), (double)fireFightEquipment.getLat())>patrolConfig.getDistance()){
 				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"请在指定区域内上传数据\"}");
 				return;
@@ -398,6 +426,11 @@ public class FirePatrolUserController {
 					fireFightEquipmentHistory.setLastUpdateTime(date);
 					fireFightEquipmentHistory.setUserName(patrolUser.getUsername());
 					fireFightEquipmentHistory.setJobNum(patrolUser.getJobNum());
+					if(locationName != null) {
+						fireFightEquipmentHistory.setLocationName(locationName);
+					}
+					int count = fireFightEquipmentHistory.getCheckCount();
+					fireFightEquipmentHistory.setCheckCount(count + 1);
 					fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
 				}else {
 					//没有查询到设备表中数据,进行添加新的数据
@@ -412,6 +445,10 @@ public class FirePatrolUserController {
 					fireFightEquipmentHistory.setOldId(fireFightEquipment.getId());
 					fireFightEquipmentHistory.setUserName(patrolUser.getUsername());
 					fireFightEquipmentHistory.setJobNum(patrolUser.getJobNum());
+					if(locationName != null) {
+						fireFightEquipmentHistory.setLocationName(locationName);
+					}
+					fireFightEquipmentHistory.setCheckCount(1);
 					fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
 				}
 
@@ -458,16 +495,17 @@ public class FirePatrolUserController {
 	 * @param lon 			经度
 	 * @param lat 			纬度
 	 * @param buildingCode	大楼id
-	 * @param floorId 		楼层id
+	 * @param floorid 		楼层id
 	 * @param response
 	 * @param request
 	 * @throws IOException
 	 */
 	@RequestMapping("/allNormalUpload")
 	public void allNormalUpload(@RequestParam("file") MultipartFile[] file,int uploadType,String buildingCode,
-								String floorId,Double lon,Double lat,Integer userId,
+								String floorid,Double lon,Double lat,Integer userId,String locationName,
 								HttpServletResponse response,HttpServletRequest request) throws IOException {
 		response.setCharacterEncoding("UTF-8");
+		response.setHeader("Content-type","application/json;charset=utf-8");
 		PrintWriter out = null;
 		try {
 		    out = response.getWriter();
@@ -483,13 +521,13 @@ public class FirePatrolUserController {
 			//下面进行判断设备是在室内还是在室外
             List<FireFightEquipment> fireFightEquipments = new ArrayList<>();
 			//室内设备
-			if(buildingCode != null && floorId != null) {
-                fireFightEquipments = this.fireFightEquipmentService.getIndoorEquipment(buildingCode,floorId);
+			if(buildingCode != null && floorid != null) {
+                fireFightEquipments = this.fireFightEquipmentService.getIndoorEquipment(buildingCode,floorid);
 			}
 
 			//室外设备(室外设备没有大楼id)
-			if(buildingCode == null && floorId != null) {
-                fireFightEquipments = this.fireFightEquipmentService.getOutdoorEquipment(null,floorId);
+			if(buildingCode == null && floorid != null) {
+                fireFightEquipments = this.fireFightEquipmentService.getOutdoorEquipment(null,floorid);
 			}
 
 
@@ -564,6 +602,9 @@ public class FirePatrolUserController {
                             fireFightEquipmentHistory.setLastUpdateTime(new Date());
                             fireFightEquipmentHistory.setUserName(patrolUser.getUsername());
                             fireFightEquipmentHistory.setJobNum(patrolUser.getJobNum());
+							if(locationName != null) {
+								fireFightEquipmentHistory.setLocationName(locationName);
+							}
                             fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
                         }else {
                             //没有查询到设备表中数据,进行添加新的数据
@@ -578,6 +619,9 @@ public class FirePatrolUserController {
                             fireFightEquipmentHistory.setOldId(fireFightEquipment.getId());
                             fireFightEquipmentHistory.setUserName(patrolUser.getUsername());
                             fireFightEquipmentHistory.setJobNum(patrolUser.getJobNum());
+							if(locationName != null) {
+								fireFightEquipmentHistory.setLocationName(locationName);
+							}
                             fireFightEquipmentHistoryService.update(fireFightEquipmentHistory);
                         }
 
@@ -617,7 +661,13 @@ public class FirePatrolUserController {
                 messageBean.setMessage("上传成功");
                 out.write(JSON.toJSONString(messageBean));
                 return;
-            }
+            }else {
+            	messageBean.setMessage("没有查找到相关设备");
+            	messageBean.setStatus(false);
+            	messageBean.setCode(200);
+            	out.write(JSON.toJSONString(messageBean));
+            	return;
+			}
 
 		}catch(Exception e){
 			if(out==null){
@@ -669,7 +719,7 @@ public class FirePatrolUserController {
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
-			String hql = "FROM FirePatrolBuildingType WHERE campusId=1";
+			String hql = "FROM FirePatrolBuildingType WHERE campusId=1 ORDER BY sort";
 			List<FirePatrolBuildingType> firePatrolBuildingTypes = buildingTypeService.getBuildingType(hql);
 			MessageListBean<FirePatrolBuildingType> message = new MessageListBean<>();
 			message.setCode(200);
@@ -712,19 +762,211 @@ public class FirePatrolUserController {
 
 
 	/**
-	 * 消防使用端统计顶部导航信息，
+	 * 进行获取消防巡查使用端巡查记录统计，这里是针对各人的巡查记录进行统计
 	 * @param jobNum		工号
-	 * @param date			时间
+	 * @param date			时间（这里上传的时间类型为：2018-05）
 	 * @param buildingType  大楼类型
 	 * @param page			当前页数
 	 * @param pageSize 		页数条数
 	 * @param response
 	 */
 	@RequestMapping("/getFirePatrolUseStatisticsData")
-	public void getFirePatrolUseStatisticsData(String jobNum,String date,int buildingType,int page,int pageSize,HttpServletResponse response) {
-		//TODO 这里进行统计相关内容
+	public void getFirePatrolUseStatisticsData(String jobNum,String date,int buildingType,
+                                               int page,int pageSize,HttpServletResponse response) {
+
+	    PrintWriter out = null;
+	    response.setCharacterEncoding("UTF-8");
+	    MessageBean messageBean = new MessageBean();
+
+        try {
+
+            out = response.getWriter();
+			messageBean.setCode(200);
+			if(jobNum == null || "".equals(jobNum) || buildingType < 0) {
+                messageBean.setStatus(false);
+                messageBean.setMessage("请求参数不能为空");
+                out.write(JSON.toJSONString(messageBean));
+                return;
+            }
+
+            page = (page <=0 ? 1 : page);
+            pageSize = (pageSize <= 0 ? 20 : pageSize);
+			buildingType = (buildingType <=0 ? 0 : buildingType);
+
+            //判断这个人是否存在
+            FirePatrolUser patrolUser = firePatrolUserService.getByJobNum(jobNum);
+            if(patrolUser == null) {
+                messageBean.setMessage("该用户不存在");
+                messageBean.setStatus(false);
+                messageBean.setCode(200);
+                out.write(JSON.toJSONString(messageBean));
+                return;
+            }
+
+            FirePatrolUseStatisticsVO useStatisticsVO = new FirePatrolUseStatisticsVO();
+
+            //这里进行统计列表信息
+            String hql = "FROM FirePatrolBuildingType WHERE campusId=1";
+            List<FirePatrolBuildingType> firePatrolBuildingTypes = buildingTypeService.getBuildingType(hql);
+
+            //设置列表头部信息
+            if(firePatrolBuildingTypes != null && firePatrolBuildingTypes.size() > 0) {
+                FirePatrolUseBarListVO firePatrolUseBarListVO = new FirePatrolUseBarListVO();
+                firePatrolUseBarListVO.setFirePatrolBuildingTypes(firePatrolBuildingTypes);
+                useStatisticsVO.setFirePatrolUseBarListVO(firePatrolUseBarListVO);
+            }
+
+			//这里进行计算开始结束时间
+			String startStr = "";
+            String endStr = "";
+			Map<String,Date> monthStartEnd = null;
+			Date tempDate = null;
+			if(date == null) {
+				//下面是真实的
+				monthStartEnd = DateMUtils.getNowMonth(new Date());
+
+			}
+
+			if(date != null && date.contains("-")) {
+				date = date + "-01 00:00:00";
+				tempDate = DateMUtils.stringFormatDate(date);
+				monthStartEnd = DateMUtils.getNowMonth(tempDate);
+			}
+
+			//这里进行时间格式化
+			if(tempDate == null) {
+				tempDate = new Date();
+			}
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-M");
+			String month = simpleDateFormat.format(tempDate);
+			useStatisticsVO.setDateStr(month);
+
+			if(monthStartEnd != null) {
+				startStr = DateMUtils.dateFormatStr(monthStartEnd.get(DateMUtils.START_DATE),DateMUtils.FORMAT_DATE);
+				endStr = DateMUtils.dateFormatStr(monthStartEnd.get(DateMUtils.END_DATE),DateMUtils.FORMAT_DATE);
+			}
+
+            //查询该人本月巡查数据个数
+			String sql = "SELECT count (*) AS totalEqui," +
+					"SUM (CASE WHEN fpi.status = 1 THEN 1 ELSE 0 END) AS normalEqui," +
+					"SUM (CASE WHEN fpi.status = 0 THEN 1 ELSE 0 END) AS exceptionEqui," +
+					"to_char(fpi.last_update_time,'YYYY-MM') AS month," +
+					"SUM(fpi.check_count) AS totalcheckcount " +
+					"FROM fire_fight_equipment_history AS fpi WHERE job_num = '"+ jobNum +"' ";
+
+			if(startStr != null && endStr != null) {
+				sql += " AND fpi.last_update_time BETWEEN '"+startStr+"' AND '"+endStr+"' GROUP BY month,fpi.check_count";
+			}
 
 
+			//这里进行type判断，0为全部
+			StringBuffer sb = new StringBuffer();
+			sb.append("SELECT COUNT (*) AS totalEqui,");
+			sb.append("SUM (CASE WHEN ffqh.status = 1 THEN 1 ELSE 0 END) AS normalEqui,");
+			sb.append("SUM (CASE WHEN ffqh.status = 0 THEN 1 ELSE 0 END) AS exceptionEqui,");
+			sb.append("to_char(ffqh.last_update_time,'YYYY-MM') AS MONTH,");
+			sb.append("SUM (ffqh.check_count) AS totalcheckcount ");
+			sb.append("FROM fire_fight_equipment_history ffqh ");
+			sb.append("LEFT JOIN fire_patrol_building_info fpbi ON ffqh.building_code = fpbi.building_id ");
+			sb.append("LEFT JOIN fire_patrol_building_type fpbt ON fpbt.\"type\" = fpbi.\"type\" ");
+			sb.append("WHERE ");
+			//不是全部的情况
+			if(buildingType > 0) {
+				sb.append(" fpbt.\"type\" = '" + buildingType + "' AND");
+			}
+			sb.append(" ffqh.job_num = '"+ jobNum + "' ");
+			sb.append(" AND ffqh.last_update_time BETWEEN '" + startStr + "' AND '" + endStr + "' GROUP BY MONTH");
+
+			System.out.println(sb.toString());
+			//保存巡查数量
+			FirePatrolUseEquNumVO firePatrolUseEquNumVO = new FirePatrolUseEquNumVO();
+			List<Object[]> statisticsNum = fireFightEquipmentHistoryService.getBySql(sb.toString());
+			if(statisticsNum != null && statisticsNum.size() > 0) {
+				Object[] objects = statisticsNum.get(0);
+				//这里进行设置
+				if(objects[0] != null) {
+					//总设备数
+					firePatrolUseEquNumVO.setAllCount(Integer.parseInt(objects[0].toString()));
+				}
+				if(objects[1] != null) {
+					//正常设备
+					firePatrolUseEquNumVO.setNormalCount(Integer.parseInt(objects[1].toString()));
+				}
+				if(objects[2] != null) {
+					//异常设备
+					firePatrolUseEquNumVO.setExceptionCount(Integer.parseInt(objects[2].toString()));
+				}
+				if(objects[3] != null) {
+					//时间
+					firePatrolUseEquNumVO.setMonth(objects[3].toString());
+				}
+				if(objects[4] != null) {
+					//巡查次数
+					firePatrolUseEquNumVO.setTotalcheckcount(Integer.parseInt(objects[4].toString()));
+				}
+				//设置统计数量
+				useStatisticsVO.setFirePatrolUseEquNumVO(firePatrolUseEquNumVO);
+			}
+
+
+			StringBuffer entitySb = new StringBuffer();
+			entitySb.append("SELECT ffqh.* ");
+			entitySb.append("FROM fire_fight_equipment_history ffqh ");
+			entitySb.append("LEFT JOIN fire_patrol_building_info fpbi ON ffqh.building_code = fpbi.building_id ");
+			entitySb.append("LEFT JOIN fire_patrol_building_type fpbt ON fpbt.\"type\" = fpbi.\"type\" ");
+			entitySb.append("WHERE ");
+			//不是全部的情况
+			if(buildingType > 0) {
+				entitySb.append(" fpbt.\"type\" = '" + buildingType + "' AND");
+			}
+			entitySb.append(" ffqh.job_num = '"+ jobNum + "' ");
+			entitySb.append(" AND ffqh.last_update_time BETWEEN '" + startStr + "' AND '" + endStr + "'");
+			entitySb.append(" ORDER BY ffqh.last_update_time DESC ").append(" LIMIT ").append(pageSize).append(" OFFSET ").append((page-1)*pageSize);
+			System.out.println(entitySb.toString());
+			//这里进行查询数据
+			List<Map<String,Object>> entitys = fireFightEquipmentHistoryDao.findForJdbc(entitySb.toString());
+			List<FireFightEquipmentHistory> histories = FireFightEquipmentHistory.toObjectList(entitys);
+			//这里进行组装数据
+
+			//查询记录总条数
+			StringBuffer countSb = new StringBuffer();
+			countSb.append("SELECT count(*) ");
+			countSb.append("FROM fire_fight_equipment_history ffqh ");
+			countSb.append("LEFT JOIN fire_patrol_building_info fpbi ON ffqh.building_code = fpbi.building_id ");
+			countSb.append("LEFT JOIN fire_patrol_building_type fpbt ON fpbt.\"type\" = fpbi.\"type\" ");
+			countSb.append("WHERE ");
+			//不是全部的情况
+			if(buildingType > 0) {
+				entitySb.append(" fpbt.\"type\" = '" + buildingType + "' AND");
+			}
+			countSb.append(" ffqh.job_num = '"+ jobNum + "' ");
+			countSb.append(" AND ffqh.last_update_time BETWEEN '" + startStr + "' AND '" + endStr + "'");
+
+			long count = fireFightEquipmentHistoryDao.getCountForJdbc(countSb.toString());
+
+
+			useStatisticsVO.setNextPage((page * pageSize >= count) ? false : true);
+			useStatisticsVO.setPage(page);
+			useStatisticsVO.setPageSize(pageSize);
+			useStatisticsVO.setList(histories);
+
+
+			//设置选中类型0 为全部 其他的是大楼type
+			useStatisticsVO.setBuildingType(buildingType);
+			messageBean.setMessage("success");
+			messageBean.setStatus(true);
+			messageBean.setData(useStatisticsVO);
+			out.write(JSON.toJSONString(messageBean));
+        } catch (IOException e) {
+            e.printStackTrace();
+            messageBean.setMessage("服务出现错误，请联系技术人员");
+            messageBean.setCode(200);
+            messageBean.setStatus(false);
+            out.write(JSON.toJSONString(messageBean));
+        }finally {
+            out.flush();
+            out.close();
+        }
 	}
 
 	/**
@@ -737,16 +979,46 @@ public class FirePatrolUserController {
 	 * @param buildingId	大楼id
 	 */
 	@RequestMapping("/judgeFirePatrolSweep")
-	public void judgeFirePatrolSweep(String jobNum,int campusNum,Integer equipmentId,String buildingId,double lon,double lat,HttpServletResponse response) {
+	public void judgeFirePatrolSweep(String jobNum,Integer campusNum,Integer equipmentId,String buildingId,double lon,double lat,HttpServletResponse response) {
 
 		PrintWriter out = null;
 		try {
 			response.setCharacterEncoding("UTF-8");
-
+			response.setHeader("Content-Type","application/json;charset=utf-8");
 			out = response.getWriter();
 			FirePatrolConfig firePatrolConfig = firePatrolConfigService.getById(1);
 			MessageBean messageBean = new MessageBean();
 			messageBean.setCode(200);
+
+			if(jobNum == null && campusNum == null) {
+				messageBean.setStatus(false);
+				messageBean.setMessage("上传参数为空");
+				out.write(JSON.toJSONString(messageBean));
+				return;
+			}
+
+            //进行判断是否是第一次扫码
+            boolean isStart = firePatrolTimeQuantumService.isStartTime(jobNum,campusNum);
+
+            if(isStart) {
+                //需要将之前最新的一条数据状态进行更改
+                String hql = "FROM FirePatrolTimeQuantum WHERE jobNum='" + jobNum + "' AND " + "campusNum=" + campusNum + " AND isNew=1";
+                List<FirePatrolTimeQuantum> firePatrolTimeQuantums = firePatrolTimeQuantumService.getByHql(hql);
+                if(firePatrolTimeQuantums != null && firePatrolTimeQuantums.size() > 0) {
+                    FirePatrolTimeQuantum firePatrolTimeQuantum = firePatrolTimeQuantums.get(0);
+                    //这里进行更新状态
+                    firePatrolTimeQuantum.setIsNew(0);
+                    firePatrolTimeQuantumService.updateFirePatrolTimeQuantum(firePatrolTimeQuantum);
+                }
+                //是的话进行保存用户的相关信息
+                FirePatrolTimeQuantum firePatrolTimeQuantum = new FirePatrolTimeQuantum();
+                firePatrolTimeQuantum.setCampusNum(campusNum);
+                firePatrolTimeQuantum.setIsNew(1);
+                firePatrolTimeQuantum.setStartTime(new Date());
+                firePatrolTimeQuantum.setJobNum(jobNum);
+                firePatrolTimeQuantumService.addFirePatrolTimeQuantum(firePatrolTimeQuantum);
+            }
+
 
 			//计算距离
 			GisUtil g = GisUtil.getInstance();
@@ -783,7 +1055,6 @@ public class FirePatrolUserController {
 				if(distance > firePatrolConfig.getDistance()) {
 					isExceedDistance = true;
 				}
-
 			}
 
 			//超过了指定距离
@@ -792,30 +1063,11 @@ public class FirePatrolUserController {
 				messageBean.setStatus(false);
 				out.write(JSON.toJSONString(messageBean));
 				return;
-			}
-
-
-
-			//进行判断是否是第一次扫码
-			boolean isStart = firePatrolTimeQuantumService.isStartTime(jobNum,campusNum);
-
-			if(isStart) {
-				//需要将之前最新的一条数据状态进行更改
-				String hql = "FROM FirePatrolTimeQuantum WHERE jobNum='" + jobNum + "' AND " + "campusNum=" + campusNum + " AND isNew=1";
-				List<FirePatrolTimeQuantum> firePatrolTimeQuantums = firePatrolTimeQuantumService.getByHql(hql);
-				if(firePatrolTimeQuantums != null && firePatrolTimeQuantums.size() > 0) {
-					FirePatrolTimeQuantum firePatrolTimeQuantum = firePatrolTimeQuantums.get(0);
-					//这里进行更新状态
-					firePatrolTimeQuantum.setIsNew(0);
-					firePatrolTimeQuantumService.updateFirePatrolTimeQuantum(firePatrolTimeQuantum);
-				}
-				//是的话进行保存用户的相关信息
-				FirePatrolTimeQuantum firePatrolTimeQuantum = new FirePatrolTimeQuantum();
-				firePatrolTimeQuantum.setCampusNum(campusNum);
-				firePatrolTimeQuantum.setIsNew(1);
-				firePatrolTimeQuantum.setStartTime(new Date());
-				firePatrolTimeQuantum.setJobNum(jobNum);
-				firePatrolTimeQuantumService.addFirePatrolTimeQuantum(firePatrolTimeQuantum);
+			}else {
+				messageBean.setMessage("success");
+				messageBean.setStatus(true);
+				out.write(JSON.toJSONString(messageBean));
+				return;
 			}
 
 		}catch (Exception e) {
@@ -824,6 +1076,45 @@ public class FirePatrolUserController {
 			out.flush();
 			out.close();
 		}
+	}
+
+
+	/**
+	 * 获取fpid
+	 * @param equpmentId
+	 */
+	@RequestMapping("/getFpidByOldId")
+	public void getFirePatrolInfoByOldId(int equpmentId,HttpServletResponse response) {
+
+		PrintWriter out = null;
+		response.setCharacterEncoding("UTF-8");
+		try {
+			out = response.getWriter();
+			MessageBean messageBean = new MessageBean();
+			String sql = "SELECT id AS fpid FROM fire_patrol_info WHERE equipment_id='" +equpmentId+ "'" + " AND is_newest=1";
+			List<Map<String,Object>> list = firePatrolBuildingInfoDao.findForJdbc(sql);
+			messageBean.setCode(200);
+			if(list != null && list.size() > 0) {
+				Map<String,Object> map = list.get(0);
+				int fpid = (Integer)map.get("fpid");
+				messageBean.setMessage("success");
+				messageBean.setStatus(true);
+				messageBean.addPropertie("fpid",fpid);
+			}else {
+				messageBean.setMessage("没有查询到异常详情");
+				messageBean.setStatus(false);
+			}
+			System.out.println(JSON.toJSONString(messageBean));
+			out.write(JSON.toJSONString(messageBean));
+			return;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally {
+			out.flush();
+			out.close();
+		}
+
+
 	}
 
 

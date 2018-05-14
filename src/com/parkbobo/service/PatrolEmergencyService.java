@@ -70,7 +70,7 @@ public class PatrolEmergencyService {
 			this.patrolEmergencyDao.bulkDelete(idArr);
 		}
 	}
-	public List<PatrolEmergency> getBySth(Integer campusNum,Date startTime, Date endTime) {
+	public List<PatrolEmergency> getBySth(Integer campusNum,String startTime, String endTime) {
 		String hql = "from PatrolEmergency where campusNum = "+campusNum;
 		if(startTime!=null){
 			hql += " and startTime > '"+startTime+"'";

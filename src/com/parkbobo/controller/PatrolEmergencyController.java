@@ -93,7 +93,7 @@ public class PatrolEmergencyController {
 	 * @throws IOException
 	 */
 	@RequestMapping("patrolEmergency_excelOut")
-	public ResponseEntity<byte[]> excelOut(Integer campusNum,Date startTime1,Date endTime1,HttpServletResponse response,HttpServletRequest request) throws IOException{
+	public ResponseEntity<byte[]> excelOut(Integer campusNum,String startTime,String endTime,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		Date today = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -101,7 +101,7 @@ public class PatrolEmergencyController {
 		String title = "突发事件记录"+df.format(today)+".xls";
 		List<PatrolEmergency> list = null;
 		try {
-			list = this.patrolEmergencyService.getBySth(campusNum==null?1:campusNum,startTime1,endTime1);
+			list = this.patrolEmergencyService.getBySth(campusNum == null ? 1 : campusNum,startTime,endTime);
 		} catch (Exception e1) {
 		}
 		//设置表格标题行

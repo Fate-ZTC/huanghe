@@ -41,6 +41,14 @@
 .scinput {
     width: 80px;
     }
+.select3{
+    width: 80px;
+    height: 32px;
+    border-top: solid 1px #a7b5bc;
+    border-left: solid 1px #a7b5bc;
+    border-right: solid 1px #ced9df;
+    border-bottom: solid 1px #ced9df;
+}
 </style>
 </head>
 <body>
@@ -56,14 +64,20 @@
     <div class="rightinfo">
     <form action="<%=path %>/firePatrolInfo_list" method="post" id="searchForm">
     <ul class="seachform">
-    	<li><label>设备名称:</label><input name="equipmentName" value="" type="text" class="scinput" /></li>
-		<li><label>巡查人员姓名:</label><input name="username" value="" type="text" class="scinput" /></li>
+    	<li><label>设备名称:</label><input name="equipmentName" value="${equipmentName}" type="text" class="scinput" /></li>
+		<li><label>巡查人员姓名:</label><input name="username" value="${patrolUserName}" type="text" class="scinput" /></li>
 		<li><label>巡查结果:</label>
     		<div class="vocation">
-				<select class="select3" name="patrolStatus" >
+				<select class="select3" id="select" name="patrolStatus" style="opacity: 1;" >
 		        	<option value="-1">-请选择-</option>
-					<option value="0">设备异常</option>
-					<option value="1">设备正常</option>
+                    <option value="0">设备异常</option>
+                    <option value="1">设备正常</option>
+                    <%--<c:if test="${patrolStatus == 0}">--%>
+                        <%--<option value="0">设备异常</option>--%>
+                    <%--</c:if>--%>
+                    <%--<c:if test="${patrolStatus == 1}">--%>
+                        <%--<option value="1">设备正常</option>--%>
+                    <%--</c:if>--%>
 		        </select>
 			</div>
    		</li>
@@ -78,6 +92,7 @@
 		<li><label>&nbsp;</label><input name="" type="submit" class="scbtn" value="搜索"/>
 		<input type="hidden" name="pageSize" value="${pageSize}" />
 		<input type="hidden" name="page" id="page" value="${page}"/>
+            <input type="hidden" name="patrolStatus" value="${patrolStatus}"/>
 		</li>
 	</ul>
 	</form>
@@ -87,8 +102,11 @@
     	<sec:authorize ifAnyGranted="firePatrolInfo_delete">
         <li onclick="bulkDelete('<%=path %>/firePatrolInfo_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
         </sec:authorize>
-        <sec:authorize ifAnyGranted="firePatrolInfo_list">
-        <li onclick="forWardUrl('<%=path %>/firePatrolInfo_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
+        <%--<sec:authorize ifAnyGranted="firePatrolInfo_excelOut">--%>
+        <%--<li onclick="forWardUrl('<%=path %>/firePatrolInfo_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>--%>
+        <%--</sec:authorize>--%>
+        <sec:authorize ifAnyGranted="firePatrolInfo_excelOut">
+        <li onclick="forWardUrlParam('<%=path %>/firePatrolInfo_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
         </sec:authorize>
         </ul>
     
@@ -146,11 +164,10 @@
     <!-- 分页结束 -->
     </div>
     <script type="text/javascript">
-    $(function(){
-    	//选择框
-	    $(".select3").uedSelect({
-			width : 80
-		});
+    $(function() {
+
+	    //设置选中
+        selectStatus();
     });
 	$('.tablelist tbody tr:odd').addClass('odd');
 	var start_time = {
@@ -159,7 +176,7 @@
 			  max: '2099-06-16',
 			  istime: true,
 			  istoday: false,
-			  choose: function(datas){
+			  choose: function(datas) {
 			     end_time.min = datas;
 			     $("#start-time").val(datas);
 			  }
@@ -173,7 +190,7 @@
 			  max: '2099-06-16',
 			  istime: true,
 			  istoday: false,
-			  choose: function(datas){
+			  choose: function(datas) {
 			    start_time.max = datas;
 			    $("#end-time").val(datas);
 			  }
@@ -195,7 +212,7 @@
 //		  });
 //		});
 	}
-	function excepDeta(name,exceptionTypes,id){
+	function excepDeta(name,exceptionTypes,id) {
 	$.get(the_host+'showExcptions',{'exceptionTypes':exceptionTypes,'id':id},function(data){
  		console.log(data);
         var content = '';
@@ -206,7 +223,7 @@
                 '<li>'+data.description+'</li></ul>';
         }
 
-   		if(data.status=='true'){
+   		if(data.status=='true') {
 			$(".layui-layer-title").text(name + "-异常描述");
 			layer.open({
 			  type: 1,
@@ -220,26 +237,75 @@
 	/**
 		 * 删除
 		 */
-		function bulkDelete(url,ids){
+		function bulkDelete(url,ids) {
 			if(ids == 0){
 				var ids = "";
-				$("[name='checkbox']:checked").each(function(){
+				$("[name='checkbox']:checked").each(function() {
 					ids += $(this).val()+",";
 				});
 				if(ids.length>0){
 					ids=ids.substr(0,ids.length-1);
-					layer.confirm('确定要删除吗？',function(index){
+					layer.confirm('确定要删除吗？',function(index) {
 						window.location.href=the_host+"firePatrolInfo_delete?ids="+ids;
 					});
 				}else{
 					layer.alert('请至少选择一条数据！', 8, !1);
 				}
 			}else{
-				layer.confirm('确定要删除吗？',function(index){
+				layer.confirm('确定要删除吗？',function(index) {
 					window.location.href=the_host+"firePatrolInfo_delete?ids="+ids;
 				});
 			}
 		}
+
+		//这里进行
+        var forWardUrlParam = function (url) {
+            //进行组装参数
+            var param = '';
+            var equipmentName = $("input[name='equipmentName']").val();//设备名称
+            var username = $("input[name='username']").val();//姓名
+            var startTime =  $("input[name='startTime']").val();//开始时间
+            var endTime =  $("input[name='endTime']").val();//结束时间
+            //获取选中的值
+            var status = $("#select option:selected").val();
+            var now = new Date().getTime();
+            param += "?now=" + now;
+            if(equipmentName != undefined && equipmentName != "") {
+                param += "&equipmentName=" + equipmentName;
+            }
+            if(username != undefined && username != "") {
+                param += "&username=" + username;
+            }
+            if(startTime != undefined && startTime != "") {
+                param += "&startTime=" + startTime;
+            }
+            if(endTime != undefined && endTime != "") {
+                param += "&endTime=" + endTime;
+            }
+            if(status != undefined && status != "") {
+                param += "&status=" + status;
+            }
+            window.location.href = url + param;
+
+
+
+        };
+
+    /**
+     * 设置选中
+     */
+    var selectStatus = function () {
+            //进行默认选中
+            var status = $("input[name='patrolStatus']").val();
+            if(status != undefined) {
+                if(status == 1) {
+                    $(".select3").find("option[value='1']").prop("selected","selected");
+                }
+                if(status == 0) {
+                    $(".select3").find("option[value='0']").prop("selected","selected");
+                }
+            }
+        }
 	</script>
 
 </body>

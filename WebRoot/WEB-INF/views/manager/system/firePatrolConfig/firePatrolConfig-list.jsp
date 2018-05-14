@@ -27,7 +27,8 @@ String path = request.getContextPath();
 		layer.msg('编辑成功', {icon: 1});
 	}else if(method=='deleteSuccess'){
 		layer.msg('删除成功', {icon: 1});
-	}else{
+	}else if(method == 'error'){
+	    layer.msg('参数设置长度超过上限',{icon: 1})
 	}
 </script>
 </head>
@@ -87,7 +88,7 @@ String path = request.getContextPath();
                                 <div class="control-content-one">
                                     <span class="content">每</span>
                                 </div>
-                                <input type="text" name="distance" class="text1" value="${firePatrolConfig.distance }" onkeyup="value=value.replace(/[^\d]/g,'')">
+                                <input type="text" name="distance" class="text1" value="${firePatrolConfig.distance }" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="8">
                                 <div class="control-content-two">
                                     <span class="symbol">*</span>
                                     <span class="content"> 米</span>
@@ -115,6 +116,8 @@ String path = request.getContextPath();
                 $(this).parent().find(".input-result").text("x");
             }
         })
+
+        //这里进行参数验证
     </script>
 
 </body>

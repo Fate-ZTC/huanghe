@@ -166,9 +166,12 @@ $(function(){
 	    	<sec:authorize ifAnyGranted="firePatrolConfig_list,firePatrolConfig_edit">
 	        <li><cite></cite><a href="<%=path %>/firePatrolConfig_list" target="rightFrame">巡查参数配置</a><i></i></li>
 	    	</sec:authorize>
-	    	<sec:authorize ifAnyGranted="firePatrolExc_list,firePatrolExc_add,firePatrolExc_edit,firePatrolExc_delete">
-	        <li><cite></cite><a href="<%=path %>/firePatrolExc_list" target="rightFrame">异常描述</a><i></i></li>
-	    	</sec:authorize>
+	    	<%--<sec:authorize ifAnyGranted="firePatrolExc_list,firePatrolExc_add,firePatrolExc_edit,firePatrolExc_delete">--%>
+	        <%--<li><cite></cite><a href="<%=path %>/firePatrolExc_list" target="rightFrame">异常描述</a><i></i></li>--%>
+	    	<%--</sec:authorize>--%>
+			<sec:authorize ifAnyGranted="firePatrolExc_list,firePatrolExc_add,firePatrolExc_edit,firePatrolExc_delete">
+				<li><cite></cite><a href="<%=path %>/firePatrolExc_list" target="rightFrame">术语管理</a><i></i></li>
+			</sec:authorize>
 	    	
 	        </ul>    
 	    </dd>

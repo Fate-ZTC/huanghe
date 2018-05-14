@@ -358,6 +358,7 @@ public class PatrolUserController {
 		Integer lossConfigTime = patrolConfig.getPersonnelLossTime();		//人员丢失时间
 		Integer locationNotChangeTime = patrolConfig.getLazyTime();			//人员位置不进行变化
 		Integer exceptionTime = patrolConfig.getExceptionPushTime();		//异常频率
+
 		//是否紧急
 		boolean isEmergency = this.patrolConfigService.isEmergency(emergencyStatus);
 		//是否在制定时间内到达
@@ -365,13 +366,15 @@ public class PatrolUserController {
 		//是否离开巡逻区域超过指定距离
 		boolean isLeaveDistance = this.patrolConfigService.isLeaveDistance(lon,lat,leaveDistance,regionId);
 		//离开巡逻区域是否超过指定时间(这里需要根据是否在指定区域内时间重置时间)
-		boolean isLeaveTime = this.patrolConfigService.isLeaveTime(leaveTime,patrolUserRegion,true);
+		boolean isLeaveTime = this.patrolConfigService.isLeaveTime(lon,lat,regionId,leaveTime,patrolUserRegion,true);
 		//人员丢失位置判断
 		boolean isLoss = this.patrolConfigService.isLoseTime(patrolUserRegion,lossConfigTime);
 		//人员位置不变判断(这里需要进行重置时间)
-		boolean isChange = this.patrolConfigService.isLocationNotChange(lon,lat,patrolUserRegion,locationNotChangeTime);
-		//是否能进行推送
-		boolean isCanPush = this.patrolConfigService.isArrivePushTime(patrolUserRegion,exceptionTime);
+		boolean isNotChange = this.patrolConfigService.isLocationNotChange(lon,lat,patrolUserRegion,locationNotChangeTime);
+		//是否能进行推送（这里的推送判断是增加了巡查开始时间限制的）
+		boolean isCanPush = this.patrolConfigService.isArrivePushTime(patrolUserRegion,exceptionTime,startPatrolTime);
+		//是否进行推送，这里是给使用端进行推送时的判断的，这个没有加入前几分钟的限制
+		boolean isCanPushUse = this.patrolConfigService.isArrivePushTimeNot(patrolUserRegion,exceptionTime);
 
 
 		//创建试试经纬度信息
@@ -397,12 +400,13 @@ public class PatrolUserController {
 
 		if(isEmergency) {			//紧急状态
 			patrolLocationInfo = patrolLocationInfoService.add(patrolLocationInfo);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+ toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
+			out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
+					+ patrolConfig.getUploadTime() +",\"data\":{\"patrolLocationInfo\":"+
+					toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
 			out.flush();
 			out.close();
 			return;
 		}else {						//非紧急状态,进行相关判定
-
 			PatrolException exception = new PatrolException();
 			if(!patrolUserRegion.isArrive()) {
 				if(isArriveTimeOn) {	//是否到达指定地点
@@ -414,6 +418,23 @@ public class PatrolUserController {
 						this.patrolUserRegionService.updateRecord(patrolUserRegion);
 						System.out.println("到达距离判断");
 					}
+					if(isCanPushUse) {
+						exceptionPushService.pushUsePatrolSend("3", "异常推送",
+								"开始巡更，请在" + startPatrolTime + "分钟内，到达指定区域！", jobNum);
+						patrolUserRegion.setExceptionPushTime(new Date());
+						//这里跟新异常推送时间
+						patrolUserRegionService.updateRecord(patrolUserRegion);
+					}
+				}else if(!isLeaveDistance) {
+					//到达指定区域，进行修改状态(到达则进行修改状态)
+					patrolUserRegion.setArrive(true);
+					this.patrolConfigService.updateTimeAndStatus(patrolUserRegion,patrolLocationInfo);
+					out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
+							+ patrolConfig.getUploadTime() +",\"data\":{\"patrolLocationInfo\":"+
+							toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
+					out.flush();
+					out.close();
+					return;
 				}else {
 					//未到达
 					System.out.println("未到达");
@@ -430,7 +451,7 @@ public class PatrolUserController {
 					//进行推送消息
 					if(isCanPush) {
 						//TODO 进行消息推送
-						content = "巡查人:"+patrolUserRegion.getUsername()+",巡查开始未在指定时间"+startPatrolTime+"分钟内到达指定位置";
+						content = "巡查人:" + patrolUserRegion.getUsername() + ",巡查开始未在指定时间" + startPatrolTime + "分钟内到达指定位置";
 						pushInfo.setCampusNum(campusNum);
 						pushInfo.setJobNum(jobNum);
 						pushInfo.setLon(lon);
@@ -444,13 +465,18 @@ public class PatrolUserController {
 						pushInfo.setExceptionId(exception.getId());
 						pushInfoService.addExceptionPushInfo(pushInfo);
 						exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
+						exceptionPushService.pushUsePatrolSend("3","异常推送",
+								"请在" + startPatrolTime +"分钟内，到达指定位置",jobNum);
 						patrolUserRegion.setExceptionPushTime(new Date());
 						//进行保存异常信息到异常信息表中
 						patrolExceptionService.addExceptionInfo(exception.getType(),patrolUserRegion.getId(),patrolUserRegion.getUsername(),jobNum);
 
 					}
+					//进行
 					patrolUserRegionService.updateRecord(patrolUserRegion);
-					out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+ toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
+					out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
+							+ patrolConfig.getUploadTime() +",\"data\":{\"patrolLocationInfo\":"+
+							toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
 					out.flush();
 					out.close();
 					return;
@@ -486,18 +512,19 @@ public class PatrolUserController {
 					pushInfo.setExceptionId(exception.getId());
 					pushInfoService.addExceptionPushInfo(pushInfo);
 					exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
+					exceptionPushService.pushUsePatrolSend("3","异常推送：",
+							"您离开巡逻区域超过指定距离" + leaveDistance + "米,请尽快回到指定区域！",jobNum);
 					patrolUserRegion.setExceptionPushTime(new Date());
 					//将异常信息记录在ExceptionInfo
 					patrolExceptionService.addExceptionInfo(exception.getType(),patrolUserRegion.getId(),patrolUserRegion.getUsername(),jobNum);
 				}
 				patrolUserRegionService.updateRecord(patrolUserRegion);
-				out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+ toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
+				out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
+						+ patrolConfig.getUploadTime() +",\"data\":{\"patrolLocationInfo\":"+
+						toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
 				out.flush();
 				out.close();
 				return;
-			}else {
-				//没有离开巡逻区域
-				System.out.println("离开巡逻区域");
 			}
 
 			if(isLeaveTime) {		//离开巡逻区域是否超过指定时间
@@ -529,18 +556,19 @@ public class PatrolUserController {
 					pushInfo.setExceptionId(exception.getId());
 					pushInfoService.addExceptionPushInfo(pushInfo);
 					exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
+					exceptionPushService.pushUsePatrolSend("3","异常推送：",
+							"您离开指定区域超过规定时间" + leaveTime +"分钟，请尽快回到指定区域",jobNum);
 					patrolUserRegion.setExceptionPushTime(new Date());
 					//将异常信息记录在ExceptionInfo
 					patrolExceptionService.addExceptionInfo(exception.getType(),patrolUserRegion.getId(),patrolUserRegion.getUsername(),jobNum);
 				}
 				patrolUserRegionService.updateRecord(patrolUserRegion);
-				out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+ toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
+				out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
+						+ patrolConfig.getUploadTime() +",\"data\":{\"patrolLocationInfo\":"+
+						toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
 				out.flush();
 				out.close();
 				return;
-			}else {
-				//没有超过指定时间
-				System.out.println("没有超过指定时间");
 			}
 
 
@@ -574,21 +602,21 @@ public class PatrolUserController {
 					pushInfo.setExceptionId(exception.getId());
 					pushInfoService.addExceptionPushInfo(pushInfo);
 					exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
+					exceptionPushService.pushUsePatrolSend("3","异常推送：","已检测不到您的位置",jobNum);
 					patrolUserRegion.setExceptionPushTime(new Date());
 					//将异常信息记录在ExceptionInfo
 					patrolExceptionService.addExceptionInfo(exception.getType(),patrolUserRegion.getId(),patrolUserRegion.getUsername(),jobNum);
 				}
 				patrolUserRegionService.updateRecord(patrolUserRegion);
-				out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+ toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
+				out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
+						+ patrolConfig.getUploadTime() +",\"data\":{\"patrolLocationInfo\":"+
+						toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
 				out.flush();
 				out.close();
 				return;
-			}else {
-				//人员没有丢失
-				System.out.println("人员没有丢失");
 			}
 
-			if(isChange) {			//人员位置是否改变
+			if(isNotChange) {			//人员位置是否改变
 				//未改变
 				System.out.println("位置没有改变");
 				exception = patrolConfigService.exceptionAssembly(5);
@@ -612,6 +640,7 @@ public class PatrolUserController {
 					pushInfo.setExceptionType(exception.getType());
 					pushInfo.setExceptionName(content);
 					pushInfo.setStatus(2);
+					pushInfo.setPushDate(new Date());
 					pushInfo.setExceptionId(exception.getId());
 					pushInfoService.addExceptionPushInfo(pushInfo);
 					exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
@@ -620,22 +649,21 @@ public class PatrolUserController {
 					patrolExceptionService.addExceptionInfo(exception.getType(),patrolUserRegion.getId(),patrolUserRegion.getUsername(),jobNum);
 				}
 				patrolUserRegionService.updateRecord(patrolUserRegion);
-				out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+ toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
+				out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
+						+ patrolConfig.getUploadTime() +",\"data\":{\"patrolLocationInfo\":"+
+						toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
 				out.flush();
 				out.close();
 				return;
-			}else {
-				//改变
-				System.out.println("改变");
 			}
 
-			//所有判断完为正常
-			patrolLocationInfo.setStatus(1);
-			patrolUserRegion.setStatus(1);
-			System.out.println("一切正常");
-			patrolLocationInfoService.add(patrolLocationInfo);
-			patrolUserRegionService.updateRecord(patrolUserRegion);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":{\"patrolLocationInfo\":"+ toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
+			//进行更新状态
+			patrolConfigService.updateTimeAndStatus(patrolUserRegion,patrolLocationInfo);
+
+
+			out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
+					+ patrolConfig.getUploadTime() +",\"data\":{\"patrolLocationInfo\":"+
+					toJSONString(patrolLocationInfo,features)+",\"patrolConfig\":"+ toJSONString(patrolConfig,features)+"}}");
 			out.flush();
 			out.close();
 			return;

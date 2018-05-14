@@ -44,7 +44,7 @@ $(function(){
     <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认添加"/><span>${msg }</span><span></li>
     </ul>
     </form>
-    
+
     </div>
 
 </body>

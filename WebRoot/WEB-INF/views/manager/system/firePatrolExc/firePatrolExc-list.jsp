@@ -37,7 +37,7 @@ String path = request.getContextPath();
     <div class="rightinfo">
     <form action="<%=path %>/firePatrolExc_list" method="post" id="searchForm">
     <ul class="seachform">
-    	<li><label>关键词:</label><input name="exceptionName" value="${firePatrolException.username}" type="text" class="scinput" /></li>
+    	<li><label>关键词:</label><input name="exceptionName" value="${firePatrolException.exceptionName}" type="text" class="scinput" /></li>
 		<li><label>&nbsp;</label><input name="" type="submit" class="scbtn" value="搜索"/>
 		<input type="hidden" name="pageSize" value="${pageSize}" />
 		<input type="hidden" name="page" id="page" value="${page}"/>
@@ -53,7 +53,7 @@ String path = request.getContextPath();
     	<sec:authorize ifAnyGranted="firePatrolExc_delete">
         <li onclick="bulkDelete('<%=path %>/firePatrolExc_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>删除</li>
         </sec:authorize>
-        <li><span>${msg }</span></li>
+        <%--<li><span>${msg }</span></li>--%>
         </ul>
     
     </div>
@@ -75,10 +75,10 @@ String path = request.getContextPath();
         <td><input type="checkbox" name="checkbox" value="${d.id}" id="checkbox_${d.id}" class="checkItem"/></td>
         <td>${d.exceptionName}</td>
         <td>${d.sort}</td>
-        <td><fmt:formatDate value="${d.lastUpdateTime}" pattern="yyyy-MM-dd HH:mm"/></td>
+        <td><fmt:formatDate value="${d.updateTime}" pattern="yyyy-MM-dd HH:mm"/></td>
         <td>
         	<sec:authorize ifAnyGranted="firePatrolExc_edit">
-        	<a href="<%=path %>/firePatrolExc_edit?id=${d.id}" class="tablelink">编辑人员信息</a> | 
+        	<a href="<%=path %>/firePatrolExc_edit?id=${d.id}" class="tablelink">编辑术语</a> |
         	</sec:authorize>
         	<sec:authorize ifAnyGranted="firePatrolExc_delete">
         	<a href="javascript:void(0);" onclick="bulkDelete('<%=path %>/firePatrolExc_delete','${d.id}');" class="tablelink"> 删除</a> 

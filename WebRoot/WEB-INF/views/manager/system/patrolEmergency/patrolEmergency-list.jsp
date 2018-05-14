@@ -10,8 +10,8 @@ String path = request.getContextPath();
 <title>突发事件管理-列表</title>
 <link href="<%=path %>/page/css/style.css" rel="stylesheet" type="text/css" />
 <link href="<%=path %>/page/css/select.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="<%=path %>/page/js/select-ui.min.js"></script>
-<script type="text/javascript" src="<%=path %>/page/js/jquery.js"></script>
+    <script type="text/javascript" src="<%=path %>/page/js/jquery.js"></script>
+    <script type="text/javascript" src="<%=path %>/page/js/select-ui.min.js"></script>
 <script type="text/javascript" src="<%=path %>/page/js/common.js"></script>
 <script type="text/javascript" src="<%=path %>/page/layer/layer.js"></script>
 <script src="<%=path %>/page/chart/laydate/laydate.js"></script>
@@ -61,8 +61,8 @@ String path = request.getContextPath();
     	<sec:authorize ifAnyGranted="patrolEmergency_delete">
         <li onclick="bulkDelete('<%=path %>/patrolEmergency_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
         </sec:authorize>
-        <sec:authorize ifAnyGranted="patrolEmergency_delete">
-        <li onclick="forWardUrl('<%=path %>/patrolEmergency_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
+        <sec:authorize ifAnyGranted="patrolEmergency_excelOut">
+        <li onclick="forWardUrl_param('<%=path %>/patrolEmergency_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
         </sec:authorize>
         </ul>
     
@@ -143,6 +143,25 @@ String path = request.getContextPath();
 			  }
 			};
 			laydate(end_time);
+
+
+			//这里进行导出处理
+    var forWardUrl_param = function (url) {
+        //这里进行获取相关的开始时间和结束时间参数
+        var startTime = $("#start-time").val();
+        var endTime = $("#end-time").val();
+        var param = '';
+        param += "?now=" + new Date().getTime();
+        if(startTime != undefined && startTime != null && startTime != "") {
+            param += "&startTime=" + startTime;
+        }
+        if(endTime != undefined && endTime != null && endTime != "") {
+            param += "&endTime=" + endTime;
+        }
+
+        window.location.href = url + param;
+    }
+
 	</script>
 
 </body>

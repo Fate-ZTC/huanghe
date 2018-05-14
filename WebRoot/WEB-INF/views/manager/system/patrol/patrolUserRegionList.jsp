@@ -33,6 +33,16 @@ String date ="今天是："+ df.format(new Date());
 	
 	}
 </script>
+	<style type="text/css">
+		/*.select3{*/
+			/*width: 80px;*/
+			/*height: 32px;*/
+			/*border-top: solid 1px #a7b5bc;*/
+			/*border-left: solid 1px #a7b5bc;*/
+			/*border-right: solid 1px #ced9df;*/
+			/*border-bottom: solid 1px #ced9df;*/
+		/*}*/
+	</style>
 </head>
 <body>
 	<div class="place">
@@ -48,7 +58,7 @@ String date ="今天是："+ df.format(new Date());
 				--%>
 				<form action="<%=path %>/patrolUserRegionList" method="post" id="searchForm">
 				    <ul class="seachform">
-				    	<li><label>巡更人员姓名</label><input name="username" value="${carparkName}" type="text" class="scinput" style="width: 90px;"/></li>
+				    	<li><label>巡更人员姓名</label><input name="username" value="${name}" type="text" class="scinput" style="width: 90px;"/></li>
 				    	<li><label>巡更区域</label>
 							<div class="vocation">
 								<select class="select3" name="regionId" >
@@ -77,8 +87,10 @@ String date ="今天是："+ df.format(new Date());
 							<input type="text" class="laydate-icon scinput" id="end-time" name="endTime" value="${endTime}" style="width: 137px;height:32px;" />
 						</li>
 						<li><label>&nbsp;</label><input name="" type="submit" class="scbtn" value="搜索"/>
-						<input type="hidden" name="pageSize" value="${pageSize}" />
-						<input type="hidden" name="page" id="page" value="${page}"/>
+							<input type="hidden" name="pageSize" value="${pageSize}" />
+							<input type="hidden" name="page" id="page" value="${page}"/>
+							<input type="hidden" name="exceptionType" value="${exceptionType}"/>
+							<input type="hidden" name="regionId" value="${regionId}"/>
 						</li>
 					</ul>
 				</form>
@@ -88,7 +100,8 @@ String date ="今天是："+ df.format(new Date());
 				        <li onclick="bulkDelete('<%=path %>/patUserReg_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>删除</li>
 				        </sec:authorize>
 				    	<sec:authorize ifAnyGranted="patrolUserRegionList">
-				        <li onclick="ExOut('<%=path %>/paUserRegExOut','0');"><span><img src="<%=path %>/page/images/t07.png" /></span>导出</li>
+				        <%--<li onclick="ExOut('<%=path %>/paUserRegExOut','0');"><span><img src="<%=path %>/page/images/t07.png" /></span>导出</li>--%>
+				        <li onclick="forWardUrl_param('<%=path %>/paUserRegExOut','0');"><span><img src="<%=path %>/page/images/t07.png" /></span>导出</li>
 				        </sec:authorize>
 			        </ul>
 			    </div>
@@ -146,15 +159,18 @@ String date ="今天是："+ df.format(new Date());
 			    <!-- 分页结束 -->
 </div>
 <script type="text/javascript">
-$(function(){
-    	//选择框
-	    $(".select3").uedSelect({
-			width : 80
+	$(function(){
+
+        showData();
+			//选择框
+			$(".select3").uedSelect({
+				width : 80
+			});
+
 		});
-    });
-var the_host = "<%=path%>/";
-$('.tablelist tbody tr:odd').addClass('odd');
-	
+	var the_host = "<%=path%>/";
+	$('.tablelist tbody tr:odd').addClass('odd');
+
 	var start_time = {
 			  elem: '#start-time',
 			  format: 'YYYY-MM-DD hh:mm:ss',
@@ -227,10 +243,7 @@ $('.tablelist tbody tr:odd').addClass('odd');
 				}
 			});
 		});
-// 		function reload(type){
-// 			location.href=the_host+"berthOrder_list?event="+type;
-			
-// 		}
+
 		/**
 		 * 删除
 		 */
@@ -254,11 +267,57 @@ $('.tablelist tbody tr:odd').addClass('odd');
 				});
 			}
 		}
+
+		//这里进行数据回显操作
+		var showData = function () {
+		    //选中异常
+			var exceptionType = $("input[name='exceptionType']").val();
+            if(exceptionType != undefined) {
+                if(exceptionType == 1) {
+                    $(".select3").find("option[value='1']").prop("selected","selected");
+                }
+                if(exceptionType == 0) {
+                    $(".select3").find("option[value='0']").prop("selected","selected");
+                }
+            }
+
+            var regionId = $("input[name='regionId']").val();
+            if(regionId != undefined) {
+                $(".select3").find("option[value='"+regionId+"']").prop("selected","selected");
+			}
+
+        };
+
 		/**
 		 * 导出
 		 */
-		function ExOut(){
-			window.location.href=the_host+"paUserRegExOut";
+		function forWardUrl_param(url){
+			var param = "";
+            var username = $("input[name='username']").val();//姓名
+            var startTime =  $("input[name='startTime']").val();//开始时间
+            var endTime =  $("input[name='endTime']").val();//结束时间
+			var regionId = $("input[name='regionId']").val();
+            var exceptionType = $("input[name='exceptionType']").val();
+
+
+            param += "?now=" + new Date().getTime();
+            if(username != undefined && username != null && username != "") {
+                param += "&username=" + username;
+			}
+            if(regionId != undefined && regionId != null && regionId != "") {
+                param += "&regionId=" + regionId;
+            }
+            if(exceptionType != undefined && exceptionType != null && exceptionType != "") {
+                param += "&exceptionType=" + exceptionType;
+            }
+            if(startTime != undefined && startTime != null && startTime != "") {
+                param += "&startTime=" + startTime;
+            }
+            if(endTime != undefined && endTime != null && endTime != "") {
+                param += "&endTime=" + endTime;
+            }
+
+			window.location.href= url + param;
 		}
 
 </script>

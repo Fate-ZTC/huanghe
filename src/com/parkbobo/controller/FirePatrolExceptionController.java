@@ -36,7 +36,7 @@ public class FirePatrolExceptionController {
 		String hql = "from  FirePatrolException f where 1=1";
 		if(firePatrolException!=null) {
 			if(StringUtil.isNotEmpty(firePatrolException.getExceptionName())) {
-				hql +=" and f.exceptionName like '% "+firePatrolException.getExceptionName()+"%'";
+				hql +=" and f.exceptionName like '%"+firePatrolException.getExceptionName()+"%'";
 			}
 		}
 		hql += " order by f.sort";
@@ -47,7 +47,7 @@ public class FirePatrolExceptionController {
 	}
 
 	@RequestMapping("firePatrolExc_add")
-	public ModelAndView add(String method,FirePatrolException firePatrolException,HttpSession session ) {
+	public ModelAndView add(String method,FirePatrolException firePatrolException,HttpSession session) {
 		ModelAndView mv = new ModelAndView();
 		//添加
 		if(StringUtil.isNotEmpty(method) && method.equals("add")) {

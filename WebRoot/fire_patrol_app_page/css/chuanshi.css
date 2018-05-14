@@ -41,10 +41,17 @@
 .inspection-record-sum>li{width: 50%;float: left;}
 .inspection-record-list-box{color: #666;line-height: 0.2rem;font-size: 0.12rem;/*padding: 0 0.12rem;*/}
 .inspection-record-list{padding: 0 0.12rem;}
-.inspection-record-list>li{padding: 0.17rem 0.16rem 0.17rem 0.6rem;background: url(../img/inspection-record.png) no-repeat 0.16rem center;background-size: 0.34rem; border: 1px solid #eee;border-radius: 3px;margin-top: 0.1rem;}
+.inspection-record-list>li{padding: 0.17rem 0.16rem 0.17rem 0.16rem;/*background: url(../img/inspection-record.png) no-repeat 0.16rem center;background-size: 0.34rem;*/ border: 1px solid #eee;border-radius: 3px;margin-top: 0.1rem;}
+.inspection-record-mesg-box{overflow:hidden;}
+.inspection-record-img{float: left;width: 0.34rem;margin: 0.1rem 0.1rem 0 0;}
+.inspection-record-text-mesg{float: left;width: 2rem;}
 .inspection-record-basic-infor{line-height: 0.28rem;font-size: 0.14rem;}
 .inspection-record-basic-infor .inspection-record-name{color: #333;}
-.inspection-record-basic-infor .inspection-record-status{color: #00B4FF;float: right;}
+.inspection-record-status-box{color: #00B4FF;overflow: hidden;line-height: 0.24rem;margin-top: 0.06rem;}
+.inspection-record-status-box .inspection-record-status{float: left;}
+.inspection-record-status-box.abnormal .inspection-record-status{color: #FC9326;}
+.record-abnormal-btn{width: 0.64rem;height: 0.24rem;background: #FC9326;color: #fff;text-align: center;line-height: 0.24rem;float: right;border-radius: 0.03rem;display: none;}
+.inspection-record-status-box.abnormal .record-abnormal-btn{display: block;}
 
 .swiper-slide {text-align: center;font-size: 0.14rem;display: -webkit-box;-webkit-box-align: center;}
 

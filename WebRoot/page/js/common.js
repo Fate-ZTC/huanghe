@@ -56,8 +56,7 @@ function bulkDelete(url,ids){
  * 跳转
  * @param {Object} url
  */
-function forWardUrl(url)
-{
+function forWardUrl(url) {
 	window.location.href=url;
 }
 /**
