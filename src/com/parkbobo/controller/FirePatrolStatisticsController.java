@@ -114,18 +114,18 @@ public class FirePatrolStatisticsController {
 		StringBuilder sb =  new StringBuilder();
 		sb.append("select A.id,A.floorid,A.campus_num as campusNum,A.check_status as checkStatus,");
 		sb.append("A.job_num as jobNum,A.last_update_time as lastUpdateTime,A.lat,A.lon,A.\"name\",");
-<<<<<<< HEAD
-		sb.append("A.old_id as oldId,A.status,A.username as userName, D.\"id\" as fpid  ");
-		sb.append("from fire_fight_equipment_history A ");
-		sb.append("inner join fire_fight_equipment B on A.old_id = B.id ");
-		sb.append("left join fire_patrol_building_info C on B.building_code = C.building_id ");
-		sb.append("left join fire_patrol_info D on D.is_newest = 1 and A.old_id = D.equipment_id ");
-=======
+
+//		sb.append("A.old_id as oldId,A.status,A.username as userName, D.\"id\" as fpid  ");
+//		sb.append("from fire_fight_equipment_history A ");
+//		sb.append("inner join fire_fight_equipment B on A.old_id = B.id ");
+//		sb.append("left join fire_patrol_building_info C on B.building_code = C.building_id ");
+//		sb.append("left join fire_patrol_info D on D.is_newest = 1 and A.old_id = D.equipment_id ");
+
 		sb.append("A.old_id as oldId,A.status,A.username as userName ");
 		sb.append("from fire_fight_equipment_history A ");
 		sb.append("inner join fire_fight_equipment B on A.old_id = B.id ");
 		sb.append("left join fire_patrol_building_info C on B.building_code = C.building_id ");
->>>>>>> origin/master
+
 		sb.append("where A.status <> 1  ");
 		sb.append("and to_char(A.last_update_time,'yyyy-mm') = '").append(startDate).append("' ");
 		if(type != null && type != 0 ){
@@ -173,11 +173,7 @@ public class FirePatrolStatisticsController {
 	
 	@RequestMapping(value = "/manage/unpatrol/page", method = RequestMethod.POST)
 	@ResponseBody
-<<<<<<< HEAD
 	public Map<String, Object> getUnPatrol(String startDate, int page, int pageSize, Integer type) {
-=======
-	public Map<String, Object> getUnPatrol(String startDate, int page, int pageSize, Integer type){
->>>>>>> origin/master
 		Map<String, Object> result = new HashMap<String, Object>();
 		StringBuilder sb =  new StringBuilder();
 		sb.append("select A.id,A.floorid,A.campus_num as campusNum,A.check_status as checkStatus,");
