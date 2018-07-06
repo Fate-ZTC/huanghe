@@ -199,6 +199,7 @@ public class PatrolUserController {
 	 * @param response
 	 * @throws IOException
 	 */
+	@Deprecated
 	@RequestMapping("uploadLocation_old")
 	public void uploadLocation(Integer regionId,Integer configId,String jobNum,Double lon,Double lat,Integer campusNum,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
@@ -424,6 +425,8 @@ public class PatrolUserController {
 						patrolUserRegion.setExceptionPushTime(new Date());
 						//这里跟新异常推送时间
 						patrolUserRegionService.updateRecord(patrolUserRegion);
+
+
 					}
 				}else if(!isLeaveDistance) {
 					//到达指定区域，进行修改状态(到达则进行修改状态)
@@ -481,6 +484,10 @@ public class PatrolUserController {
 					out.close();
 					return;
 				}
+
+
+				//这里进行重新计算是否能进行推送
+				isCanPush = this.patrolConfigService.isArrivePushTime(patrolUserRegion,exceptionTime,startPatrolTime);
 			}
 
 			if(isLeaveDistance) {		//是否离开巡逻区域超过指定距离
