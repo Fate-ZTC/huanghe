@@ -23,9 +23,9 @@ public class SysconfigService {
 		}
 		return map;
 	}
-	public String getValue(String key){
+	public String getValue(String key) {
 		Sysconfig sysconfig = this.sysconfigDao.getUniqueByProperty("varname", key);
-		if(sysconfig != null){
+		if(sysconfig != null) {
 			return sysconfig.getVarvalue();
 		}
 		return null;
