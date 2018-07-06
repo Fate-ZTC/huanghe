@@ -65,6 +65,22 @@ public class PatrolConfig implements Serializable {
 	 * 异常推送频率(分钟/次)
      */
 	private Integer exceptionPushTime;
+	/**
+	 * 蓝牙签到有效距离(米）：beacon_sign_distance,单位米
+	 */
+	private Integer beaconSignDistance;
+	/**
+	 * GPS签到有效距离(米）：gps_sign_distance,单位米
+	 */
+	private Integer gpsSignDistance;
+	/**
+	 * 循环签到周期(多少分钟一次)：sign_range,单位分钟
+	 */
+	private Integer signRange;
+	/**
+	 * 超出循环周期时间处理方式：overtime_deal，1记为应签，2丢弃
+	 */
+	private Integer overtimeDeal;
 	
 	@Id
 	@Column(name="id",nullable=false,unique=true)
@@ -146,5 +162,40 @@ public class PatrolConfig implements Serializable {
 
 	public void setExceptionPushTime(Integer exceptionPushTime) {
 		this.exceptionPushTime = exceptionPushTime;
+	}
+	@Column(name = "beacon_sign_distance")
+	public Integer getBeaconSignDistance() {
+		return beaconSignDistance;
+	}
+
+	public void setBeaconSignDistance(Integer beaconSignDistance) {
+		this.beaconSignDistance = beaconSignDistance;
+	}
+
+	@Column(name = "gps_sign_distance")
+	public Integer getGpsSignDistance() {
+		return gpsSignDistance;
+	}
+
+	public void setGpsSignDistance(Integer gpsSignDistance) {
+		this.gpsSignDistance = gpsSignDistance;
+	}
+
+	@Column(name = "sign_range")
+	public Integer getSignRange() {
+		return signRange;
+	}
+
+	public void setSignRange(Integer signRange) {
+		this.signRange = signRange;
+	}
+
+	@Column(name = "overtime_deal")
+	public Integer getOvertimeDeal() {
+		return overtimeDeal;
+	}
+
+	public void setOvertimeDeal(Integer overtimeDeal) {
+		this.overtimeDeal = overtimeDeal;
 	}
 }

@@ -1,3 +1,4 @@
+<%@ taglib prefix="s" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@include file="../../taglibs.jsp" %>
 <%
@@ -274,6 +275,101 @@
                                 <div class="control-content-three">
 								<span class="mark">
 									（设置后，巡更发现异常，将在<span class="input-result">${patrolConfig.exceptionPushTime }</span>分钟后进行二次推送提醒[首次发现异常，会立即推送告知]）
+								</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="title">
+                                <div class="title-content">
+                                    <span class="content">蓝牙签到有效距离</span>
+                                </div>
+                            </div>
+                            <div class="control">
+                                <div class="control-content-one">
+                                    <span class="content"></span>
+                                </div>
+                                <input type="text" name="beaconSignDistance" value="${patrolConfig.beaconSignDistance }" class="text1" onkeyup="value=value.replace(/[^\d]/g,'')">
+                                <div class="control-content-two">
+                                    <span class="symbol">*</span>
+                                    <span class="content"> (米)</span>
+                                </div>
+                                <div class="control-content-three">
+								<span class="mark">
+									（设置后，距离蓝牙标签<span class="input-result">${patrolConfig.beaconSignDistance }</span>米可进行签到）
+								</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="title">
+                                <div class="title-content">
+                                    <span class="content">GPS定位辅助签到有效距离</span>
+                                </div>
+                            </div>
+                            <div class="control">
+                                <div class="control-content-one">
+                                    <span class="content"></span>
+                                </div>
+                                <input type="text" name="gpsSignDistance" value="${patrolConfig.gpsSignDistance }" class="text1" onkeyup="value=value.replace(/[^\d]/g,'')">
+                                <div class="control-content-two">
+                                    <span class="symbol">*</span>
+                                    <span class="content"> (米)</span>
+                                </div>
+                                <div class="control-content-three">
+								<span class="mark">
+									（设置后，距离签到点位<span class="input-result">${patrolConfig.gpsSignDistance }</span>米可进行签到）
+								</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="title">
+                                <div class="title-content">
+                                    <span class="content">巡更签到循环要求</span>
+                                </div>
+                            </div>
+                            <div class="control">
+                                <div class="control-content-one">
+                                    <span class="content">每巡更</span>
+                                </div>
+                                <input type="text" name="signRange" value="${patrolConfig.signRange }" class="text1" onkeyup="value=value.replace(/[^\d]/g,'')">
+                                <div class="control-content-two">
+                                    <span class="symbol"></span>
+                                    <span class="content"></span>
+                                </div>
+                                <div class="control-content-three">
+								<span class="mark">
+									分钟，需要签到1次
+								</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="title">
+                                <div class="title-content">
+                                    <span class="content">巡更超过循环周期</span>
+                                </div>
+                            </div>
+                            <div class="control">
+                                <div class="control-content-one">
+                                    <span class="content"></span>
+                                </div>
+                                <div class="input-radio-box">
+                                    <input type="radio" name="overtimeDeal" value="1" class="text1" <s:if test="${patrolConfig.overtimeDeal == 1}">checked</s:if>>
+                                    记为应签
+                                </div>
+                                <div class="input-radio-box">
+                                    <input type="radio" name="overtimeDeal" value="2" class="text1" <s:if test="${patrolConfig.overtimeDeal == 2}">checked</s:if>>
+                                    多余设计
+                                </div>
+                                <div class="control-content-two">
+                                    <span class="symbol"></span>
+                                    <span class="content"></span>
+                                </div>
+                                <div class="control-content-three">
+								<span class="mark">
+									(举例：要求巡更人员每30分钟巡更1次，巡更人员在第31分钟结束巡更，则应签2次，实签1次)
 								</span>
                                 </div>
                             </div>
