@@ -38,6 +38,11 @@ public class PatrolSignPointInfoService {
         patrolSignPointInfoDao.delete(pointId);
     }
 
+    public Integer countWithRegionId(Integer regionId){
+        String hql = "from PatrolSignPointInfo where patrolRegion.id = " + regionId;
+        return patrolSignPointInfoDao.pageQuery(hql, 1, 1).getAllRow();
+    }
+
     public PatrolSignPointInfoDao getPatrolSignPointInfoDao() {
         return patrolSignPointInfoDao;
     }

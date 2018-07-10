@@ -54,7 +54,7 @@ String path = request.getContextPath();
     	<li onclick="forWardUrl('<%=path %>/patrolBeaconInfo_add');"><span><img src="<%=path %>/page/images/t01.png" /></span>添加</li>
         <li onclick="bulkDelete('<%=path %>/patrolBeaconInfo_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
         <li onclick="forWardUrl('<%=path %>/patrolBeaconInfo_downloadTemplate','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>下载导入模板</li>
-        <li onclick="forWardUrl('<%=path %>/patrolBeaconInfo_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>批量导入</li>
+        <li onclick="forWardUrl('<%=path %>/patrolBeaconInfo_toImport','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>批量导入</li>
         <li onclick="forWardUrl('<%=path %>/patrolBeaconInfo_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
         </ul>
     

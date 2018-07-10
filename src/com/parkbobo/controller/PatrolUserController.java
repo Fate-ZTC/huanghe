@@ -2,6 +2,7 @@ package com.parkbobo.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +61,9 @@ public class PatrolUserController {
 	@Resource
 	private ExceptionPushService exceptionPushService;
 
+	@Resource
+	private PatrolPauseService patrolPauseService;
+
 
 
 	/**
@@ -101,6 +105,7 @@ public class PatrolUserController {
 	}
 	/**
 	 * 开始巡逻
+	 * @param startTime 开始时间
 	 * @param username  员工姓名
 	 * @param regionId  区域id
 	 * @param jobNum    工号
@@ -108,12 +113,15 @@ public class PatrolUserController {
 	 * @throws IOException 
 	 */
 	@RequestMapping("startPatrol")
-	public void startPatrol(String username,Integer regionId ,String jobNum,Integer campusNum,HttpServletResponse response) throws IOException
+	public void startPatrol(String startTime, String username,Integer regionId ,String jobNum,Integer campusNum,HttpServletResponse response) throws IOException
 	{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
+
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 			PatrolUserRegion patrolUserRegion = new PatrolUserRegion();
 			if(username!=null){
 				patrolUserRegion.setUsername(username);
@@ -124,7 +132,7 @@ public class PatrolUserController {
 			patrolUserRegion.setRegionId(regionId);
 			patrolUserRegion.setJobNum(jobNum);
 			Date date = new Date();
-			patrolUserRegion.setStartTime(date);
+			patrolUserRegion.setStartTime(sdf.parse(df.format(date) + " " + startTime));
 			patrolUserRegion.setLastUpdateTime(date);
 			patrolUserRegion.setStatus(1);
 			patrolUserRegion.setAbnormalCount(0);
@@ -376,6 +384,8 @@ public class PatrolUserController {
 		boolean isCanPush = this.patrolConfigService.isArrivePushTime(patrolUserRegion,exceptionTime,startPatrolTime);
 		//是否进行推送，这里是给使用端进行推送时的判断的，这个没有加入前几分钟的限制
 		boolean isCanPushUse = this.patrolConfigService.isArrivePushTimeNot(patrolUserRegion,exceptionTime);
+		// 是否暂停
+		boolean isPause = patrolPauseService.checkPauseStatus() == null ? false : true;
 
 
 		//创建试试经纬度信息
@@ -399,7 +409,7 @@ public class PatrolUserController {
 		String title = "异常推送";
 		String content = "";
 
-		if(isEmergency) {			//紧急状态
+		if(isEmergency || isPause) {			//紧急状态以及暂停
 			patrolLocationInfo = patrolLocationInfoService.add(patrolLocationInfo);
 			out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
 					+ patrolConfig.getUploadTime() +",\"data\":{\"patrolLocationInfo\":"+
@@ -407,7 +417,7 @@ public class PatrolUserController {
 			out.flush();
 			out.close();
 			return;
-		}else {						//非紧急状态,进行相关判定
+		} else{						//非紧急状态,进行相关判定
 			PatrolException exception = new PatrolException();
 			if(!patrolUserRegion.isArrive()) {
 				if(isArriveTimeOn) {	//是否到达指定地点

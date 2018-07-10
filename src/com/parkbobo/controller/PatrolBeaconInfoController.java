@@ -19,9 +19,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
@@ -29,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -367,13 +370,23 @@ public class PatrolBeaconInfoController {
 	}
 
 	/**
+	 * 进入导入页面
+	 * @return
+	 */
+	@RequestMapping(value = "/patrolBeaconInfo_toImport")
+	public ModelAndView toImport(){
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("manager/system/patrolBeaconInfo/patrolBeaconInfo-import");
+		return mv;
+	}
+
+	/**
 	 * 导入蓝牙标签
 	 * @param file
 	 * @return
 	 */
-	@RequestMapping("/patrolBeaconInfo_import")
-	@ResponseBody
-	public ModelAndView importBeaconInfo(MultipartFile file) throws IOException {
+	@RequestMapping(value = "/patrolBeaconInfo_import", method = RequestMethod.POST)
+	public ModelAndView importBeaconInfo(@RequestParam("file") CommonsMultipartFile file) throws IOException {
 		ModelAndView mv = new ModelAndView();
 
 		HSSFWorkbook work = new HSSFWorkbook(file.getInputStream());// 得到这个excel表格对象
@@ -417,7 +430,8 @@ public class PatrolBeaconInfoController {
 				}
 			}
 		}
-		mv.setViewName("redirect:/patrolBeaconInfo_list?method=addSuccess");
+		mv.setViewName("redirect:/patrolBeaconInfo_list?method=importSuccess");
+
 		return mv;
 	}
 }
