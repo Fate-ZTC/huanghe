@@ -57,6 +57,7 @@ public class PatrolSignRecordCehckTask {
         // 未结束的巡更，只需要检查上一个签到周期范围
         // 已结束的巡更，需要根据多出时间处理方式判断是否需要检查超出时间范围
         // 计算时间范围，还需要考虑暂停时间
+        calendar = Calendar.getInstance();
         for(PatrolUserRegion userRegion : userRegionList){
             Date startTime = userRegion.getStartTime();
             Date endTime = userRegion.getEndTime() == null ? calendar.getTime() : userRegion.getEndTime();
@@ -118,16 +119,20 @@ public class PatrolSignRecordCehckTask {
                         overTimeEnd = rangeEnd;
                     }
                     if(overTime > 0L){
-                        if(rangeEnd.getTime() - rangeStart.getTime() >= overTime){
-                            overTime = 0L;
+                        if((rangeEnd.getTime() - rangeStart.getTime()) >= (overTime + rangeTime)){
                             rangeEndTime = overTimeStart = new Date(rangeEnd.getTime() - overTime);
+                            rangeStartTime = new Date(rangeEnd.getTime() - overTime - rangeTime);
+                            rangeTime = overTime = 0L;
+                        } else if((rangeEnd.getTime() - rangeStart.getTime()) >= overTime){
+                            rangeEndTime = overTimeStart = new Date(rangeEnd.getTime() - overTime);
+                            overTime = 0L;
                         } else{
                             overTime -= (rangeEnd.getTime() - rangeStart.getTime());
                         }
                     } else if(rangeTime > 0L){
-                        if(rangeEnd.getTime() - rangeStart.getTime() >= rangeTime){
-                            overTime = 0L;
+                        if((rangeEnd.getTime() - rangeStart.getTime()) >= rangeTime){
                             rangeStartTime = new Date(rangeEnd.getTime() - rangeTime);
+                            overTime = 0L;
                         } else{
                             rangeTime -= (rangeEnd.getTime() - rangeStart.getTime());
                         }
