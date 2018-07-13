@@ -191,6 +191,7 @@ public class FirePatrolStatisticsController {
 				sb.append(" and C.\"type\" = ").append(type).append(" ");
 			}
 		}
+		sb.append(" order by lastUpdateTime desc");
 		StringBuilder sb_count =  new StringBuilder();
 		sb_count.append("select count(*) from (");
 		sb_count.append(sb).append(") t ");

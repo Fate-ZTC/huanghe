@@ -25,10 +25,10 @@ public class T {
 //		System.out.println(new Date().getTime());
 		//System.out.println(MD5.getDefaultInstance().MD5Encode("104.070890" + Configuration.getInstance().getValue("key")));
 		//String md5Encode = MD5.getDefaultInstance().MD5Encode("{'ParkCode': '66666666','CarPort':'1001','CarPortDesc':'','CarNo':'川A58642','StartTime':'2016-01-29 11:36:30','EndTime':'2016-01-29 13:36:30','ConAmount':'10','Qn':'Cpu7NgDLdG81PGNA8wm4UpX6GMZGO0spm4PVRsNyi5c=','SubTime':'2016-01-29 11:36:30'}6ffba0ad08d94f07ab960ec188af8e6d");
-		String md5Encode = MD532.getDefaultInstance().encryption("postgres");
-		System.out.println(md5Encode);
-	}      
-	       
+//		String md5Encode = MD532.getDefaultInstance().encryption("postgres");
+//		System.out.println(md5Encode);
+	}
+
 	       
 	       
 }          

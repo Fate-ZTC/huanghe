@@ -69,9 +69,9 @@
 		<li><label>巡查结果:</label>
     		<div class="vocation">
 				<select class="select3" id="select" name="patrolStatus" style="opacity: 1;" >
-		        	<option value="-1">-请选择-</option>
-                    <option value="0">设备异常</option>
-                    <option value="1">设备正常</option>
+		        	<option value="-1" <c:if test="${patrolStatus!=0&&patrolStatus!=1}">selected = "selected"</c:if>>-请选择-</option>
+                    <option value="0" <c:if test="${patrolStatus==0}">selected</c:if>>设备异常</option>
+                    <option value="1" <c:if test="${patrolStatus==1}">selected</c:if>>设备正常</option>
                     <%--<c:if test="${patrolStatus == 0}">--%>
                         <%--<option value="0">设备异常</option>--%>
                     <%--</c:if>--%>
@@ -164,11 +164,6 @@
     <!-- 分页结束 -->
     </div>
     <script type="text/javascript">
-    $(function() {
-
-	    //设置选中
-        selectStatus();
-    });
 	$('.tablelist tbody tr:odd').addClass('odd');
 	var start_time = {
 			  elem: '#start-time',
@@ -294,18 +289,18 @@
     /**
      * 设置选中
      */
-    var selectStatus = function () {
-            //进行默认选中
-            var status = $("input[name='patrolStatus']").val();
-            if(status != undefined) {
-                if(status == 1) {
-                    $(".select3").find("option[value='1']").prop("selected","selected");
-                }
-                if(status == 0) {
-                    $(".select3").find("option[value='0']").prop("selected","selected");
-                }
-            }
-        }
+    // var selectStatus = function () {
+    //         //进行默认选中
+    //         var status = $("input[name='patrolStatus']").val();
+    //         if(status != undefined) {
+    //             if(status == 1) {
+    //                 $(".select3").find("option[value='1']").prop("selected","selected");
+    //             }
+    //             if(status == 0) {
+    //                 $(".select3").find("option[value='0']").prop("selected","selected");
+    //             }
+    //         }
+    //     }
 	</script>
 
 </body>
