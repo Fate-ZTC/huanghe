@@ -144,7 +144,7 @@ public class PatrolSignInterfaceController {
 					tmpJson.append("\"pointName\":\"" + patrolSignPointInfo.getPointName() + "\",");
 					tmpJson.append("\"lng\":" + patrolSignPointInfo.getLng() + ",");
 					tmpJson.append("\"lat\":" + patrolSignPointInfo.getLat() + ",");
-					tmpJson.append("\"hasSigned \":" + calculateSignStatus(patrolUserRegion.getStartTime(), config.getSignRange(), patrolSignPointInfo.getPointId(), patrolUserRegion.getJobNum()) + ",");
+					tmpJson.append("\"hasSigned\":" + calculateSignStatus(patrolUserRegion.getStartTime(), config.getSignRange(), patrolSignPointInfo.getPointId(), patrolUserRegion.getJobNum()) + ",");
 					tmpJson.append("\"beaconList\":[" + beaconJson + "]");
 					tmpJson.append("},");
 				}

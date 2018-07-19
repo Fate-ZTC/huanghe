@@ -36,10 +36,10 @@ $(function(){
     </div>
     <div class="formbody">
     <div class="formtitle"><span>导入蓝牙标签</span></div>
-    <form action="<%=path %>/patrolBeaconInfo_import" method="post" id="addForm" enctype=”multipart/form-data”  data-validator-option="{stopOnError:true, timely:1 ,theme:'yellow_right'}">
-    <input type="hidden" name="method" value="import" />
+    <form action="patrolBeaconInfo_import" method="post" id="addForm" enctype="multipart/form-data">
+
     <ul class="forminfo">
-    <li><label>EXCEL<b>*</b></label><input name="file" type="file" class="dfinput" data-rule="EXCEL:required"/></li>
+    <li><label>EXCEL<b>*</b></label><input name="attached" type="file" class="dfinput" data-rule="EXCEL:required"/></li>
     <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认导入"/></li>
     </ul>
     </form>

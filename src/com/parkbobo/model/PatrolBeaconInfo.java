@@ -1,5 +1,7 @@
 package com.parkbobo.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -25,6 +27,7 @@ public class PatrolBeaconInfo implements Serializable {
 	/**
 	 * 签到点位信息
 	 */
+	@JSONField(serialize = false)
 	private PatrolSignPointInfo patrolSignPointInfo;
 	/**
 	 * 标签UUID

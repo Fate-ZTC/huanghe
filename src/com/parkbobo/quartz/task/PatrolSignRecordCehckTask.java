@@ -90,7 +90,7 @@ public class PatrolSignRecordCehckTask {
                     pauseStart = startTime;
                 }
 
-                if(pause.getPauseEnd().after(endTime)){
+                if(pause.getPauseEnd() == null || pause.getPauseEnd().after(endTime)){
                     pauseEnd = endTime;
                 } else{
                     pauseEnd = pause.getPauseEnd();
