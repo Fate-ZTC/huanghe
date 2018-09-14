@@ -152,6 +152,9 @@ $(function(){
 	    	<sec:authorize ifAnyGranted="patrolConfig_list,patrolConfig_edit">
 	        <li><cite></cite><a href="<%=path %>/patrolConfig_list" target="rightFrame">巡查参数配置</a><i></i></li>
 	    	</sec:authorize>
+            <sec:authorize ifAnyGranted="patrolStatistic_list,patrolStatistic_excelOut">
+                <li><cite></cite><a href="<%=path %>/patrolStatistic_list" target="rightFrame">巡更统计</a><i></i></li>
+            </sec:authorize>
 				<li><cite></cite><a href="<%=path %>/patrolBeaconInfo_list" target="rightFrame">蓝牙标签管理</a><i></i></li>
 	        </ul>    
 	    </dd>

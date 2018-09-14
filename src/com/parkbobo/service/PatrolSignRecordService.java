@@ -3,6 +3,7 @@ package com.parkbobo.service;
 import com.parkbobo.dao.PatrolSignRecordDao;
 import com.parkbobo.model.PatrolSignRecord;
 import com.parkbobo.utils.PageBean;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -30,6 +31,16 @@ public class PatrolSignRecordService {
                 + "' and signType = 1 and signTime > '" + startTime
                 + "' and signTime < '" + endTime
                 + "'";
+        return patrolSignRecordDao.pageQuery(hql, 1, 1).getAllRow();
+    }
+    public Integer countEffective(String jobNum, String startTime, String endTime){
+        String hql = "from PatrolSignRecord where signType=1 and jobNum =  '" + jobNum + "'";
+        if(StringUtils.isNotBlank(startTime)){
+            hql += " and signTime > '" + startTime + "'";
+        }
+        if(StringUtils.isNotBlank(endTime)){
+            hql += " and signTime < '" + endTime + "'";
+        }
         return patrolSignRecordDao.pageQuery(hql, 1, 1).getAllRow();
     }
 
