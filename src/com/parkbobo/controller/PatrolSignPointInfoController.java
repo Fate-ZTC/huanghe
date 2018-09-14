@@ -1,6 +1,7 @@
 package com.parkbobo.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.parkbobo.model.PatrolRegion;
 import com.parkbobo.model.PatrolSignPointInfo;
 import com.parkbobo.service.PatrolBeaconInfoService;
@@ -49,7 +50,7 @@ public class PatrolSignPointInfoController {
         List<PatrolSignPointInfo> pointInfoList = patrolSignPointInfoService.getByHql(hql);
 
         mv.addObject("patrolRegion", JSON.toJSONString(patrolRegion));
-        mv.addObject("pointInfoList", JSON.toJSONString(pointInfoList));
+        mv.addObject("pointInfoList", JSON.toJSONString(pointInfoList, SerializerFeature.DisableCircularReferenceDetect));
         mv.setViewName("manager/system/patrolSignPortInfo/patrolSignPortInfo-manage");
         return mv;
     }
@@ -69,7 +70,6 @@ public class PatrolSignPointInfoController {
     public String saveSignPointInfo(Integer pointId, String pointName, Double lng, Double lat, Integer regionId, Integer beaconId){
         MessageBean<PatrolSignPointInfo> messageBean = new MessageBean<PatrolSignPointInfo>();
         try {
-            String sql = "select st_contains((select region_location from patrol_region where id = 19), st_point(104.117787771749,30.6115469924933))";
             if(pointId != null){
                 PatrolSignPointInfo pointInfo = patrolSignPointInfoService.get(pointId);
                 pointInfo.setPointName(pointName);
@@ -83,21 +83,27 @@ public class PatrolSignPointInfoController {
                 messageBean.setData(pointInfo);
                 messageBean.setMessage("更新成功");
             } else{
-                PatrolRegion patrolRegion = patrolRegionService.getById(regionId);
-                PatrolSignPointInfo pointInfo = new PatrolSignPointInfo();
-                pointInfo.setPointName(pointName);
-                pointInfo.setUpdateTime(new Date());
-                pointInfo.setLat(lat);
-                pointInfo.setLng(lng);
-                pointInfo.setPatrolRegion(patrolRegion);
+                if(patrolSignPointInfoService.isInRegion(regionId, lng, lat)){
+                    PatrolRegion patrolRegion = patrolRegionService.getById(regionId);
+                    PatrolSignPointInfo pointInfo = new PatrolSignPointInfo();
+                    pointInfo.setPointName(pointName);
+                    pointInfo.setUpdateTime(new Date());
+                    pointInfo.setLat(lat);
+                    pointInfo.setLng(lng);
+                    pointInfo.setPatrolRegion(patrolRegion);
 
-                PatrolSignPointInfo newSignPointInfo = patrolSignPointInfoService.add(pointInfo);
-                patrolBeaconInfoService.updatePointInfo(beaconId, newSignPointInfo.getPointId());
+                    PatrolSignPointInfo newSignPointInfo = patrolSignPointInfoService.add(pointInfo);
+                    patrolBeaconInfoService.updatePointInfo(beaconId, newSignPointInfo.getPointId());
 
-                messageBean.setCode(200);
-                messageBean.setStatus(true);
-                messageBean.setData(newSignPointInfo);
-                messageBean.setMessage("添加成功");
+                    messageBean.setCode(200);
+                    messageBean.setStatus(true);
+                    messageBean.setData(newSignPointInfo);
+                    messageBean.setMessage("添加成功");
+                } else{
+                    messageBean.setCode(-1);
+                    messageBean.setStatus(false);
+                    messageBean.setMessage("签到点位不在该巡更区域，请重新设置点位位置");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

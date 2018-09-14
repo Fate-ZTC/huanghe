@@ -107,7 +107,7 @@
                                     <span class="content">位置数据动态上传周期</span>
                                 </div>
                             </div>
-                            <div class="control-first">
+                            <div class="control-first control">
                                 <div class="control-content-one">
                                     <span class="content">每</span>
                                 </div>
@@ -361,7 +361,7 @@
                                 </div>
                                 <div class="input-radio-box">
                                     <input type="radio" name="overtimeDeal" value="2" class="text1" <s:if test="${patrolConfig.overtimeDeal == 2}">checked</s:if>>
-                                    多余设计
+                                    多余舍弃
                                 </div>
                                 <div class="control-content-two">
                                     <span class="symbol"></span>

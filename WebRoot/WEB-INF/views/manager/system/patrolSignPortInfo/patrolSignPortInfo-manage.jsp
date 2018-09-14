@@ -638,6 +638,9 @@
         });
         map.addLayers([signPointMarkerLayer]);
 
+        var regionInfo = '${patrolRegion}';
+        var regionId = JSON.parse(regionInfo).id;
+        var point_region_id = 0;
         /**
          * 获取签到点位数据，创建点，添加到图层
          * @type {string}
@@ -645,13 +648,21 @@
         var signPointList = '${pointInfoList}';
         if(signPointList != ''){
             $.each(JSON.parse(signPointList), function(p, p_item){
+                var img_src;
+                var p_region_id = p_item.patrolRegion.id;
+                if(p_region_id == regionId){
+                    img_src = '<%=basePath%>page/images/red.png';
+                } else{
+                    img_src = '<%=basePath%>page/images/orange-point.png';
+                }
                 var signPointMarkerFeature = new LMap.Feature.Vector(
                     new LMap.Geometry.Point( p_item.lng, p_item.lat)
                     .transform(new LMap.Projection("EPSG:4326"), map.getProjectionObject()),
                     {
                         gid:p_item.pointId,
-                        src: '<%=basePath%>page/images/red.png',
-                        name: p_item.pointName
+                        src: img_src,
+                        name: p_item.pointName,
+                        p_region_id : p_region_id
                     }
                 );
                 signPointMarkerLayer.addFeatures(signPointMarkerFeature);
@@ -670,6 +681,7 @@
             point_name = e.feature.attributes.name;
             if(point_name != '新增签到点位'){
                 point_id = e.feature.attributes.gid;
+                point_region_id = e.feature.attributes.p_region_id;
                 removeClickMarkerLayer();
                 var lonlat = new LMap.LonLat(e.feature.geometry.x, e.feature.geometry.y);
                 var markerPopup = createPopup('point-' + e.feature.attributes.gid, lonlat, -57,-70);
@@ -767,9 +779,11 @@
                 new LMap.Geometry.Point(lonlat.lon,lonlat.lat),{
                     gid:'new-1',
                     src:'<%=basePath%>page/images/orange.png',
-                    name:'新增签到点位'
+                    name:'新增签到点位',
+                    p_region_id : regionId
                 }
             );
+            point_region_id = regionId;
             signPointMarkerLayer.addFeatures(markerFeaure);
 
             var markerPopup = createPopup('new-1', lonlat, 33,-51);
@@ -814,12 +828,16 @@
         }
         var load_beacon_status = false;
         function mapIconSure() {
-            clearInput();
-            $("#point-name").val(point_name);
-            loadBeacon()
-            if(load_beacon_status){
-                $(".patrol-bomb-box").fadeIn(300);
-                $("#mask").show();
+            if(regionId == point_region_id){
+                clearInput();
+                $("#point-name").val(point_name);
+                loadBeacon()
+                if(load_beacon_status){
+                    $(".patrol-bomb-box").fadeIn(300);
+                    $("#mask").show();
+                }
+            } else{
+                layer.msg('只能配置当前区域的签到点位', {icon: 2});
             }
         }
 
@@ -884,14 +902,12 @@
             });
         }
 
-        var regionInfo = '${patrolRegion}';
-        var regionId = JSON.parse(regionInfo).id;
         function saveSignPoint(){
             point_name = $("#point-name").val();
             var beacon_id = $("input[name='beaconId']:checked").val();
             if(point_name == ''){
                 layer.msg('点位名称不能为空', {icon: 2});
-            } else if(beacon_id == ''){
+            } else if(beacon_id == undefined || beacon_id == ''){
                 layer.msg('请配置绑定标签', {icon: 2});
             } else{
                 $.ajax({
@@ -922,7 +938,8 @@
                                 {
                                     gid:Data.data.pointId,
                                     src: '<%=basePath%>page/images/red.png',
-                                    name: Data.data.pointName
+                                    name: Data.data.pointName,
+                                    p_region_id : regionId
                                 }
                             );
                             signPointMarkerLayer.addFeatures(signPointMarkerFeature);
@@ -941,24 +958,28 @@
         }
 
         function deletePoint(){
-            $.ajax({
-                type:"get",
-                url:"<%=basePath%>patrolSignPortInfo_delete",
-                data:{
-                    pointId : point_id
-                },
-                async:false,
-                dataType:"json",
-                success:function(Data){
-                    if (Data.code==200) {
-                        deletePointWithGid(point_id);
-                        map.removePopups();
-                        layer.msg('删除成功', {icon: 1});
-                    } else{
-                        layer.msg(Data.message, {icon: 2});
+            if(point_region_id == regionId){
+                $.ajax({
+                    type:"get",
+                    url:"<%=basePath%>patrolSignPortInfo_delete",
+                    data:{
+                        pointId : point_id
+                    },
+                    async:false,
+                    dataType:"json",
+                    success:function(Data){
+                        if (Data.code==200) {
+                            deletePointWithGid(point_id);
+                            map.removePopups();
+                            layer.msg('删除成功', {icon: 1});
+                        } else{
+                            layer.msg(Data.message, {icon: 2});
+                        }
                     }
-                }
-            });
+                });
+            } else{
+                layer.msg('只能删除当前区域的签到点位', {icon: 2});
+            }
         }
 
         function deletePointWithGid(gid){

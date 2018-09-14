@@ -27,7 +27,6 @@ public class PatrolSignPointInfo implements Serializable {
 	/**
 	 * 巡更区域
 	 */
-	@JSONField(serialize = false)
 	private PatrolRegion patrolRegion;
 	/**
 	 * 点位名称

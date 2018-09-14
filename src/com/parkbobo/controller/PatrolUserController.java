@@ -105,7 +105,6 @@ public class PatrolUserController {
 	}
 	/**
 	 * 开始巡逻
-	 * @param startTime 开始时间
 	 * @param username  员工姓名
 	 * @param regionId  区域id
 	 * @param jobNum    工号
@@ -113,7 +112,7 @@ public class PatrolUserController {
 	 * @throws IOException 
 	 */
 	@RequestMapping("startPatrol")
-	public void startPatrol(String startTime, String username,Integer regionId ,String jobNum,Integer campusNum,HttpServletResponse response) throws IOException
+	public void startPatrol(String username,Integer regionId ,String jobNum,Integer campusNum,HttpServletResponse response) throws IOException
 	{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
@@ -132,7 +131,7 @@ public class PatrolUserController {
 			patrolUserRegion.setRegionId(regionId);
 			patrolUserRegion.setJobNum(jobNum);
 			Date date = new Date();
-			patrolUserRegion.setStartTime(sdf.parse(df.format(date) + " " + startTime));
+			patrolUserRegion.setStartTime(date);
 			patrolUserRegion.setLastUpdateTime(date);
 			patrolUserRegion.setStatus(1);
 			patrolUserRegion.setAbnormalCount(0);

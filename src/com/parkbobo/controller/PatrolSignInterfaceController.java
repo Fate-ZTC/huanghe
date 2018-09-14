@@ -73,9 +73,11 @@ public class PatrolSignInterfaceController {
                 json.append("\"gpsSignDistance\":" + config.getGpsSignDistance() + ",");
                 json.append("\"signRange\":" + config.getSignRange() + ",");
                 if(patrolUserRegion != null){
+					json.append("\"usregId\":" + patrolUserRegion.getId() + ",");
                     json.append("\"patrolTime \":" + caculatePatrolTime(patrolUserRegion.getStartTime(), config.getSignRange()) + "");
                 } else{
-                    json.append("\"patrolTime\":-1,");
+					json.append("\"usregId\":-1,");
+                    json.append("\"patrolTime\":-1");
                 }
                 json.append("}}");
             } else{
@@ -277,7 +279,7 @@ public class PatrolSignInterfaceController {
 						json.append("\"data\":[" + tmpJson.deleteCharAt(tmpJson.length() - 1) + "]}");
 					} else{
 						json.append("{\"status\":false,");
-						json.append("\"code\":-2,");
+						json.append("\"code\":-1000,");
 						json.append("\"errorMsg\":\"有效签到点位已经签到\",");
 						json.append("\"data\":[]}");
 					}
@@ -481,17 +483,27 @@ public class PatrolSignInterfaceController {
 
 		try {
 			out = response.getWriter();
-			PatrolPause patrolPause = new PatrolPause();
-			patrolPause.setCause(cause);
-			patrolPause.setPauseStart(new Date());
-			patrolPause.setUsercode(usercode);
-			patrolPause.setUsername(username);
 
-			patrolPauseService.add(patrolPause);
+			PatrolPause checkPause = patrolPauseService.checkPauseStatus();
+			if(checkPause == null){
+				PatrolPause patrolPause = new PatrolPause();
+				patrolPause.setCause(cause);
+				patrolPause.setPauseStart(new Date());
+				patrolPause.setUsercode(usercode);
+				patrolPause.setUsername(username);
 
-			json.append("{\"status\":true,");
-			json.append("\"code\":1,");
-			json.append("\"errorMsg\":\"暂停成功\"}");
+				patrolPauseService.add(patrolPause);
+
+				json.append("{\"status\":true,");
+				json.append("\"code\":1,");
+				json.append("\"errorMsg\":\"暂停成功\"}");
+			} else{
+				json.append("{\"status\":false,");
+				json.append("\"code\":-2,");
+				json.append("\"errorMsg\":\"当前正在暂停\"}");
+			}
+
+
 			out.print(json);
 		} catch (Exception e) {
 			e.printStackTrace();

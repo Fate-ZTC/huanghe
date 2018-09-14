@@ -21,7 +21,7 @@ public class PatrolPauseService {
     }
 
     public PatrolPause checkPauseStatus(){
-        String hql = "from PatrolPause where pauseEnd is not null order by pauseStart desc";
+        String hql = "from PatrolPause where pauseEnd is null order by pauseStart desc";
         List<PatrolPause> pauseList = patrolPauseDao.getByHQL(hql);
         if(pauseList.size() > 0){
             return pauseList.get(0);
