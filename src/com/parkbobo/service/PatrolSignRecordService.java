@@ -49,4 +49,15 @@ public class PatrolSignRecordService {
     public void setPatrolSignRecordDao(PatrolSignRecordDao patrolSignRecordDao) {
         this.patrolSignRecordDao = patrolSignRecordDao;
     }
+
+    public void bulkDelete(String ids) {
+        if(ids.length() > 0) {
+            String[] strs = ids.split(",");
+            Integer[] idArr = new Integer[strs.length];
+            for (int i=0; i< strs.length; i++) {
+                idArr[i] = Integer.parseInt(strs[i]);
+            }
+            this.patrolSignRecordDao.bulkDelete(idArr);
+        }
+    }
 }

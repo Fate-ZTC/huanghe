@@ -96,4 +96,19 @@ public class PatrolPause implements java.io.Serializable{
     public void setUsername(String username) {
         this.username = username;
     }
+
+    @Transient
+    public String getCheckDuration(){
+        String dm = null;
+        if(pauseEnd != null && pauseStart != null) {
+            long second = 0l;
+            second = (pauseEnd.getTime()-pauseStart.getTime())/1000;
+            long hours = second / 3600;            //转换小时
+            second = second % 3600;                //剩余秒数
+            long minutes = second /60;            //转换分钟
+            second = second % 60;                //剩余秒数
+            dm=hours+":"+minutes+":"+second;
+        }
+        return dm;
+    }
 }

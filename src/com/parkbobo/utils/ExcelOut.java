@@ -2,10 +2,6 @@ package com.parkbobo.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +39,7 @@ public class ExcelOut {
 		HSSFRow row = sheet.createRow((int) 0);
 		// 第四步，创建单元格，并设置值表头 设置表头居中    
 		HSSFCellStyle style = wb.createCellStyle(); 
-		style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式    
+		style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式
 		HSSFCell  cell = null;   //设置单元格的数据类型
 		for (int i = 0; i < headers.length; i++) {
 			cell = row.createCell(i);

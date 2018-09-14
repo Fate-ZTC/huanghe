@@ -134,6 +134,12 @@ $(function(){
 	    	<sec:authorize ifAnyGranted="patrolUserRegionList">
 	        <li><cite></cite><a href="<%=path %>/patrolUserRegionList" target="rightFrame">巡更记录管理</a><i></i></li>
 	    	</sec:authorize>
+			<sec:authorize ifAnyGranted="patrolSignRecord_list,patrolSignRecord_delete,patrolSignRecord_excelOut">
+				<li><cite></cite><a href="<%=path %>/patrolSignRecord_list" target="rightFrame">巡更签到记录</a><i></i></li>
+			</sec:authorize>
+            <sec:authorize ifAnyGranted="patrolPause_list,patrolPause_delete,patrolSPause_excelOut">
+				<li><cite></cite><a href="<%=path %>/patrolPause_list" target="rightFrame">暂停巡更记录</a><i></i></li>
+			</sec:authorize>
 	    	<sec:authorize ifAnyGranted="patrolRegList">
 	        <li><cite></cite><a href="<%=path %>/patrolRegList" target="rightFrame">巡更区域管理</a><i></i></li>
 	    	</sec:authorize>

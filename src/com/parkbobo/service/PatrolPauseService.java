@@ -2,6 +2,7 @@ package com.parkbobo.service;
 
 import com.parkbobo.dao.PatrolPauseDao;
 import com.parkbobo.model.PatrolPause;
+import com.parkbobo.utils.PageBean;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -40,5 +41,20 @@ public class PatrolPauseService {
 
     public void setPatrolPauseDao(PatrolPauseDao patrolPauseDao) {
         this.patrolPauseDao = patrolPauseDao;
+    }
+
+    public PageBean<PatrolPause> pageQuery(String hql, int pageSize, int page) {
+        return this.patrolPauseDao.pageQuery(hql,pageSize,page);
+    }
+
+    public void bulkDelete(String ids) {
+        if(ids.length() > 0) {
+            String[] strs = ids.split(",");
+            Integer[] idArr = new Integer[strs.length];
+            for (int i=0; i< strs.length; i++) {
+                idArr[i] = Integer.parseInt(strs[i]);
+            }
+            this.patrolPauseDao.bulkDelete(idArr);
+        }
     }
 }
