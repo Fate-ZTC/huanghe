@@ -90,7 +90,7 @@ public class PatrolSignRecordCehckTask {
                     pauseStart = startTime;
                 }
 
-                if(pause.getPauseEnd().after(endTime)){
+                if(pause.getPauseEnd() == null || pause.getPauseEnd().after(endTime)){
                     pauseEnd = endTime;
                 } else{
                     pauseEnd = pause.getPauseEnd();
@@ -183,7 +183,7 @@ public class PatrolSignRecordCehckTask {
                 signRecord.setSignTime(calendar.getTime());
                 signRecord.setPatrolSignPointInfo(pointInfo);
                 signRecord.setJobNum(jobNum);
-                signRecord.setNoSignRange(startTime.substring(10) + "-" + endTime.substring(10));
+                signRecord.setNoSignRange(startTime.substring(10, 16) + "-" + endTime.substring(10, 16));
 
                 patrolSignRecordService.add(signRecord);
             }

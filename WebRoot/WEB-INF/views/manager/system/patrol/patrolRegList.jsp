@@ -114,6 +114,7 @@
 					        <td style="color:#16c2ea;">
 								<a  style="color:#16c2ea;" href="javascript:void(0);" onclick="upHtm('${m.regionName}',${m.id},'${m.color}');">修改名称</a>
 								<a style="color:#16c2ea;" href="javascript:void(0);" onclick="toPatrolMap(${m.id})">配置巡更范围</a>
+								<a style="color:#16c2ea;" href="javascript:void(0);" onclick="toPatroSignPortlMap(${m.id})">配置巡更点位</a>
 							</td>
 					        </tr> 
 				        </c:forEach>
@@ -245,7 +246,13 @@
 			}
 		};
 
-
+        //点击进入巡更签到点位管理页面
+        var toPatroSignPortlMap = function (id) {
+            //点击进入绘制地图区域
+            if(id != undefined) {
+                window.location.href = '<%=basePath%>patrolSignPortInfo_toManage?regionId=' + id;
+            }
+        };
 
 
 		/**

@@ -1,9 +1,13 @@
 package com.parkbobo.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.parkbobo.model.*;
 import com.parkbobo.service.*;
 import com.parkbobo.utils.PageBean;
+import com.parkbobo.utils.message.MessageBean;
+import com.parkbobo.utils.message.MessageListBean;
 import com.system.utils.StringUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.*;
@@ -14,17 +18,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -130,27 +140,30 @@ public class PatrolBeaconInfoController {
 	 * @param method
 	 * @param patrolBeaconInfo
 	 * @param id
+	 * @param msg
 	 * @return
 	 */
 	@RequestMapping("patrolBeaconInfo_edit")
-	public ModelAndView edit(String method,PatrolBeaconInfo patrolBeaconInfo, Integer id)
+	public ModelAndView edit(String method,PatrolBeaconInfo patrolBeaconInfo, Integer id, String msg)
 	{
 		ModelAndView mv = new ModelAndView();
 		//编辑
 		if(StringUtil.isNotEmpty(method) && method.equals("edit"))
 		{
-			String[] propertyNames = {"major", "minor"};
-			Object[] values = {patrolBeaconInfo.getMajor(), patrolBeaconInfo.getMinor()};
-			PatrolBeaconInfo byMajorMinor = patrolBeaconInfoService.getUniqueByPropertys(propertyNames, values);
-			if(byMajorMinor!=null){
+
+			String hql = "from PatrolBeaconInfo where major = " + patrolBeaconInfo.getMajor()
+					+ " and minor = " + patrolBeaconInfo.getMinor()
+					+ " and beaconId != " + patrolBeaconInfo.getBeaconId();
+			List<PatrolBeaconInfo> list = patrolBeaconInfoService.getByHql(hql);
+			if(list.size() > 0){
 				mv.setViewName("redirect:/patrolBeaconInfo_edit?id=" + patrolBeaconInfo.getBeaconId());
 				mv.addObject("msg","major, minor已存在,请检查");
-				return mv;
+			} else{
+				Date date = new Date();
+				patrolBeaconInfo.setUpdateTime(date);
+				patrolBeaconInfoService.update(patrolBeaconInfo);
+				mv.setViewName("redirect:/patrolBeaconInfo_list?method=editSuccess");
 			}
-			Date date = new Date();
-			patrolBeaconInfo.setUpdateTime(date);
-			patrolBeaconInfoService.update(patrolBeaconInfo);
-			mv.setViewName("redirect:/patrolBeaconInfo_list?method=editSuccess");
 		}
 		//跳转到编辑页面
 		else
@@ -158,6 +171,9 @@ public class PatrolBeaconInfoController {
 			patrolBeaconInfo = patrolBeaconInfoService.get(id);
 			mv.addObject("patrolBeaconInfo", patrolBeaconInfo);
 			mv.setViewName("manager/system/patrolBeaconInfo/patrolBeaconInfo-edit");
+			if(StringUtil.isNotEmpty(msg)){
+				mv.addObject("msg", msg);
+			}
 		}
 		return mv;
 	}
@@ -167,7 +183,7 @@ public class PatrolBeaconInfoController {
 	 * @param ids
 	 * @return
 	 */
-	@RequestMapping("patrolBeaconInfo_edit")
+	@RequestMapping("patrolBeaconInfo_delete")
 	public ModelAndView delete(String ids)
 	{
 		ModelAndView mv = new ModelAndView();
@@ -373,18 +389,18 @@ public class PatrolBeaconInfoController {
 
 	/**
 	 * 导入蓝牙标签
-	 * @param file
+	 * @param attached
 	 * @return
 	 */
-	@RequestMapping(value = "/patrolBeaconInfo_import", method = RequestMethod.POST)
-	public ModelAndView importBeaconInfo(@RequestParam("file") CommonsMultipartFile file) throws IOException {
+	@RequestMapping(value = "/patrolBeaconInfo_import")
+	public ModelAndView importBeaconInfo(@RequestParam("attached") MultipartFile attached) throws IOException {
 		ModelAndView mv = new ModelAndView();
 
-		HSSFWorkbook work = new HSSFWorkbook(file.getInputStream());// 得到这个excel表格对象
+		HSSFWorkbook work = new HSSFWorkbook(attached.getInputStream());// 得到这个excel表格对象
 		HSSFSheet sheet = work.getSheetAt(0); //得到第一个sheet
 		int rowNo = sheet.getLastRowNum(); //得到行数
 		System.out.println("rowNo:" + rowNo);
-		for (int i = 2; i <= rowNo; i++) {
+		for (int i = 1; i <= rowNo; i++) {
 			HSSFRow row = sheet.getRow(i);
 			HSSFCell cell1 = row.getCell((short) 0);
 			HSSFCell cell2 = row.getCell((short) 1);
@@ -400,7 +416,7 @@ public class PatrolBeaconInfoController {
 
 			System.out.println(ce1 + "\t" + ce2 + "\t" + ce3);
 
-			if(StringUtil.isNotEmpty(ce1) && StringUtil.isNotEmpty(ce2) && !StringUtil.isNotEmpty(ce3)){
+			if(StringUtil.isNotEmpty(ce1) && StringUtil.isNotEmpty(ce2) && StringUtil.isNotEmpty(ce3)){
 				try {
 					PatrolBeaconInfo patrolBeaconInfo = new PatrolBeaconInfo();
 					patrolBeaconInfo.setUuid(ce1);
@@ -424,5 +440,59 @@ public class PatrolBeaconInfoController {
 		mv.setViewName("redirect:/patrolBeaconInfo_list?method=importSuccess");
 
 		return mv;
+	}
+
+	/**
+	 * 配置标签-点位绑定时
+	 * 获取未绑定标签
+	 * 如果是修改配置，则需要根据点位把已绑定标签获取到
+	 * @param pointId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/patrolBeaconInfo_loadUnbindBeacons")
+	public String loadUnbindBeacons(Integer pointId, String uuid, Integer major, Integer minor){
+		MessageListBean<PatrolBeaconInfo> messageListBean = new MessageListBean<PatrolBeaconInfo>();
+
+		try {
+			String hql = "from PatrolBeaconInfo where 1 = 1 ";
+
+			String queryHql = "";
+			if(StringUtil.isNotEmpty(uuid)){
+				queryHql += "and uuid like '%" + uuid + "%' ";
+			}
+			if(major != null){
+				queryHql += "and major = " + major + " ";
+			}
+			if(minor != null){
+				queryHql += "and minor = " + minor + " ";
+			}
+
+			if(pointId != null){
+				hql += "and (patrolSignPointInfo.pointId = " + pointId + " or (patrolSignPointInfo is null " + queryHql + ")) ";
+			} else{
+				hql += "and patrolSignPointInfo is null " + queryHql;
+			}
+
+			hql += "order by patrolSignPointInfo, beaconId";
+			System.out.println(hql);
+			List<PatrolBeaconInfo> beaconInfoList = patrolBeaconInfoService.getByHql(hql);
+			if(beaconInfoList.size() > 0){
+                messageListBean.setStatus(true);
+                messageListBean.setCode(200);
+                messageListBean.setMessage("获取成功");
+                messageListBean.setData(beaconInfoList);
+            } else{
+                messageListBean.setStatus(false);
+                messageListBean.setCode(-1);
+                messageListBean.setMessage("没有未绑定标签");
+            }
+		} catch (Exception e) {
+			e.printStackTrace();
+			messageListBean.setStatus(false);
+			messageListBean.setCode(-1);
+			messageListBean.setMessage("接口错误");
+		}
+		return JSON.toJSONString(messageListBean, SerializerFeature.DisableCircularReferenceDetect);
 	}
 }

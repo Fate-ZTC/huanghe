@@ -15,12 +15,18 @@ Date date = new Date();
 <script type="text/javascript" src="<%=path %>/page/validator/jquery.validator.js"></script>
 <script type="text/javascript" src="<%=path %>/page/validator/local/zh-CN.js"></script>
 <script type="text/javascript" src="<%=path %>/page/laydate/laydate.js"></script>
+<script type="text/javascript" src="<%=path %>/page/layer/layer.js"></script>
 
 <script type="text/javascript">
 $(function(){
    	//选择框
    	laydate.skin('molv');
  });
+
+var msg = '${msg }';
+if(msg != ''){
+    layer.msg(msg, {icon: 1});
+}
 </script>
 </head>
 
@@ -36,16 +42,17 @@ $(function(){
     </div>
     <div class="formbody">
     <div class="formtitle"><span>编辑蓝牙标签</span></div>
-    <form action="<%=path %>/patrolBeaconInfo_edit" method="post" id="addForm" data-validator-option="{stopOnError:true, timely:1 ,theme:'yellow_right'}">
-    <input type="hidden" name="method" value="edit" />
-    <ul class="forminfo">
-    <li><label>UUID<b>*</b></label><input name="uuid" type="text" value="${patrolBeaconInfo.uuid}" class="dfinput" data-rule="UUID:required;length[~100];"/></li>
-    <li><label>major<b>*</b></label><input name="major" type="text" class="dfinput" value="${patrolBeaconInfo.major}" data-rule="UUID:required;digits;"/></li>
-    <li><label>minor<b>*</b></label><input name="minor" type="text" value="${patrolBeaconInfo.minor}" class="dfinput"data-rule="UUID:required;digits;"/></li>
-    <input type="hidden" name="beaconId" value="${patrolBeaconInfo.beaconId}"/>
-    <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认编辑"/></li>
-    </ul>
-    </form>
+        <form action="<%=path %>/patrolBeaconInfo_edit" method="post" id="addForm" data-validator-option="{stopOnError:true, timely:1 ,theme:'yellow_right'}">
+            <input type="hidden" name="method" value="edit" />
+            <ul class="forminfo">
+                <li><label>UUID<b>*</b></label><input name="uuid" type="text" value="${patrolBeaconInfo.uuid}" class="dfinput" data-rule="UUID:required;length[~100];"/></li>
+                <li><label>major<b>*</b></label><input name="major" type="text" class="dfinput" value="${patrolBeaconInfo.major}" data-rule="UUID:required;digits;"/></li>
+                <li><label>minor<b>*</b></label><input name="minor" type="text" class="dfinput" value="${patrolBeaconInfo.minor}" data-rule="UUID:required;digits;"/></li>
+                <input type="hidden" name="id" value="${patrolBeaconInfo.beaconId}"/>
+                <input type="hidden" name="beaconId" value="${patrolBeaconInfo.beaconId}"/>
+                <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认添加"/></li>
+            </ul>
+        </form>
     
     </div>
 

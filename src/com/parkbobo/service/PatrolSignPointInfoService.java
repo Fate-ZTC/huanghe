@@ -43,6 +43,10 @@ public class PatrolSignPointInfoService {
         return patrolSignPointInfoDao.pageQuery(hql, 1, 1).getAllRow();
     }
 
+    public Boolean isInRegion(Integer regionId, Double lng, Double lat){
+        return patrolSignPointInfoDao.isInRegion(regionId, lng, lat);
+    }
+
     public PatrolSignPointInfoDao getPatrolSignPointInfoDao() {
         return patrolSignPointInfoDao;
     }
