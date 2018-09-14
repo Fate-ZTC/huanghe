@@ -84,14 +84,19 @@ public class FirePatrolUserController {
 			response.setCharacterEncoding("UTF-8");
 			out = response.getWriter();
 			FirePatrolUser patrolUser = this.firePatrolUserService.userLogin(jobNum, password);
+			FirePatrolUser firePatrolUser = this.firePatrolUserService.getByJobNumAll(jobNum);
+			if(firePatrolUser==null){
+				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户不存在!\"}");
+				return;
+			}
 			if(patrolUser != null){
 				if(patrolUser.getIsDel()==1){
-					out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账户已删除\"}");
+					out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户已删除!\"}");
 					return;
 				}
 				out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(patrolUser,features)+"}");
 			}else{
-				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账号密码错误\"}");
+				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"用户名或密码错误\"}");
 			}
 		} catch (Exception e) {
 			if(out==null){
@@ -196,7 +201,6 @@ public class FirePatrolUserController {
 							 HttpServletResponse response,HttpServletRequest request) throws IOException {
 		PrintWriter out = null;
 		try {
-
 			response.setCharacterEncoding("UTF-8");
 			out=response.getWriter();
 			FirePatrolConfig patrolConfig = this.firePatrolConfigService.getById(1);
@@ -221,6 +225,13 @@ public class FirePatrolUserController {
 			}
 
 			FirePatrolUser patrolUser = this.firePatrolUserService.getById(userId);
+            String jobNum = patrolUser.getJobNum();
+            int campusNum = patrolUser.getCampusNum();
+            boolean isStart = firePatrolTimeQuantumService.isStartTime(jobNum,campusNum);
+
+            if(isStart) {
+                isStart(jobNum,campusNum,firePatrolTimeQuantumService);
+            }
 			if(patrolUser!=null) {
 				FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
 				firePatrolInfo.setCampusNum(patrolUser.getCampusNum());
@@ -280,6 +291,8 @@ public class FirePatrolUserController {
 					fireFightEquipmentHistory.setCampusNum(fireFightEquipment.getCampusNum());
 					fireFightEquipmentHistory.setCheckStatus((short)1);
 					fireFightEquipmentHistory.setStatus((short)1);
+					fireFightEquipmentHistory.setFloorid(fireFightEquipment.getFloorid());
+					fireFightEquipmentHistory.setBuildingCode(fireFightEquipment.getBuildingCode());
 					fireFightEquipmentHistory.setLon(lon);
 					fireFightEquipmentHistory.setLat(lat);
 					fireFightEquipmentHistory.setLastUpdateTime(new Date());
@@ -396,7 +409,13 @@ public class FirePatrolUserController {
 				statusVO.setDeviceStatus("0");											//巡查状态
 				statusVO.setDeviceId(fireFightEquipment.getPointid().toString());					//设备消防专题图id
 				firePatrolEquipmentSychService.updateFirePatrolEquipmentVOStatus(statusVO);
+                String jobNum = patrolUser.getJobNum();
+                int campusNum = patrolUser.getCampusNum();
+                boolean isStart = firePatrolTimeQuantumService.isStartTime(jobNum,campusNum);
 
+                if(isStart) {
+                    isStart(jobNum,campusNum,firePatrolTimeQuantumService);
+                }
 
 				List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
 
@@ -436,6 +455,8 @@ public class FirePatrolUserController {
 					//没有查询到设备表中数据,进行添加新的数据
 					FireFightEquipmentHistory fireFightEquipmentHistory = new FireFightEquipmentHistory();
 					fireFightEquipmentHistory.setName(fireFightEquipment.getName());
+                    fireFightEquipmentHistory.setFloorid(fireFightEquipment.getFloorid());
+                    fireFightEquipmentHistory.setBuildingCode(fireFightEquipment.getBuildingCode());
 					fireFightEquipmentHistory.setCampusNum(fireFightEquipment.getCampusNum());
 					fireFightEquipmentHistory.setCheckStatus((short)1);
 					fireFightEquipmentHistory.setStatus((short)0);
@@ -485,7 +506,6 @@ public class FirePatrolUserController {
 			out.close();
 		}
 	}
-
 
 	/**
 	 * 上传所有消防设备正常信息（主要包含两种情况，1、在）
@@ -908,7 +928,7 @@ public class FirePatrolUserController {
 				useStatisticsVO.setFirePatrolUseEquNumVO(firePatrolUseEquNumVO);
 			}
 
-
+            //TODO 统计
 			StringBuffer entitySb = new StringBuffer();
 			entitySb.append("SELECT ffqh.* ");
 			entitySb.append("FROM fire_fight_equipment_history ffqh ");
@@ -1001,24 +1021,8 @@ public class FirePatrolUserController {
             boolean isStart = firePatrolTimeQuantumService.isStartTime(jobNum,campusNum);
 
             if(isStart) {
-                //需要将之前最新的一条数据状态进行更改
-                String hql = "FROM FirePatrolTimeQuantum WHERE jobNum='" + jobNum + "' AND " + "campusNum=" + campusNum + " AND isNew=1";
-                List<FirePatrolTimeQuantum> firePatrolTimeQuantums = firePatrolTimeQuantumService.getByHql(hql);
-                if(firePatrolTimeQuantums != null && firePatrolTimeQuantums.size() > 0) {
-                    FirePatrolTimeQuantum firePatrolTimeQuantum = firePatrolTimeQuantums.get(0);
-                    //这里进行更新状态
-                    firePatrolTimeQuantum.setIsNew(0);
-                    firePatrolTimeQuantumService.updateFirePatrolTimeQuantum(firePatrolTimeQuantum);
-                }
-                //是的话进行保存用户的相关信息
-                FirePatrolTimeQuantum firePatrolTimeQuantum = new FirePatrolTimeQuantum();
-                firePatrolTimeQuantum.setCampusNum(campusNum);
-                firePatrolTimeQuantum.setIsNew(1);
-                firePatrolTimeQuantum.setStartTime(new Date());
-                firePatrolTimeQuantum.setJobNum(jobNum);
-                firePatrolTimeQuantumService.addFirePatrolTimeQuantum(firePatrolTimeQuantum);
+                isStart(jobNum,campusNum,firePatrolTimeQuantumService);
             }
-
 
 			//计算距离
 			GisUtil g = GisUtil.getInstance();
@@ -1201,6 +1205,7 @@ public class FirePatrolUserController {
 			if(firePatrolTimeQuantums != null && firePatrolTimeQuantums.size() > 0) {
 				FirePatrolTimeQuantum firePatrolTimeQuantum = firePatrolTimeQuantums.get(0);
 				firePatrolTimeQuantum.setEndTime(new Date());
+				firePatrolTimeQuantum.setIsNew(0);
 				firePatrolTimeQuantumService.updateFirePatrolTimeQuantum(firePatrolTimeQuantum);
 				messageBean.setMessage("结束巡查成功");
 				messageBean.setStatus(true);
@@ -1220,6 +1225,30 @@ public class FirePatrolUserController {
 		}
 	}
 
+    /**
+     * 开始巡查状态
+     * @param jobNum 工号
+     * @param campusNum 校区id
+     * @param firePatrolTimeQuantumService
+     */
+    void isStart(String jobNum,int campusNum,FirePatrolTimeQuantumService firePatrolTimeQuantumService){
+        //需要将之前最新的一条数据状态进行更改
+        String hql = "FROM FirePatrolTimeQuantum WHERE jobNum='" + jobNum + "' AND " + "campusNum=" + campusNum + " AND isNew=1";
+        List<FirePatrolTimeQuantum> firePatrolTimeQuantums = firePatrolTimeQuantumService.getByHql(hql);
+        if(firePatrolTimeQuantums != null && firePatrolTimeQuantums.size() > 0) {
+            FirePatrolTimeQuantum firePatrolTimeQuantum = firePatrolTimeQuantums.get(0);
+            //这里进行更新状态
+            firePatrolTimeQuantum.setIsNew(0);
+            firePatrolTimeQuantumService.updateFirePatrolTimeQuantum(firePatrolTimeQuantum);
+        }
+        //是的话进行保存用户的相关信息
+        FirePatrolTimeQuantum firePatrolTimeQuantum = new FirePatrolTimeQuantum();
+        firePatrolTimeQuantum.setCampusNum(campusNum);
+        firePatrolTimeQuantum.setIsNew(1);
+        firePatrolTimeQuantum.setStartTime(new Date());
+        firePatrolTimeQuantum.setJobNum(jobNum);
+        firePatrolTimeQuantumService.addFirePatrolTimeQuantum(firePatrolTimeQuantum);
+    }
 
 
 

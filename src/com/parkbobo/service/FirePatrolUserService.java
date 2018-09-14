@@ -122,6 +122,15 @@ public class FirePatrolUserService {
 		}
 		return null;
 	}
+	public FirePatrolUser getByJobNumAll(String jobNum){
+		//这里进行查询用户
+		String hql = "FROM FirePatrolUser WHERE jobNum='" + jobNum +"'";
+		List<FirePatrolUser> firePatrolUsers = this.firePatrolUserDao.getByHQL(hql);
+		if(firePatrolUsers != null && firePatrolUsers.size() > 0) {
+			return firePatrolUsers.get(0);
+		}
+		return null;
+	}
 	
 	public List<FirePatrolUser> getAll(){
 		return this.firePatrolUserDao.getAll();

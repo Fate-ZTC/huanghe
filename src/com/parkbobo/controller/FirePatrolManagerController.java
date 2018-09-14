@@ -260,7 +260,6 @@ public class FirePatrolManagerController {
 	public void exceptionDetail(Integer fpId,HttpServletResponse response) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-
 		if(fpId == null) {
 			out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"参数不能为空\"}");
 			return;
