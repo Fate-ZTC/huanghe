@@ -151,17 +151,28 @@ public class PatrolUserManagerController {
 	 * 导出excel
 	 */
 	@RequestMapping("patrolUser_excelOut")
-	public ResponseEntity<byte[]> excelOut(PatrolUser patrolUser,HttpServletResponse response,HttpServletRequest request) throws IOException{
+	public ResponseEntity<byte[]> excelOut(String ids,String jobNum,String username,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
+		System.out.println(ids+":::::"+username+jobNum);
 		Date today = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		//导出文件的标题
 		String title = "安防巡更人员记录"+df.format(today)+".xls";
-		List<PatrolUser> list = null;
-		try {
-			list = this.patrolUserService.getBySth(patrolUser.getUsername(),patrolUser.getJobNum());
-		} catch (Exception e1) {
-		}
+		List<PatrolUser> list = new ArrayList<>();
+		if(ids!=null && ids.length()>0){
+            String[] strs = ids.split(",");
+            Integer[] idArr = new Integer[strs.length];
+            for (int i=0; i< strs.length; i++) {
+                idArr[i] = Integer.parseInt(strs[i]);
+                PatrolUser user = this.patrolUserService.getById(idArr[i]);
+                list.add(user);
+            }
+		}else{
+            try {
+                list = this.patrolUserService.getBySth(username,jobNum);
+            } catch (Exception e1) {
+            }
+        }
 		//设置表格标题行
 		String[] headers = new String[] {"巡更人员姓名","巡更人员账号", "更新时间"};
 		List<Object[]> dataList = new ArrayList<Object[]>();

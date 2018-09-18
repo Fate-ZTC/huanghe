@@ -71,4 +71,8 @@ public class PatrolSignRecordService {
             this.patrolSignRecordDao.bulkDelete(idArr);
         }
     }
+
+    public PatrolSignRecord get(Integer recordId) {
+        return this.patrolSignRecordDao.get(recordId);
+    }
 }

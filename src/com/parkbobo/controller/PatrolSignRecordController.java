@@ -81,40 +81,50 @@ public class PatrolSignRecordController {
     }
 
     /**
-     * 消防巡查记录导出
+     * 巡更签到记录导出
      * @param response
      * @param request
      * @return
      * @throws IOException
      */
     @RequestMapping("patrolSignRecord_excelOut")
-    public ResponseEntity<byte[]> excelOut(String name, String jobNum, Integer patrol, String startTime, String endTime, HttpServletResponse response, HttpServletRequest request) throws IOException{
+    public ResponseEntity<byte[]> excelOut(String ids,String name, String jobNum, Integer patrol, String startTime, String endTime, HttpServletResponse response, HttpServletRequest request) throws IOException{
         response.setCharacterEncoding("UTF-8");
         Date today = new Date();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         //导出文件的标题
         String title = "巡更签到记录"+df.format(today)+".xls";
-        List<PatrolSignRecord> list = null;
-        String hql = "from  PatrolSignRecord  where 1=1";
-        if(StringUtils.isNotBlank(jobNum)){
-            hql +=" and jobNum like '%"+jobNum+"%'";
-        }
-        if(StringUtils.isNotBlank(name)){
-            hql += " and username like '%" + name +"%'";
-        }
-        if(patrol != null&&patrol!=-1){
-            hql += " and signType ="+patrol;
-        }
-        if(StringUtils.isNotBlank(startTime)){
-            hql += " and signTime > '"+startTime+"'";
-        }
-        if(StringUtils.isNotBlank(endTime)){
-            hql += " and signTime < '"+endTime+"'";
-        }
-        hql += " order by signTime desc";
-        try {
-            list = this.patrolSignRecordService.getByHql(hql);
-        } catch (Exception e1) {
+        List<PatrolSignRecord> list = new ArrayList<>();
+        if(ids!=null && ids.length() > 0) {
+            String[] strs = ids.split(",");
+            Integer[] idArr = new Integer[strs.length];
+            for (int i=0; i< strs.length; i++) {
+                idArr[i] = Integer.parseInt(strs[i]);
+                PatrolSignRecord patrolSignRecord = this.patrolSignRecordService.get(idArr[i]);
+                list.add(patrolSignRecord);
+            }
+        }else{
+            String hql = "from  PatrolSignRecord  where 1=1";
+            if(StringUtils.isNotBlank(jobNum)){
+                hql +=" and jobNum like '%"+jobNum+"%'";
+            }
+            if(StringUtils.isNotBlank(name)){
+                hql += " and username like '%" + name +"%'";
+            }
+            if(patrol != null&&patrol!=-1){
+                hql += " and signType ="+patrol;
+            }
+            if(StringUtils.isNotBlank(startTime)){
+                hql += " and signTime > '"+startTime+"'";
+            }
+            if(StringUtils.isNotBlank(endTime)){
+                hql += " and signTime < '"+endTime+"'";
+            }
+            hql += " order by signTime desc";
+            try {
+                list = this.patrolSignRecordService.getByHql(hql);
+            } catch (Exception e1) {
+            }
         }
         //设置表格标题行
         String[] headers = new String[] {"姓名","工号", "巡更签到时间","巡更结果"};

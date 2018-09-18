@@ -73,6 +73,9 @@ public class PatrolBackstageController {
 	public ModelAndView getPatrolUserRegionsBySth(String username,Integer regionId,Integer exceptionType,String startTime,String endTime,Integer page,Integer pageSize,HttpServletResponse response) throws IOException{
 		ModelAndView mv = new ModelAndView();
 		page = (page != null && page > 0 ? page : 1);
+		if(exceptionType == null){
+		    exceptionType = -1;
+        }
 		pageSize = (pageSize != null && pageSize > 0 ? pageSize : 10);
 		String hql = "from PatrolRegion where isDel != 1 order by id asc";
 		List<PatrolRegion> patrolRegions = patrolRegionService.getByHQL(hql);
@@ -118,7 +121,6 @@ public class PatrolBackstageController {
 		return mv;
 	}
 
-	//TODO 巡更记录导出有问题
 	/**
 	 * 巡查信息列表导出
 	 * @param response
@@ -126,14 +128,26 @@ public class PatrolBackstageController {
 	 * @throws IOException
 	 */
 	@RequestMapping("paUserRegExOut")
-	public ResponseEntity<byte[]> paUserRegExOut(String username,Integer regionId,Integer exceptionType,String startTime,String endTime,HttpServletResponse response,HttpServletRequest request) throws IOException{
+	public ResponseEntity<byte[]> paUserRegExOut(String ids,String username,Integer regionId,Integer exceptionType,String startTime,String endTime,HttpServletResponse response,HttpServletRequest request) throws IOException{
 		response.setCharacterEncoding("UTF-8");
 		Date today = new Date();
+        System.out.println(ids);
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		List<PatrolUserRegion> list = new ArrayList<>();
+        if(ids!=null && ids.length() > 0) {
+            String[] strs = ids.split(",");
+            Integer[] idArr = new Integer[strs.length];
+            for (int i=0; i< strs.length; i++) {
+                idArr[i] = Integer.parseInt(strs[i]);
+                PatrolUserRegion patrolSignRecord = this.patrolUserRegionService.getById(idArr[i]);
+                list.add(patrolSignRecord);
+            }
+        }else{
+		    list = patrolUserRegionService.getPatrolUserBySth(username,regionId,exceptionType,startTime,endTime);
+        }
 		//导出文件的标题
 		String title = "巡查信息列表"+df.format(today)+".xls";
 		//
-		List<PatrolUserRegion> list = patrolUserRegionService.getPatrolUserBySth(username,regionId,exceptionType,startTime,endTime);
 		//设置表格标题行
 		String[] headers = new String[] {"巡更人员姓名","巡更人员账号", "开始巡查时间", "结束巡查时间", "巡更时长", "巡更区域", "是否异常", "异常原因"};
 		List<Object[]> dataList = new ArrayList<Object[]>();

@@ -55,7 +55,7 @@ String path = request.getContextPath();
         <li onclick="bulkDelete('<%=path %>/patrolUser_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
         </sec:authorize>
         <sec:authorize ifAnyGranted="patrolUser_list">
-        <li onclick="forWardUrl('<%=path %>/patrolUser_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
+        <li onclick="forWardUrl_param('<%=path %>/patrolUser_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
         </sec:authorize>
         </ul>
     
@@ -109,6 +109,28 @@ String path = request.getContextPath();
     </div>
     <script type="text/javascript">
 	$('.tablelist tbody tr:odd').addClass('odd');
+    function forWardUrl_param(url){
+        var ids = "";
+        $("[name='checkbox']:not(:disabled):checked").each(function(){
+            ids += $(this).val()+",";
+        });
+        if(ids.length>0){
+            ids=ids.substr(0,ids.length-1);
+        }
+        $("#ids").val(ids);
+        var username = $("input[name='username']").val();//姓名
+        var jobNum = $("input[name='jobNum']").val();//姓名
+        var param = "?now=" + new Date().getTime();
+        if(username != undefined && username != null && username != "") {
+            param += "&username=" + username;
+        }
+        if(jobNum != undefined && jobNum != null && jobNum != "") {
+            param += "&jobNum=" + jobNum;
+        }
+        param += "&ids=" + ids;
+        window.location.href= url+param;
+    }
+
 	</script>
 
 </body>

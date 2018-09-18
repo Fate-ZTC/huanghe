@@ -72,9 +72,9 @@ String date ="今天是："+ df.format(new Date());
 				    	<li><label>是否异常</label>
 					    	<div class="vocation">
 								<select class="select3" name="exceptionType" >
-						        	<option value="-1">-请选择-</option>
-									<option value="0">否</option>
-									<option value="1">是</option>
+						        	<option value="-1" <c:if test="${exceptionType!=0&&exceptionType!=1}">selected</c:if>>-请选择-</option>
+									<option value="0" <c:if test="${exceptionType==0}">selected</c:if>>否</option>
+									<option value="1" <c:if test="${exceptionType==1}">selected</c:if>>是</option>
 						        </select>
 							</div>
 				    	</li>
@@ -298,7 +298,13 @@ String date ="今天是："+ df.format(new Date());
             var endTime =  $("input[name='endTime']").val();//结束时间
 			var regionId = $("input[name='regionId']").val();
             var exceptionType = $("input[name='exceptionType']").val();
-
+            var ids = "";
+            $("[name='checkbox']:not(:disabled):checked").each(function(){
+                ids += $(this).val()+",";
+            });
+            if(ids.length>0){
+                ids=ids.substr(0,ids.length-1);
+            }
 
             param += "?now=" + new Date().getTime();
             if(username != undefined && username != null && username != "") {
@@ -316,6 +322,7 @@ String date ="今天是："+ df.format(new Date());
             if(endTime != undefined && endTime != null && endTime != "") {
                 param += "&endTime=" + endTime;
             }
+            param += "&ids=" + ids;
 
 			window.location.href= url + param;
 		}
