@@ -216,8 +216,14 @@
             var usercode = $("input[name='usercode']").val();//账号
             var pauseStart =  $("input[name='pauseStart']").val();//开始时间
             var pauseEnd =  $("input[name='pauseEnd']").val();//结束时间
+            var ids = "";
+            $("[name='checkbox']:not(:disabled):checked").each(function(){
+                ids += $(this).val()+",";
+            });
+            if(ids.length>0){
+                ids=ids.substr(0,ids.length-1);
+            }
             //获取选中的值
-            var patrol = $("#select option:selected").val();
             var now = new Date().getTime();
             param += "?now=" + now;
             if(name != undefined && name != "") {
@@ -232,6 +238,7 @@
             if(pauseEnd != undefined && pauseEnd != "") {
                 param += "&pauseEnd=" + pauseEnd;
             }
+            param += "&ids=" + ids;
             window.location.href = url + param;
 
 

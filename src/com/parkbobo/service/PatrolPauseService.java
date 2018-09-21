@@ -30,6 +30,9 @@ public class PatrolPauseService {
             return null;
         }
     }
+    public PatrolPause get(Integer id){
+        return this.patrolPauseDao.get(id);
+    }
 
     public List<PatrolPause> getByHql(String hql){
         return patrolPauseDao.getByHQL(hql);

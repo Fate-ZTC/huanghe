@@ -361,6 +361,7 @@ public class PatrolSignInterfaceController {
                 json.append("\"queryStartDate\":\"" + nextQueryStartDate + "\",");
                 json.append("\"data\":[" + tmpJson.deleteCharAt(tmpJson.length() - 1) + "]");
                 json.append("}");
+                System.out.println(json);
 
             } else{
                 json.append("{\"status\":false,");
@@ -889,8 +890,12 @@ public class PatrolSignInterfaceController {
 
 		for(PatrolSignRecord record : recordList){
 			tmpJson.append("{");
-			tmpJson.append("\"pointName\":\"" + record.getPatrolSignPointInfo().getPointName() + "\",");
-			tmpJson.append("\"regionName\":\"" + record.getPatrolSignPointInfo().getPatrolRegion().getRegionName() + "\",");
+			tmpJson.append("\"pointName\":\"" + (record.getPatrolSignPointInfo()==null?"":record.getPatrolSignPointInfo().getPointName()) + "\",");
+			if(record.getPatrolSignPointInfo()!=null&&record.getPatrolSignPointInfo().getPatrolRegion()!=null){
+			    tmpJson.append("\"regionName\":\"" + record.getPatrolSignPointInfo().getPatrolRegion().getRegionName() + "\",");
+            }else{
+                tmpJson.append("\"regionName\":\""+""+"\",");
+            }
 			tmpJson.append("\"signStatus\":" + record.getSignType() + ",");
 			tmpJson.append("\"signTime\":\"" + (record.getSignTime() == null ? "" : simpleDateFormat.format(record.getSignTime())) + "\",");
 			tmpJson.append("\"signRange\":\"" + (record.getNoSignRange() == null ? "" : record.getNoSignRange()) + "\"");

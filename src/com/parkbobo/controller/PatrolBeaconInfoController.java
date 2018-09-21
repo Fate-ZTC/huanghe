@@ -405,11 +405,15 @@ public class PatrolBeaconInfoController {
 			HSSFCell cell1 = row.getCell((short) 0);
 			HSSFCell cell2 = row.getCell((short) 1);
 			HSSFCell cell3 = row.getCell((short) 2);
-
-			cell1.setCellType(CellType.STRING);
-			cell2.setCellType(CellType.STRING);
-			cell3.setCellType(CellType.STRING);
-
+			if(cell1!=null){
+				cell1.setCellType(CellType.STRING);
+			}
+			if(cell2!=null){
+			    cell2.setCellType(CellType.STRING);
+            }
+            if(cell3!=null){
+			    cell3.setCellType(CellType.STRING);
+            }
 			String ce1 = cell1 == null?"空":cell1.getStringCellValue();
 			String ce2 = cell2 == null?"空":cell2.getStringCellValue();
 			String ce3 = cell3 == null?"空":cell3.getStringCellValue();

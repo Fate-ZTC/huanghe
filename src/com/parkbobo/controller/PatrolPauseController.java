@@ -80,30 +80,40 @@ public class PatrolPauseController {
      * @throws IOException
      */
     @RequestMapping("patrolPause_excelOut")
-    public ResponseEntity<byte[]> excelOut(String name, String usercode,String pauseStart, String pauseEnd, HttpServletResponse response, HttpServletRequest request) throws IOException{
+    public ResponseEntity<byte[]> excelOut(String ids,String name, String usercode,String pauseStart, String pauseEnd, HttpServletResponse response, HttpServletRequest request) throws IOException{
         response.setCharacterEncoding("UTF-8");
         Date today = new Date();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         //导出文件的标题
         String title = "暂停巡更记录"+df.format(today)+".xls";
-        List<PatrolPause> list = null;
-        String hql = "from  PatrolPause  where 1=1";
-        if(StringUtils.isNotBlank(usercode)){
-            hql +=" and usercode like '%"+usercode+"%'";
-        }
-        if(StringUtils.isNotBlank(name)){
-            hql += " and username like '%" + name +"%'";
-        }
-        if(StringUtils.isNotBlank(pauseStart)){
-            hql += " and pauseStart > '"+pauseStart+"'";
-        }
-        if(StringUtils.isNotBlank(pauseEnd)){
-            hql += " and pauseEnd < '"+pauseEnd+"'";
-        }
-        hql += " order by pauseEnd desc";
-        try {
-            list = this.patrolPauseService.getByHql(hql);
-        } catch (Exception e1) {
+        List<PatrolPause> list = new ArrayList<>();
+        if(ids!=null && ids.length() > 0) {
+            String[] strs = ids.split(",");
+            Integer[] idArr = new Integer[strs.length];
+            for (int i=0; i< strs.length; i++) {
+                idArr[i] = Integer.parseInt(strs[i]);
+                PatrolPause patrolPause = this.patrolPauseService.get(idArr[i]);
+                list.add(patrolPause);
+            }
+        }else{
+            String hql = "from  PatrolPause  where 1=1";
+            if(StringUtils.isNotBlank(usercode)){
+                hql +=" and usercode like '%"+usercode+"%'";
+            }
+            if(StringUtils.isNotBlank(name)){
+                hql += " and username like '%" + name +"%'";
+            }
+            if(StringUtils.isNotBlank(pauseStart)){
+                hql += " and pauseStart > '"+pauseStart+"'";
+            }
+            if(StringUtils.isNotBlank(pauseEnd)){
+                hql += " and pauseEnd < '"+pauseEnd+"'";
+            }
+            hql += " order by pauseEnd desc";
+            try {
+                list = this.patrolPauseService.getByHql(hql);
+            } catch (Exception e1) {
+            }
         }
         //设置表格标题行
         String[] headers = new String[] {"姓名","账号", "暂停开始时间","暂停结束时间","暂停时长"};

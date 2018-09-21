@@ -46,9 +46,8 @@ public class PatrolSignPointInfoController {
 
         PatrolRegion patrolRegion = patrolRegionService.getById(regionId);
 
-        String hql = "from PatrolSignPointInfo";
+        String hql = "from PatrolSignPointInfo where patrolRegion.id = "+regionId;
         List<PatrolSignPointInfo> pointInfoList = patrolSignPointInfoService.getByHql(hql);
-
         mv.addObject("patrolRegion", JSON.toJSONString(patrolRegion));
         mv.addObject("pointInfoList", JSON.toJSONString(pointInfoList, SerializerFeature.DisableCircularReferenceDetect));
         mv.setViewName("manager/system/patrolSignPortInfo/patrolSignPortInfo-manage");
