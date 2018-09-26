@@ -183,6 +183,7 @@ public class PatrolSignInterfaceController {
 	 */
 	@RequestMapping("patrolSign")
 	public void patrolSign(HttpServletResponse response, String locationInfo){
+        System.out.println("locationinfo:::::"+locationInfo);
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = null;
@@ -246,6 +247,7 @@ public class PatrolSignInterfaceController {
 				String signSuccessPointIds = "";
 				if(effectivePointMap.keySet().size() > 0){
 					for(String effectiveKey : effectivePointMap.keySet()){
+                        System.out.println("effectiveKey="+effectiveKey);
 						String[] pointIdAndSignMode = effectiveKey.split("-");
 						String recordQueryHql = "from PatrolSignRecord where signTime > '" + signRange[0]
 								+ "' and signTime < '" + signRange[1]
@@ -817,7 +819,7 @@ public class PatrolSignInterfaceController {
 				endMillis = userRegion.getEndTime().getTime();
 			}
 
-			Long expectedCount = calculateNeedSignCount(userRegion.getStartTime().getTime(), endMillis, patrolConfig.getSignRange(), patrolConfig.getOvertimeDeal());
+			Long expectedCount = calculateNeedSignCount(userRegion.getStartTime().getTime(), endMillis, patrolConfig.getSignRange(), patrolConfig.getOvertimeDeal())*regionPointCountMap.get(userRegion.getRegionId());
 
 			if(!statisticVOMap.containsKey(userRegion.getJobNum())){
 				PatrolsignStatisticVO statisticVO = new PatrolsignStatisticVO();
@@ -845,7 +847,7 @@ public class PatrolSignInterfaceController {
 				json.append("\"username\":\"" + statisticVO.getUsername() + "\",");
 				json.append("\"expectedCount\":" + statisticVO.getExpectedCount() + ",");
 				json.append("\"signedCount\":" + effectiveSign + ",");
-				json.append("\"noSignCount\":" + (statisticVO.getExpectedCount() - effectiveSign));
+				json.append("\"noSignCount\":" + (statisticVO.getExpectedCount() - effectiveSign>0?statisticVO.getExpectedCount() - effectiveSign:0));
 				json.append("},");
 			} else{
 				json.append("{");
