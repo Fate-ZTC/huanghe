@@ -100,6 +100,7 @@
         <th width="100px">应巡查</th>
         <th width="100px">实巡查</th>
         <th width="100px">未巡查</th>
+            <th width="100px">异常次数</th>
         </tr>
         </thead>
         <tbody>
@@ -111,6 +112,13 @@
         <td>${d.expectedCount}</td>
         <td>${d.signedCount}</td>
         <td>${d.noSignCount}</td>
+
+
+            <td>
+
+                <a  style="color:#16c2ea;" href="javascript:void(0);" onclick="upHtm(${d.usregId},'${d.jobNum}','${d.startTime}','${d.endTime}');">${d.abnormalCount}</a>
+
+            </td>
         </tr>
         </c:forEach>
         </tbody>
@@ -207,6 +215,14 @@
     //             }
     //         }
     //     }
+
+    var the_host = "<%=path%>/";
+    function upHtm(usregId,jobNum,startTime,endTime) {
+
+        window.location.href = "<%=basePath%>toSelectPatrolExceptionInfosByjobNum?usregId=" + usregId+"&jobNum=" + jobNum +"&startTime="+startTime+"&endTime="+endTime;
+    }
+
+
 	</script>
 
 </body>

@@ -17,6 +17,8 @@
     <constant name="struts.multipart.maxSize" value="10000000000000" />
     <!-- 文件上传临时文件存放路径 -->
     <constant name="struts.multipart.saveDir" value="/tmp"/>
+	<!--&lt;!&ndash; 综合服务 &ndash;&gt;
+	<include file="struts-service.xml"/>-->
     <!-- 全局Package -->
     <package name="def" extends="struts-default" >
     	<interceptors >
@@ -239,6 +241,7 @@
 				<result name="to">/WEB-INF/jsp/mobile/weixin/hik/go_parking.jsp</result>
 		</action>
     </package>
+
     
  </struts>
 	

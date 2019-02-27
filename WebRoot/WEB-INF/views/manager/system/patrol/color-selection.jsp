@@ -42,6 +42,17 @@
 				<ul class="color-selection-list">
 					<form action="<%=basePath%>patrolReg_add" method="POST" id="myForm">
 						<li>
+							<label class="color-selection-name">校区：</label>
+							<%--<input name="campusNum" class="campus-num" type="text" />--%>
+							<div class="vocation">
+								<select class="select3" name="campusNum" >
+									<option value="-1">-请选择-</option>
+									<option value="0">袁家岗校区</option>
+									<option value="1">缙云校区</option>
+								</select>
+							</div>
+						</li>
+						<li>
 							<label class="color-selection-name">巡更区域名称：</label>
 							<input name="regionName" class="region-name" type="text" />
 						</li>
@@ -54,7 +65,7 @@
 				
 				<div class="add-xungeng-btn-box">
 					<button type="reset" onclick="goToRegionList()">取消</button>
-					<button onclick="submitRegion()" class="submit-btn">提交</button>
+					<button onclick="submitRegion()" class="submit-btn">提交并配置巡更范围</button>
 				</div>
 			</div>
 		</div>
@@ -78,6 +89,15 @@
         var goToRegionList = function () {
 			window.location.href = "<%=basePath%>patrolRegList"
         }
+		$(function() {
+			//选择框
+			$(".select3").uedSelect({
+				width : 150
+			});
+			/**
+			 * 弹出页面
+			 */
+		});
 	</script>
 </body>
 </html>

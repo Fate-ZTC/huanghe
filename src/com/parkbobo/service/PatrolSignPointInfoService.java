@@ -54,4 +54,20 @@ public class PatrolSignPointInfoService {
     public void setPatrolSignPointInfoDao(PatrolSignPointInfoDao patrolSignPointInfoDao) {
         this.patrolSignPointInfoDao = patrolSignPointInfoDao;
     }
+    public void merge(PatrolSignPointInfo patrolSignPointInfo){
+        patrolSignPointInfoDao.merge(patrolSignPointInfo);
+    }
+
+    public void addRecord(PatrolSignPointInfo patrolSignPointInfo) {
+        this.patrolSignPointInfoDao.add(patrolSignPointInfo);
+    }
+    public int updateBySql(String sql) {
+        if(sql != null && !"".equals(sql)) {
+            int result = this.patrolSignPointInfoDao.updatePatrolRegionDao(sql);
+            return result;
+        }
+        return 0;
+    }
+
+
 }

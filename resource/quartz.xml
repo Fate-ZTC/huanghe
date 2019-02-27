@@ -63,37 +63,37 @@
 		</property>
 	</bean>
 
-	<!--   每20分钟检查巡更签到记录  -->
-	<bean id="patrolSignRecordCehckTask" class="com.parkbobo.quartz.task.PatrolSignRecordCehckTask"></bean>
-	<bean id="patrolSignRecordCehckTaskWork" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject">
-			<ref bean="patrolSignRecordCehckTask"/>
-		</property>
-		<property name="targetMethod">
-			<value>startJob</value>
-		</property>
-		<property name="concurrent">
-			<value>false</value>
-		</property>
-	</bean>
-	<bean id="patrolSignRecordCehckTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail">
-			<ref bean="patrolSignRecordCehckTaskWork"/>
-		</property>
-		<property name="cronExpression">
-			<!--<value>0 0 2 1 * ?</value>-->
-			<value>0 */10 * * * ?</value>
-			<!--TODO 下面定时器是进行测试用的-->
-			<!--<value>0/1 * * * * ?</value>-->
-		</property>
-	</bean>
+	<!--&lt;!&ndash;   每20分钟检查巡更签到记录  &ndash;&gt;-->
+	<!--<bean id="patrolSignRecordCehckTask" class="com.parkbobo.quartz.task.PatrolSignRecordCehckTask"></bean>-->
+	<!--<bean id="patrolSignRecordCehckTaskWork" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">-->
+		<!--<property name="targetObject">-->
+			<!--<ref bean="patrolSignRecordCehckTask"/>-->
+		<!--</property>-->
+		<!--<property name="targetMethod">-->
+			<!--<value>startJob</value>-->
+		<!--</property>-->
+		<!--<property name="concurrent">-->
+			<!--<value>false</value>-->
+		<!--</property>-->
+	<!--</bean>-->
+	<!--<bean id="patrolSignRecordCehckTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">-->
+		<!--<property name="jobDetail">-->
+			<!--<ref bean="patrolSignRecordCehckTaskWork"/>-->
+		<!--</property>-->
+		<!--<property name="cronExpression">-->
+			<!--&lt;!&ndash;<value>0 0 2 1 * ?</value>&ndash;&gt;-->
+			<!--<value>0 */10 * * * ?</value>-->
+			<!--&lt;!&ndash;TODO 下面定时器是进行测试用的&ndash;&gt;-->
+			<!--&lt;!&ndash;<value>0/1 * * * * ?</value>&ndash;&gt;-->
+		<!--</property>-->
+	<!--</bean>-->
 	
 	<bean id="JobSchedule" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
 				<ref bean="getRestCheckStatusTaskTrigger"/>
 				<ref bean="getCopeToHistoryTaskTrigger"/>
-				<ref bean="patrolSignRecordCehckTaskTrigger"/>
+				<!--<ref bean="patrolSignRecordCehckTaskTrigger"/>-->
 			</list>
 		</property>
 	</bean>

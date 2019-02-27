@@ -1,9 +1,12 @@
-<%@ page language="java" import="java.util.*,java.text.*" pageEncoding="UTF-8"%>
+<%@ page language="java" import="java.text.DateFormat,java.text.SimpleDateFormat" pageEncoding="UTF-8"%>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.util.Locale" %>
 <%@include file="../../taglibs.jsp" %>
 <%
 String path = request.getContextPath();
 DateFormat df = new SimpleDateFormat("yyyy年MM月dd日，EEE", Locale.CHINA);
 String date ="今天是："+ df.format(new Date());
+	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -116,8 +119,9 @@ String date ="今天是："+ df.format(new Date());
 			            		<th>结束巡更时间</th>
 			            		<th>巡更时长</th>
 			            		<th>巡更区域</th>
-			            		<th>是否异常</th>
-			            		<th>异常原因</th>
+			            		<%--<th>是否异常</th>
+			            		<th>异常原因</th>--%>
+								<th>异常次数</th>
 <!-- 			            		<th>操作</th> -->
 					        </tr>
 				        </thead>
@@ -130,17 +134,25 @@ String date ="今天是："+ df.format(new Date());
 					        <td>${m.formatEndTime}</td>
 					        <td>${m.checkDuration}</td>
 					        <td>${m.regionName}</td>
-					        <td>
+					      <%--  <td>
 					        	<c:if test="${empty m.patrolException}">否</c:if>
 					        	<c:if test="${!empty m.patrolException}">是</c:if>
 					        </td>
 					        <td>
 					        	<c:if test="${empty m.patrolException}">无</c:if>
 					        	<c:if test="${!empty m.patrolException}">${m.patrolException.exceptionName}</c:if>
-					        </td>
+					        </td>--%>
 <!-- 					        <td>删除</td> -->
+								<td>
+									<a  style="color:#16c2ea;" href="javascript:void(0);" onclick="upHtm(${m.id},'${m.jobNum}','${m.formatStartTime}','${m.formatEndTime}');">${m.abnormalCount}</a>
+
+
+
+								</td>
+
 					        </tr> 
 				        </c:forEach>
+
 			        </tbody>
 			    </table>
 			   	<!-- 分页开始 -->
@@ -168,6 +180,16 @@ String date ="今天是："+ df.format(new Date());
 			});
 
 		});
+	var the_host = "<%=path%>/";
+	function upHtm(id,jobNum,formatStartTime,formatEndTime) {
+
+
+		window.location.href = "<%=basePath%>toSelectPatrolExceptionInfosByid?id=" + id+"&jobNum=" + jobNum +"&formatStartTime="+formatStartTime+"&formatEndTime="+formatEndTime;
+
+	}
+
+
+
 	var the_host = "<%=path%>/";
 	$('.tablelist tbody tr:odd').addClass('odd');
 
@@ -326,6 +348,7 @@ String date ="今天是："+ df.format(new Date());
 
 			window.location.href= url + param;
 		}
+
 
 </script>
 </body>

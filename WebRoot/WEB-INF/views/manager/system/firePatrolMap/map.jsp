@@ -138,13 +138,10 @@
 
 
 
-
-
-
         LMap.APIURL = "<%=LMap_APIURL%>";
         LMap.MAPSERVERURL = "<%=LMap_MAPSERVERURL%>";
 
-        var map = new LMap.Map2D("map", 1001);
+        var map = new LMap.Map2D("map", 2000);
         /**
          * 放大地图比例
          */

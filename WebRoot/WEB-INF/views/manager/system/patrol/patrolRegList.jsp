@@ -72,6 +72,21 @@
 						        </select>
 							</div>
 						</li>
+                        <li><label>校区</label>
+                            <div class="vocation">
+                                <select class="select3" name="campusNum" >
+                                    <option value="-1">-请选择-</option>
+                                    <option value="0">袁家岗校区</option>
+                                    <option value="1">缙云校区</option>
+
+                                      <%--  <option value="0" <c:if test="${campusNum==0}">南校区</c:if>>
+                                        </option>
+                                    <option value="1" <c:if test="${campusNum==1}">北校区</c:if>>
+                                    </option>--%>
+
+                                </select>
+                            </div>
+                        </li>
 						<li><label>&nbsp;</label><input name="" type="submit" class="scbtn" value="搜索"/>
 						<input type="hidden" name="pageSize" value="${pageSize}"/>
 						<input type="hidden" name="page" id="page" value="${page}"/>
@@ -86,9 +101,9 @@
 				    	<sec:authorize ifAnyGranted="patrolReg_delete">
 				        <li onclick="bulkDelete('<%=path %>/patrolReg_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>删除</li>
 				        </sec:authorize>
-						<sec:authorize ifAnyGranted="patrolReg_add">
+						<%--<sec:authorize ifAnyGranted="patrolReg_add">
 							<li onclick="showAllDraw();"><span><img src="<%=path %>/page/images/t01.png"/></span>显示所有区域</li>
-						</sec:authorize>
+						</sec:authorize>--%>
 			        </ul>
 			    </div>
 				<table width="100%" class="tablelist">
@@ -98,7 +113,8 @@
 					        	<th class="tbt1">
 									<input type="checkbox" name="checkAll" value="checkbox" id="checkAll" class="checkAll"/></th>
 			            		<th>巡更区域名称</th>
-								<th>绘制颜色</th>
+								<%--<th>绘制颜色</th>--%>
+								<th>校区</th>
 			            		<th>更新时间</th>
 			            		<th>操作</th>
 					        </tr>
@@ -109,10 +125,20 @@
 								<input type="checkbox" name="checkbox" value="${m.id}" id="checkbox_${m.id}" class="checkItem"/>
 							</td>
 					        <td>${m.regionName}</td>
-								<td>${m.color}</td>
+								<%--<td>${m.color}</td>--%>
+							<td>
+								<c:choose>
+									<c:when test="${m.campusNum == 0}">
+										袁家岗校区
+									</c:when>
+									<c:when test="${m.campusNum == 1}">
+										缙云校区
+									</c:when>
+								</c:choose>
+							</td>
 					        <td>${m.lastUpdateTime}</td>
 					        <td style="color:#16c2ea;">
-								<a  style="color:#16c2ea;" href="javascript:void(0);" onclick="upHtm('${m.regionName}',${m.id},'${m.color}');">修改名称</a>
+								<a  style="color:#16c2ea;" href="javascript:void(0);" onclick="upHtm('${m.regionName}',${m.id},'${m.color}');">编辑</a>
 								<a style="color:#16c2ea;" href="javascript:void(0);" onclick="toPatrolMap(${m.id})">配置巡更范围</a>
 								<a style="color:#16c2ea;" href="javascript:void(0);" onclick="toPatroSignPortlMap(${m.id})">配置巡更点位</a>
 							</td>

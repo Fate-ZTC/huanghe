@@ -83,6 +83,11 @@ public class PatrolUserRegion implements Serializable{
      */
 	private int campusNum;
 
+/*	*//**
+	 * 异常数据
+	 *//*
+	private PatrolExceptionInfo patrolExceptionInfo;*/
+
 	public PatrolUserRegion() {}
 
 	public PatrolUserRegion(String username, String jobNum) {

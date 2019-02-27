@@ -56,6 +56,12 @@ public class PatrolUser implements Serializable{
 	 * 最后更新时间
 	 */
 	private Date lastUpdateTime;
+
+	/**
+	 * 是否推送,0是，1否
+	 */
+	private Integer isJpush;
+
 	@Id
 	@Column(name="id",unique=true,nullable=false)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -121,5 +127,13 @@ public class PatrolUser implements Serializable{
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
-	
+
+	@Column(name = "is_jpush")
+	public Integer getIsJpush() {
+		return isJpush;
+	}
+
+	public void setIsJpush(Integer isJpush) {
+		this.isJpush = isJpush;
+	}
 }

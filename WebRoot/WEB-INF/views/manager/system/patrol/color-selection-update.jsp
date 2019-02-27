@@ -23,7 +23,7 @@
 		.bomb-top{height: 36px;line-height: 36px;background: #ECECEC;padding-left: 10px;color: #282828;font-weight: bold;}
 		.bomb-close{width: 36px;height: 36px;background: url(img/close.png) no-repeat center;float: right;cursor: pointer;}
 		.bomb-content{height: 209px;padding: 12px 15px;line-height: 22px;overflow: hidden;}
-		
+
 		.color-selection-list{padding: 10px;}
 		.color-selection-list>li{overflow: hidden;padding: 10px 0;line-height: 32px;}
 		.color-selection-name{width: 150px;float: left;}
@@ -52,15 +52,15 @@
 						</li>
 					</form>
 				</ul>
-				
+
 				<div class="add-xungeng-btn-box">
 					<button type="reset" onclick="goToRegionList()">取消</button>
-					<button onclick="submitRegion()" class="submit-btn">提交</button>
+					<button onclick="submitRegion()" class="submit-btn">提交并配置巡更范围</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	
+
 	<script>
 		$(".bomb-close").click(function() {
 			$(".background-bomb").fadeOut(300);

@@ -230,7 +230,7 @@ public interface BaseDao<T> {
 	 * 根据主键ID局部更新一条数据多个字段值.
 	 * @param  entityid 序列号实体ID
 	 * @param  propertyNames 需要更新字段名数组
-	 * @param  value 字段新值数组
+	 * @param  values 字段新值数组
 	 */
 	public abstract boolean localUpdateOneFields(Serializable entityid,String[] propertyNames ,Object[] values);
 	/**
@@ -266,4 +266,9 @@ public interface BaseDao<T> {
 	 * 使用指定的检索标准检索数据并分页返回数据For JDBC
 	 */
 	public Long getCountForJdbc(String sql);
+
+	/**
+	 * 查询最大id
+	 */
+	public Integer selectMaxid(String sql);
 }

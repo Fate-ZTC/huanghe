@@ -28,11 +28,22 @@ public class PatrolSignRecordService {
 
     public Integer countEffectiveWithTimeRange(String jobNum, String startTime, String endTime){
         String hql = "from PatrolSignRecord where jobNum = '" + jobNum
-                + "' and signType = 1 and signTime > '" + startTime
+//                + "' and signType = 1 and signTime > '" + startTime
+                + "' and signTime > '" + startTime
                 + "' and signTime < '" + endTime
                 + "'";
         return patrolSignRecordDao.pageQuery(hql, 1, 1).getAllRow();
     }
+    public Integer expectedCountWithTimeRange(String jobNum, String startTime, String endTime){
+        String hql = "from PatrolUserRegion where jobNum = '" + jobNum
+                + "' and status = 2  "
+                + " and startTime > '" + startTime
+                + "' and endTime < '" + endTime
+                + "'";
+        return patrolSignRecordDao.pageQuery(hql, 1, 1).getAllRow();
+    }
+
+
     public Integer countEffective(String jobNum, String startTime, String endTime){
         String hql = "from PatrolSignRecord where signType=1 and jobNum =  '" + jobNum + "'";
         if(StringUtils.isNotBlank(startTime)){

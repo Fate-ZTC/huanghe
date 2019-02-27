@@ -530,7 +530,7 @@ public class BaseDaoSupport<T> implements BaseDao<T> {
 	}
 	/**
      * 取得对象的主键名,辅助函数.
-     * @param <T>
+     * @param
 	 * @param clazz 实体类
      */
 	private String getIdName(Class<T> clazz) {
@@ -597,5 +597,13 @@ public class BaseDaoSupport<T> implements BaseDao<T> {
 	public Long getCountForJdbc(String sql) {
 		return this.jdbcTemplate.queryForObject(sql, Long.class);
 	}
+
+	@Override
+	public Integer selectMaxid(String sql){
+		SQLQuery query = this.getSession().createSQLQuery(sql);
+		return Integer.parseInt(query.list().get(0).toString());
+	}
+
+
 	
 }

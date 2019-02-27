@@ -41,6 +41,7 @@ public class PatrolLocationInfoService {
 		}
 		return null;
 	}
+
 	public List<PatrolLocationInfo> getByProperty(String propertyName,Object value){
 		return this.patrolLocationInfoDao.getByProperty(propertyName, value);
 	}

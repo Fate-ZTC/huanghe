@@ -39,8 +39,6 @@ public class PatrolUserService {
 	}
 	/**
 	 * 分页查询
-	 * @param username 用户名
-	 * @param jobNum 工号
 	 * @param page 页码
 	 * @param pageSize 每页条数
 	 * @return
@@ -135,6 +133,14 @@ public class PatrolUserService {
 	public PageBean<PatrolUser> getAllUserByPage(Integer pageSize, Integer page) {
 		String hql = "from PatrolUser where isDel = 0";
 		return this.patrolUserDao.pageQuery(hql, pageSize==null?20:pageSize, page==null?1:page);
+	}
+
+	public PageBean<PatrolUser> pageQuery(String hql, int pageSize, int page) {
+		return this.patrolUserDao.pageQuery(hql,pageSize,page);
+	}
+
+	public List<PatrolUser> getByHQL(String hql){
+		return this.patrolUserDao.getByHQL(hql);
 	}
 	
 }

@@ -78,6 +78,7 @@ public class PatrolConfigService {
 	}
 
 
+
 	/**
 	 * 进行判断位置没有发生变化是否超过指定时间
 	 * @param lon						经度
@@ -369,9 +370,34 @@ public class PatrolConfigService {
 		patrolLocationInfo.setStatus(1);
 		patrolLocationInfo.setPatrolException(null);
 
+		//获取配置信息
+		PatrolConfig patrolConfig = this.patrolConfigService.getById(1);
 		patrolUserRegionService.updateRecord(patrolUserRegion);
-		patrolLocationInfoService.add(patrolLocationInfo);
+		//查询最新的一条定位数据信息
+		PatrolLocationInfo locationInfo= patrolLocationInfoService.getLocation(patrolLocationInfo.getJobNum(),patrolLocationInfo.getUsregId(),patrolLocationInfo.getCampusNum());
+		//获取的定位数据时间与最新的一条定位数据时间的差值
+		Long xcDate=null;
+		if(locationInfo!=null){
+			xcDate=patrolLocationInfo.getTimestamp().getTime()-locationInfo.getTimestamp().getTime();
+		}
+
+		//如果配置的定位数据上传周期为空，则直接上传，不为空则需要判断
+		if(patrolConfig.getSignRange()==null){
+			patrolLocationInfoService.add(patrolLocationInfo);
+		}
+		else{
+			if(locationInfo==null){
+				patrolLocationInfoService.add(patrolLocationInfo);
+			}
+			else if(xcDate>=patrolConfig.getSignRange()*1000){
+				patrolLocationInfoService.add(patrolLocationInfo);
+			}
+		}
+
+
+
 	}
+
 
 
 

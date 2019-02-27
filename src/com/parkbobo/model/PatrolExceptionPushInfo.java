@@ -24,6 +24,8 @@ public class PatrolExceptionPushInfo {
     private Integer usregId;        //区域和用户绑定id
     private Date pushDate;          //推送时间
     private Date exceptionDate;     //异常发生时间
+    private String usregName;        //异常区域名称
+
 
 
     public PatrolExceptionPushInfo() {}
@@ -148,6 +150,33 @@ public class PatrolExceptionPushInfo {
         this.exceptionDate = exceptionDate;
     }
 
+    @Column(name = "usregname")
+    public String getUsregName() {
+        return usregName;
+    }
+
+    public void setUsregName(String usregName) {
+        this.usregName = usregName;
+    }
+
+//    @Override
+//    public String toString() {
+//        return "PatrolExceptionPushInfo{" +
+//                "id=" + id +
+//                ", campusNum=" + campusNum +
+//                ", jobNum='" + jobNum + '\'' +
+//                ", lat=" + lat +
+//                ", lon=" + lon +
+//                ", exceptionName=" + exceptionName +
+//                ", exceptionType=" + exceptionType +
+//                ", exceptionId=" + exceptionId +
+//                ", status=" + status +
+//                ", userName='" + userName + '\'' +
+//                ", usregId=" + usregId +
+//                '}';
+//    }
+
+
     @Override
     public String toString() {
         return "PatrolExceptionPushInfo{" +
@@ -156,12 +185,15 @@ public class PatrolExceptionPushInfo {
                 ", jobNum='" + jobNum + '\'' +
                 ", lat=" + lat +
                 ", lon=" + lon +
-                ", exceptionName=" + exceptionName +
+                ", exceptionName='" + exceptionName + '\'' +
                 ", exceptionType=" + exceptionType +
                 ", exceptionId=" + exceptionId +
                 ", status=" + status +
                 ", userName='" + userName + '\'' +
                 ", usregId=" + usregId +
+                ", pushDate=" + pushDate +
+                ", exceptionDate=" + exceptionDate +
+                ", usregName='" + usregName + '\'' +
                 '}';
     }
 }
