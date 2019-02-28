@@ -204,19 +204,19 @@
                                 pointRadius: 6,
                                 graphicName: "#02a6cf",
                                 fillColor: "#02a6cf",
-                                fillOpacity: 1,
+                                fillOpacity: 0.1,
                                 strokeWidth: 2,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#02a6cf"
                             },
                             "Line": {
                                 strokeWidth: 4,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#00ccff"
                             },
                             "Polygon":{
                                 strokeWidth: 2,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 fillColor: "#02a6c0",
                                 strokeColor: "#02a6c0"
                             }
@@ -232,19 +232,19 @@
                                 pointRadius: 6,
                                 graphicName: "circle",
                                 fillColor: "white",
-                                fillOpacity: 0.5,
+                                fillOpacity: 0.1,
                                 strokeWidth: 1,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#02a6cf"
                             },
                             "Line": {
                                 strokeWidth: 4,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#00ccff"
                             },
                             "Polygon":{
                                 strokeWidth: 2,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#00ccff"
                             }
                         }
@@ -259,19 +259,19 @@
                                 pointRadius: 6,
                                 graphicName: "circle",
                                 fillColor: "white",
-                                fillOpacity: 0.5,
+                                fillOpacity: 0.1,
                                 strokeWidth: 1,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#02a6cf"
                             },
                             "Line": {
                                 strokeWidth: 4,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#00ccff"
                             },
                             "Polygon":{
                                 strokeWidth: 2,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#02a6cf"
                             }
                         }
@@ -460,7 +460,7 @@
                 "default":new LMap.Style({
                     cursor:'pointer',
                     fillColor: (color == "" || color == undefined) ? "#02a6cf" : color ,
-                    fillOpacity: 0.4,
+                    fillOpacity: 0.1,
                     strokeColor: (color == "" || color == undefined) ? "#02a6cf" : color ,
                     strokeWidth: 1
                 }),
@@ -468,7 +468,7 @@
                 }),
                 "temporary":new LMap.Style({
                     fillColor: (color == "" || color == undefined) ? "#02a6cf" : color ,
-                    fillOpacity: 0.4,
+                    fillOpacity: 0.1,
                     strokeColor: (color == "" || color == undefined) ? "#02a6cf" : color ,
                     strokeWidth: 1
                 })

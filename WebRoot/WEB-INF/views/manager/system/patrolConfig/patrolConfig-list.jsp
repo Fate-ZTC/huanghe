@@ -10,6 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <title>巡更信息配置</title>
+    <script src="<%=basePath%>page/js/jquery.js"></script>
     <style>
         html,body,ul,li{margin: 0;padding: 0;}
         html,body{width: 100%;height: 100%;background: #f7f7f7;}
@@ -86,8 +87,9 @@
         .btn-box{margin-top: 40px;}
         .manufacturer-item{display: flex;padding-left: 40px;}
         .manufacturer-item:not(:first-child){border-top: 1px solid #e1e1e1;}
+        .button-box{padding-top: 11px;margin-left:50px;}
         .btn-add,.btn-mul{font-size: 18px;font-weight: bold;color: #fff;border-radius: 50%;width: 30px;height: 30px;text-align: center;cursor: pointer;}
-        .btn-add{background: #0A99F1}
+        .btn-add{background: #0A99F1;margin-right: 20px;}
         .btn-mul{background: #F75C5D}
         @font-face {
             font-family: 'iconfont';  /* project id 954075 */
@@ -265,16 +267,28 @@
                                <input type="hidden" name="pList[${status.index}].manufacturerId" value="${pList.manufacturerId }" size="5"/>
                                <div class="form-item">
                                    <label >设备厂商：</label>
-                                   <input type="text" name="pList[${status.index}].manufacturerName" class="text1" id="manufacturerName" value="${pList.manufacturerName }" onkeyup="value=value.replace(/[^\d]/g,'')" size="s">
+                                   <input type="text" name="pList[${status.index}].manufacturerName" class="text1" id="manufacturerName" value="${pList.manufacturerName }" onkeyup="value=value.replace(/[^\d]/g,'')">
                                </div>
                                <div class="form-item">
                                    <label >对接地址：</label>
-                                   <input type="text" name="pList[${status.index}].dockingAddress" class="text1" id="dockingAddress" value="${pList.dockingAddress }" onkeyup="value=value.replace(/[^\d]/g,'')" size="5">
+                                   <input type="text" name="pList[${status.index}].dockingAddress" class="text1" id="dockingAddress" value="${pList.dockingAddress }" onkeyup="value=value.replace(/[^\d]/g,'')" >
                                </div>
-                               <div class="button-box">
+                            <c:if test="${status.last}">
+                               <div class="button-box box-none${status.index+1}">
                                    <button type="button" class="btn-add" onclick="addItem()"><span class="iconfont el-icon-ips-jia"></span></button>
-                                   <!-- <button type="button" class="btn-mul" onclick="delItem(this)"><span class="iconfont el-icon-ips-jian"></span></button> -->
-                               </div>
+                                   <c:if test="${status.index!=0}">
+                                       <button type="button" class="btn-mul" onclick="delItem(this)"><span class="iconfont el-icon-ips-jian"></span></button>
+                                   </c:if>
+                                   </div>
+                            </c:if>
+                            <c:if test="${!status.last}">
+                                <div class="button-box box-none${status.index+1}" style="display: none;">
+                                    <button type="button" class="btn-add" onclick="addItem()"><span class="iconfont el-icon-ips-jia"></span></button>
+                                    <c:if test="${status.index!=0}">
+                                        <button type="button" class="btn-mul" onclick="delItem(this)"><span class="iconfont el-icon-ips-jian"></span></button>
+                                    </c:if>
+                                </div>
+                            </c:if>
                         </div>
                         </c:forEach>
                     </div>
@@ -388,28 +402,31 @@
 
     //添加一项
     function addItem() {
-        var id = document.querySelectorAll('#equipment-profile .manufacturer-item').length
+        var id = document.querySelectorAll('#equipment-profile .manufacturer-item').length;
         document.querySelector('#equipment-profile').insertAdjacentHTML('beforeend',
                 '<div class="manufacturer-item">'+
           '<div class="form-item">'+
-        '<label for="">设备厂商：</label>'+
+        '<label for="">设备厂商： </label>'+
         '<input type="text" name="pList['+id+'].manufacturerName"/>'+
         '</div>'+
         '<div class="form-item">'+
-        '<label for="">对接地址：</label>'+
+        '<label for="">对接地址： </label>'+
         '<input type="text" name="pList['+id+'].dockingAddress" />'+
         '</div>'+
-        '<div class="button-box">'+
+        '<div class="button-box box-none'+(id+1)+'">'+
         '<button type="button" class="btn-add" onclick="addItem()"><span class="iconfont el-icon-ips-jia"></span></button>'+
         '<button type="button" class="btn-mul" onclick="delItem()"><span class="iconfont el-icon-ips-jian"></span></button>'+
         '</div>'+
         '</div>'
-        )
+        );
+        $(".box-none"+id).hide();
     }
 
     //删除一项
     function delItem(_this) {
-        document.querySelector('#equipment-profile').removeChild(event.target.parentNode.parentNode.parentNode)
+        document.querySelector('#equipment-profile').removeChild(event.target.parentNode.parentNode.parentNode);
+        var id = document.querySelectorAll('#equipment-profile .manufacturer-item').length;
+        $(".box-none"+id).show();
     }
     // 不是全选
     document.querySelector('#location-label').addEventListener('change',()=>{
