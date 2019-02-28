@@ -31,7 +31,7 @@ import static com.alibaba.fastjson.JSON.toJSONString;
 
 /**
  * 安防使用端接口
- * @author zj
+ * @author ZQ
  *@version 1.0
  */
 @Controller
@@ -1356,7 +1356,7 @@ public class PatrolUserController {
 
 
     /**
-     * 列表
+     * 求救人员列表
      * @return
      */
     @RequestMapping("/patrolJpushList")
@@ -1383,7 +1383,7 @@ public class PatrolUserController {
     }
 
     /**
-     * 修改
+     * 修改求救人员信息
      * @param response
      * @throws IOException
      */
@@ -1468,7 +1468,7 @@ public class PatrolUserController {
      * @param response
      * @throws IOException
      */
-    @RequestMapping("updateIsReade")
+    @RequestMapping("/updateIsReade")
     public void updateIsReade(Integer id,HttpServletResponse response) throws IOException{
         response.setCharacterEncoding("UTF-8");
         byte[] b= new byte[0];

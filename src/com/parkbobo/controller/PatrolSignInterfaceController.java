@@ -24,10 +24,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * 巡更签到接口
- * @author RY
+ * 巡更定位接口
+ * @author ZQ
  * @version 1.0
- * @since 2018-7-9 10:12:26
+ * @since 2019-2-9 10:12:26
  */
 @Controller
 public class PatrolSignInterfaceController {
