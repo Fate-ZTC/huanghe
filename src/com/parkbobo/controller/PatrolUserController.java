@@ -145,6 +145,11 @@ public class PatrolUserController {
             b=username.getBytes("ISO_8859-1");
         }
         String username1=new String(b,"UTF-8");
+
+        //如果为签到板，则id改变
+        Integer configId = 1;
+
+		PatrolConfig patrolConfig = this.patrolConfigService.getById(configId);
 		//String  username1 = username;
 		PrintWriter out = null;
 		try {
@@ -177,7 +182,7 @@ public class PatrolUserController {
 			//TODO 这里需要进行推送，判断是否在巡更范围内，在范围内推送开始巡查，不在范围内推送巡查需要在指定时间内到达
 
 			this.patrolUserRegionService.addRecord(patrolUserRegion);
-			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+ toJSONString(patrolUserRegion,features)+"}");
+			out.print("{\"status\":\"true\",\"Code\":1,\"startPatrolTime\":\""+patrolConfig.getStartPatrolTime()+"\",\"data\":"+ toJSONString(patrolUserRegion,features)+"}");
 		} catch (Exception e) {
 			e.printStackTrace();
 			if(out==null) {
@@ -543,8 +548,8 @@ public class PatrolUserController {
 					}
 					if(isCanPushUse) {
 
-						exceptionPushService.pushUsePatrolSend("3", "提醒",
-								"开始巡更，请在" + startPatrolTime + "分钟内，到达指定区域！", jobNum1);
+//						exceptionPushService.pushUsePatrolSend("3", "提醒",
+//								"开始巡更，请在" + startPatrolTime + "分钟内，到达指定区域！", jobNum1);
 						patrolUserRegion.setExceptionPushTime(new Date());
 						//这里跟新异常推送时间
 						patrolUserRegionService.updateRecord(patrolUserRegion);
