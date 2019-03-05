@@ -99,7 +99,7 @@
 				        <li onclick="addHtm();"><span><img src="<%=path %>/page/images/t01.png" /></span>添加</li>
 				        </sec:authorize>
 				    	<sec:authorize ifAnyGranted="patrolReg_delete">
-				        <li onclick="bulkDelete('<%=path %>/patrolReg_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>删除</li>
+				        <li onclick="bulkDelete('<%=path %>/patrolReg_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
 				        </sec:authorize>
 						<%--<sec:authorize ifAnyGranted="patrolReg_add">
 							<li onclick="showAllDraw();"><span><img src="<%=path %>/page/images/t01.png"/></span>显示所有区域</li>
@@ -140,7 +140,8 @@
 					        <td style="color:#16c2ea;">
 								<a  style="color:#16c2ea;" href="javascript:void(0);" onclick="upHtm('${m.regionName}',${m.id},'${m.color}');">编辑</a>
 								<a style="color:#16c2ea;" href="javascript:void(0);" onclick="toPatrolMap(${m.id})">配置巡更范围</a>
-								<a style="color:#16c2ea;" href="javascript:void(0);" onclick="toPatroSignPortlMap(${m.id})">配置巡更点位</a>
+								<a style="color:#16c2ea;" href="<%=path %>/patrolReg_delete?ids=${m.id}">删除</a>
+								<%--<a style="color:#16c2ea;" href="javascript:void(0);" onclick="toPatroSignPortlMap(${m.id})">配置巡更点位</a>--%>
 							</td>
 					        </tr> 
 				        </c:forEach>
@@ -173,9 +174,14 @@
 			});
 		var the_host = "<%=path%>/";
 		function upHtm(regionName,regionId,color) {
-
-			window.location.href = "<%=basePath%>toSelectColorPageUpdate?regionId=" + regionId
-				+ "&regionName=" + encodeURIComponent(regionName) + "&color=" + encodeURIComponent(color);
+		    layer.open({
+				type:2,
+				title:'编辑',
+				area:['470px','290px'],
+				content:"<%=basePath%>toSelectColorPageUpdate?regionId=" + regionId+ "&regionName=" + encodeURIComponent(regionName) + "&color=" + encodeURIComponent(color)
+            })
+            <%--window.location.href = "<%=basePath%>toSelectColorPageUpdate?regionId=" + regionId--%>
+				<%--+ "&regionName=" + encodeURIComponent(regionName) + "&color=" + encodeURIComponent(color);--%>
 
 		    //TODO 下面是之前在当前页面显示的弹框（废弃）
 			<%--$(".layui-layer-title").text("修改信息");--%>
@@ -196,8 +202,13 @@
 		 * 添加颜色
 		 */
 		function addHtm() {
-
-		    window.location.href = '<%=basePath%>toSelectColorPage';
+            layer.open({
+                type:2,
+                title:'编辑',
+                area:['470px','290px'],
+                content:"<%=basePath%>toSelectColorPage"
+            })
+		    <%--window.location.href = '<%=basePath%>toSelectColorPage';--%>
             //TODO 下面是之前在当前页面显示的弹框（废弃）
 			<%--$(".layui-layer-title").text("增加信息");--%>
 			<%--layer.open({--%>

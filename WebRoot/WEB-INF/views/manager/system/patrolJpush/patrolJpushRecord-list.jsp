@@ -10,7 +10,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>巡更签到记录-列表</title>
+<title>巡更异常记录-列表</title>
 <link href="<%=path %>/page/css/style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<%=path %>/page/js/jquery.js"></script>
 <script type="text/javascript" src="<%=path %>/page/js/common.js"></script>
@@ -216,7 +216,7 @@
        layer.open({
            type: 2,
            title:'查看位置',
-           area: ['50%', '50%'], //宽高
+           area: ['60%', '70%'], //宽高
            content: 'to_cyMap?lat='+lat.split(',')[0]+'&lon='+lat.split(',')[1]
        });
    }

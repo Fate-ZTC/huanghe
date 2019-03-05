@@ -100,7 +100,7 @@ String date ="今天是："+ df.format(new Date());
 				<div class="tools">
 			    	<ul class="toolbar">
 				    	<sec:authorize ifAnyGranted="patUserReg_delete">
-				        <li onclick="bulkDelete('<%=path %>/patUserReg_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>删除</li>
+				        <li onclick="bulkDelete('<%=path %>/patUserReg_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
 				        </sec:authorize>
 				    	<sec:authorize ifAnyGranted="patrolUserRegionList">
 				        <%--<li onclick="ExOut('<%=path %>/paUserRegExOut','0');"><span><img src="<%=path %>/page/images/t07.png" /></span>导出</li>--%>
@@ -122,7 +122,7 @@ String date ="今天是："+ df.format(new Date());
 			            		<%--<th>是否异常</th>
 			            		<th>异常原因</th>--%>
 								<th>异常次数</th>
-<!-- 			            		<th>操作</th> -->
+			            		<th>操作</th>
 					        </tr>
 				        </thead>
 		            	<c:forEach items="${patrolUserRegions.list}" var="m">
@@ -145,9 +145,9 @@ String date ="今天是："+ df.format(new Date());
 <!-- 					        <td>删除</td> -->
 								<td>
 									<a  style="color:#16c2ea;" href="javascript:void(0);" onclick="upHtm(${m.id},'${m.jobNum}','${m.formatStartTime}','${m.formatEndTime}');">${m.abnormalCount}</a>
-
-
-
+								</td>
+								<td>
+									<a   href="<%=path %>/patUserReg_delete?ids=${m.id}">删除</a>
 								</td>
 
 					        </tr> 
@@ -182,10 +182,13 @@ String date ="今天是："+ df.format(new Date());
 		});
 	var the_host = "<%=path%>/";
 	function upHtm(id,jobNum,formatStartTime,formatEndTime) {
-
-
-		window.location.href = "<%=basePath%>toSelectPatrolExceptionInfosByid?id=" + id+"&jobNum=" + jobNum +"&formatStartTime="+formatStartTime+"&formatEndTime="+formatEndTime;
-
+        layer.open({
+            type:2,
+            title:'异常详情',
+            area: ['772px', '470px'],
+            content:"<%=basePath%>toSelectPatrolExceptionInfosByid?id=" + id+"&jobNum=" + jobNum +"&formatStartTime="+formatStartTime+"&formatEndTime="+formatEndTime
+   	 	})
+		<%--window.location.href = "<%=basePath%>toSelectPatrolExceptionInfosByid?id=" + id+"&jobNum=" + jobNum +"&formatStartTime="+formatStartTime+"&formatEndTime="+formatEndTime;--%>
 	}
 
 

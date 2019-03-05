@@ -135,7 +135,7 @@ $(function(){
 	        <li><cite></cite><a href="<%=path %>/patrolUserRegionList" target="rightFrame">巡更记录管理</a><i></i></li>
 	    	</sec:authorize>
 			<sec:authorize ifAnyGranted="patrolSignRecord_list,patrolSignRecord_delete,patrolSignRecord_excelOut">
-				<li><cite></cite><a href="<%=path %>/patrolSignRecord_list" target="rightFrame">巡更签到记录</a><i></i></li>
+				<li><cite></cite><a href="<%=path %>/patrolSignRecord_list" target="rightFrame">巡更异常记录</a><i></i></li>
 			</sec:authorize>
             <sec:authorize ifAnyGranted="patrolPause_list,patrolPause_delete,patrolSPause_excelOut">
 				<li><cite></cite><a href="<%=path %>/patrolPause_list" target="rightFrame">暂停巡更记录</a><i></i></li>
@@ -143,9 +143,9 @@ $(function(){
 	    	<sec:authorize ifAnyGranted="patrolRegList">
 	        <li><cite></cite><a href="<%=path %>/patrolRegList" target="rightFrame">巡更区域管理</a><i></i></li>
 	    	</sec:authorize>
-	    	<sec:authorize ifAnyGranted="patrolEmergency_list,patrolEmergency_delete">
+	    	<%--<sec:authorize ifAnyGranted="patrolEmergency_list,patrolEmergency_delete">
 	        <li><cite></cite><a href="<%=path %>/patrolEmergency_list" target="rightFrame">突发事件管理</a><i></i></li>
-	    	</sec:authorize>
+	    	</sec:authorize>--%>
 	    	<sec:authorize ifAnyGranted="patrolUser_list,patrolUser_edit,patrolUser_add,patrolUser_delete">
 	        <li><cite></cite><a href="<%=path %>/patrolUser_list" target="rightFrame">巡更人员管理</a><i></i></li>
 	    	</sec:authorize>
@@ -158,7 +158,7 @@ $(function(){
             <sec:authorize ifAnyGranted="patrolStatistic_list,patrolStatistic_excelOut">
                 <li><cite></cite><a href="<%=path %>/patrolStatistic_list" target="rightFrame">巡更统计</a><i></i></li>
             </sec:authorize>
-				<li><cite></cite><a href="<%=path %>/patrolBeaconInfo_list" target="rightFrame">蓝牙标签管理</a><i></i></li>
+				<%--<li><cite></cite><a href="<%=path %>/patrolBeaconInfo_list" target="rightFrame">蓝牙标签管理</a><i></i></li>--%>
 	        </ul>
 	    </dd>
 <!-- 	    月租管理END -->
@@ -186,7 +186,7 @@ $(function(){
 
 
 
-	    <sec:authorize ifAnyGranted="monthlyHandleManage,monthlyRenewManage">
+	   <%-- <sec:authorize ifAnyGranted="monthlyHandleManage,monthlyRenewManage">
 	    <!-- 消防巡查管理START -->
 	    <dd>
 	    <div class="title">
@@ -202,9 +202,9 @@ $(function(){
 	    	<sec:authorize ifAnyGranted="firePatrolConfig_list,firePatrolConfig_edit">
 	        <li><cite></cite><a href="<%=path %>/firePatrolConfig_list" target="rightFrame">巡查参数配置</a><i></i></li>
 	    	</sec:authorize>
-	    	<%--<sec:authorize ifAnyGranted="firePatrolExc_list,firePatrolExc_add,firePatrolExc_edit,firePatrolExc_delete">--%>
-	        <%--<li><cite></cite><a href="<%=path %>/firePatrolExc_list" target="rightFrame">异常描述</a><i></i></li>--%>
-	    	<%--</sec:authorize>--%>
+	    	&lt;%&ndash;<sec:authorize ifAnyGranted="firePatrolExc_list,firePatrolExc_add,firePatrolExc_edit,firePatrolExc_delete">&ndash;%&gt;
+	        &lt;%&ndash;<li><cite></cite><a href="<%=path %>/firePatrolExc_list" target="rightFrame">异常描述</a><i></i></li>&ndash;%&gt;
+	    	&lt;%&ndash;</sec:authorize>&ndash;%&gt;
 			<sec:authorize ifAnyGranted="firePatrolExc_list,firePatrolExc_add,firePatrolExc_edit,firePatrolExc_delete">
 				<li><cite></cite><a href="<%=path %>/firePatrolExc_list" target="rightFrame">术语管理</a><i></i></li>
 			</sec:authorize>
@@ -212,7 +212,7 @@ $(function(){
 	        </ul>    
 	    </dd>
 	    <!-- 消防巡查管理END -->
-	    </sec:authorize>
+	    </sec:authorize>--%>
     </dl>
     
 </body>

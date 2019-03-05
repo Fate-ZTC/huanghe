@@ -11,6 +11,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="<%=basePath%>page/js/jquery.js"></script>
+    <script type="text/javascript" src="<%=path %>/page/layer/layer.js"></script>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
@@ -23,6 +25,9 @@
             margin: 0;
             padding: 0;
         }
+		input{
+			outline:none;
+		}
         .main{
             padding: 20px;
         }
@@ -48,6 +53,7 @@
         .main .header .check-all{
             float: right;
             margin-top: 4px;
+            margin-right: 10px;
         }
         .main .header .check-all input{
             vertical-align: middle;
@@ -82,6 +88,9 @@
             text-align: center;
             line-height: 1.2em;
         }
+        .user-info-icon{float: left;width: 13px;height: 14px;margin: 2px 16px 0 0;}
+        .checkbox-box{width: 17px;height: 17px;background-image: url(page/images/checkbox.png);background-size: 100%;-webkit-appearance:none;}
+        .checkbox-box:checked{background-image: url(page/images/checkbox-checked.png);}
     </style>
     <script type="text/javascript" src="<%=path %>/page/js/jquery.js"></script>
 </head>
@@ -100,8 +109,8 @@
         <button onclick="submit()">提交</button>
         <span class="tip">提示:被选中的人员可自动接收救援上报的推送消息</span>
         <span class="check-all">
-        <input type="checkbox" id="checkAll" onchange="checkAll()"/>全选
-      </span>
+            全选<input type="checkbox" id="checkAll" class="checkbox-box" onchange="checkAll()"/>
+        </span>
     </div>
     <ul class="person-list" id="person-list">
 
@@ -122,11 +131,12 @@
                     htmlStr +=
                         '<li class="item">'+
                             '<div class="user-info">'+
+                                '<img src="page/images/renyuan.png" class="user-info-icon" alt="">'+
                                 '<span class="name">'+item.username+'</span>'+
                                 '<span class="id">'+item.jobNum+'</span>'+
                             '</div>'+
                             '<div class="checkbox">'+
-                                '<input type="checkbox" value="'+item.jobNum+'" '+(item.isJpush?"checked":"")+' onchange="handlerChange('+index+')"/>'+
+                                '<input type="checkbox"  class="checkbox-box" value="'+item.jobNum+'" '+(item.isJpush?"checked":"")+' onchange="handlerChange('+index+')"/>'+
                             '</div>'+
                         '</li>'
                 })
@@ -157,12 +167,15 @@
     }
     function submit() {
         var data = personList.filter(item=>item.isJpush === 1)
-        console.log(data)
+        var index =  layer.load(1, {
+            shade: [0.8,'#000'] //0.1透明度的白色背景
+        });
         $.ajax({
             url:'updateIsJpush?ids='+data.map(item=>item.id).join(','),
             type:'post',
             success:function () {
-                window.location.reload()
+				layer.close(index);
+                // window.location.reload()
             }
         })
     }

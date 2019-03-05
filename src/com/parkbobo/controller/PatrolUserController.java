@@ -93,6 +93,7 @@ public class PatrolUserController {
 			b=jobNum.getBytes("ISO_8859-1");
 		}
 		String jobNum1=new String(b,"UTF-8");
+		b= new byte[0];
 		if(password!=null){
 			b=password.getBytes("ISO_8859-1");
 		}
@@ -102,6 +103,7 @@ public class PatrolUserController {
 			response.setCharacterEncoding("UTF-8");
 			out = response.getWriter();
 			PatrolUser patrolUser = this.patrolUserService.userLogin(jobNum1, password1);
+			//PatrolUser patrolUser = this.patrolUserService.userLogin(jobNum, password);
 			if(patrolUser != null){
 				if(patrolUser.getIsDel()==1){
 					out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"账户已删除\"}");
@@ -138,10 +140,12 @@ public class PatrolUserController {
             b=jobNum.getBytes("ISO_8859-1");
         }
         String jobNum1=new String(b,"UTF-8");
+		b= new byte[0];
         if(username!=null){
             b=username.getBytes("ISO_8859-1");
         }
         String username1=new String(b,"UTF-8");
+		//String  username1 = username;
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
@@ -206,6 +210,7 @@ public class PatrolUserController {
 			Date date = new Date();
 			PatrolSignRecord patrolSignRecord=new PatrolSignRecord();
 			List<PatrolUserRegion> list = this.patrolUserRegionService.getsByJobNum(jobNum1);
+			//List<PatrolUserRegion> list = this.patrolUserRegionService.getsByJobNum(jobNum);
 			//看是否有未结束的巡逻
 			if(list!=null&&list.size()>0) {
 				for(int i = 0; i < list.size();i++) {
@@ -228,6 +233,13 @@ public class PatrolUserController {
                     patrolRegion.setId(patrolUserRegion.getRegionId());
                     patrolSignPointInfo.setPatrolRegion(patrolRegion);
                     if(patrolSignPointInfoService.get(patrolUserRegion.getRegionId())==null){
+						PatrolRegion patrolRegion1 = patrolRegionService.getById(patrolUserRegion.getRegionId());
+						patrolSignPointInfo.setPointName(patrolRegion1.getRegionName());
+						String lan = patrolRegion1.getGeometryCentroid();
+						lan = lan.replaceAll("POLYGON","").replaceAll("（","").replaceAll("）","");
+						String[] str = lan.split(",");
+						patrolSignPointInfo.setLat(Double.parseDouble(str[1]));
+						patrolSignPointInfo.setLng(Double.parseDouble(str[0]));
                         patrolSignPointInfoService.add(patrolSignPointInfo);
                         String sql="update patrol_sign_point_info set point_id = "+patrolUserRegion.getRegionId()+"where id = "+patrolUserRegion.getRegionId();
                         patrolSignPointInfoService.updateBySql(sql);
@@ -416,7 +428,9 @@ public class PatrolUserController {
 
 		PatrolConfig patrolConfig = this.patrolConfigService.getById(configId);
 		//查询当前巡查人员
-		List<PatrolUserRegion> list = this.patrolUserRegionService.getByHQL("from PatrolUserRegion where jobNum ='"+jobNum1+"' and endTime is null order by startTime desc limit 1");
+		//List<PatrolUserRegion> list = this.patrolUserRegionService.getByHQL("from PatrolUserRegion where jobNum ='"+jobNum1+"' and endTime is null order by startTime desc limit 1");
+		List<PatrolUserRegion> list = this.patrolUserRegionService.getByHQL("from PatrolUserRegion where jobNum ='"+jobNum+"' and endTime is null order by startTime desc limit 1");
+		System.out.println("from PatrolUserRegion where jobNum ='"+jobNum+"' and endTime is null order by startTime desc limit 1");
 		if(list != null && list.size() > 0) {
 			patrolUserRegion = list.get(0);
 		}else {
@@ -472,6 +486,7 @@ public class PatrolUserController {
 		patrolLocationInfo.setLon(lon);//经度
 		patrolLocationInfo.setLat(lat);//纬度
 		patrolLocationInfo.setJobNum(jobNum1);
+		patrolLocationInfo.setStatus(1);
 		patrolLocationInfo.setUsregId(patrolUserRegion.getId());
 		patrolLocationInfo.setTimestamp(date);
 		patrolLocationInfo.setUsername(patrolUserRegion.getUsername());
@@ -1190,6 +1205,7 @@ public class PatrolUserController {
 		try {
 			out = response.getWriter();
 			PatrolUserRegion patrolUserRegion = this.patrolUserRegionService.getCountTime(jobNum1);
+			//PatrolUserRegion patrolUserRegion = this.patrolUserRegionService.getCountTime(jobNum);
 			long countTime = 0;
 			if(patrolUserRegion!=null) {
 				countTime = new Date().getTime() - patrolUserRegion.getStartTime().getTime();
@@ -1224,7 +1240,7 @@ public class PatrolUserController {
 		PrintWriter out = response.getWriter();
 		if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate) && StringUtils.isNotBlank(jobNum1)) {
 			String sql = "SELECT job_num, to_char(start_time, 'yyyy-MM-dd') FROM patrol_user_region WHERE "+
-					"job_num = '"+jobNum1+"' AND start_time >= '"+startDate+"' AND end_time < '"+endDate+"'"+
+					"job_num = '"+jobNum1+"' AND to_char(start_time, 'yyyy-MM-dd') >= '"+startDate+"' AND to_char(end_time, 'yyyy-MM-dd') <= '"+endDate+"'"+
 					"GROUP BY job_num,to_char(start_time,'yyyy-MM-dd')";
 			List<Object[]> patrolUserRegions = patrolUserRegionService.getBySql(sql);
 			StringBuilder sb =new StringBuilder();
@@ -1317,7 +1333,7 @@ public class PatrolUserController {
             //到时候需要获取一下管理端的账号，目前传的是all，广播
             String hql="from PatrolUser where 1=1";
             hql+="and isDel = 0";
-            hql+="and isJpush = 0";
+            hql+="and isJpush = 1";
             List<PatrolUser> list= patrolUserService.getByHQL(hql);
             String ids="";
             if(list.size()>0&list!=null){

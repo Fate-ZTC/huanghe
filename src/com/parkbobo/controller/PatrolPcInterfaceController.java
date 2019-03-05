@@ -151,10 +151,12 @@ public class PatrolPcInterfaceController {
             b=cause.getBytes("ISO_8859-1");
         }
         String cause1=new String(b,"UTF-8");
+        b= new byte[0];
         if(usercode!=null){
             b=usercode.getBytes("ISO_8859-1");
         }
         String usercode1=new String(b,"UTF-8");
+        b= new byte[0];
         if(username!=null){
             b=username.getBytes("ISO_8859-1");
         }
@@ -167,8 +169,11 @@ public class PatrolPcInterfaceController {
             if(checkPause == null){
                 PatrolPause patrolPause = new PatrolPause();
                 patrolPause.setCause(cause1);
+                //patrolPause.setCause(cause);
                 patrolPause.setPauseStart(new Date());
+                //patrolPause.setUsercode(usercode);
                 patrolPause.setUsercode(usercode1);
+                //patrolPause.setUsername(username);
                 patrolPause.setUsername(username1);
 
                 patrolPauseService.add(patrolPause);

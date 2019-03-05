@@ -11,6 +11,7 @@
     <meta charset="UTF-8">
     <title>巡更信息配置</title>
     <script src="<%=basePath%>page/js/jquery.js"></script>
+    <script type="text/javascript" src="<%=path %>/page/layer/layer.js"></script>
     <style>
         html,body,ul,li{margin: 0;padding: 0;}
         html,body{width: 100%;height: 100%;background: #f7f7f7;}
@@ -114,7 +115,7 @@
 <body>
 <div class="configuration-box">
 
-    <form action="<%=path %>/patrolConfig_edit" method="post" id="form">
+    <form action="<%=path %>/patrolConfig_edit" method="post" id="form" onsubmit="handleSubmit()">
     <div class="configuration-item">
         <div class="profile-item-box">
             <div class="profile-item">
@@ -157,15 +158,15 @@
                 </div>
                 <span class="curr" target="location-label">定位巡更</span>
             </div>
-            <div class="tab-item">
+            <%--<div class="tab-item">
                 <div class="checkbox">
                     <input type="checkbox" id="signIn" name="isLocation" <c:if test="${patrolConfig.isLocation==1}">checked="checked"</c:if> value=1 />
-                    <%--<input type="checkbox" id="signIn" name="signIn" />--%>
+                    &lt;%&ndash;<input type="checkbox" id="signIn" name="signIn" />&ndash;%&gt;
                     <label for="signIn" onclick="selectAll(this,'signin-label')"></label>
                 </div>
                 </label>
                 <span target="signin-label">签到巡更</span>
-            </div>
+            </div>--%>
         </div>
 
                 <input type="hidden" name="id" value="${patrolConfig.id }"/>
@@ -384,13 +385,20 @@
     document.querySelector('#location').checked = false
     document.querySelector('#signIn').checked = false
     })
+
+    function handleSubmit(){
+        layer.load(1, {
+            shade: [0.8,'#000'] //0.1透明度的白色背景
+        });
+        return true
+    }
     //提交
     document.querySelector('.btn-commit').addEventListener('click',()=>{
         document.querySelectorAll('.tab-content input[type=checkbox]').forEach(element=>{
-        if (element.checked) {
-        selected.push(element)
-    }
-    })
+            if (element.checked) {
+                selected.push(element)
+            }
+        })
     })
     //全选
     function selectAll(_this,params) {

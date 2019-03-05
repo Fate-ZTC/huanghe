@@ -580,10 +580,12 @@ public class PatrolSignInterfaceController {
 			b=cause.getBytes("ISO_8859-1");
 		}
 		String cause1=new String(b,"UTF-8");
+		b= new byte[0];
 		if(usercode!=null){
 			b=usercode.getBytes("ISO_8859-1");
 		}
 		String usercode1=new String(b,"UTF-8");
+		b= new byte[0];
 		if(username!=null){
 			b=username.getBytes("ISO_8859-1");
 		}
@@ -596,9 +598,12 @@ public class PatrolSignInterfaceController {
 			if(checkPause == null){
 				PatrolPause patrolPause = new PatrolPause();
 				patrolPause.setCause(cause1);
+				//patrolPause.setCause(cause);
 				patrolPause.setPauseStart(new Date());
 				patrolPause.setUsercode(usercode1);
 				patrolPause.setUsername(username1);
+				//patrolPause.setUsercode(usercode);
+				//patrolPause.setUsername(username);
 
 				patrolPauseService.add(patrolPause);
 
@@ -1070,9 +1075,9 @@ public class PatrolSignInterfaceController {
 				for(PatrolExceptionInfo patrolExceptionInfo : patrolExceptionInfos){
 					tmpJson1.append("{");
 					SimpleDateFormat sdf1=new SimpleDateFormat("HH:mm");
-					String str=sdf1.format(patrolExceptionInfos.get(0).getCreateTime());
+					String str=sdf1.format(patrolExceptionInfo.getCreateTime());
 					tmpJson1.append("\"patrolExceptionInfoTime\":\"" + str + "\",");
-					tmpJson1.append("\"patrolExceptionInfoName\":\"" + patrolExceptionInfos.get(0).getExceptionName() + "\"");
+					tmpJson1.append("\"patrolExceptionInfoName\":\"" + patrolExceptionInfo.getExceptionName() + "\"");
 					tmpJson1.append("},");
 				}
 				tmpJson.append("\"patrolExceptionInfoList\":[" + tmpJson1.deleteCharAt(tmpJson1.length() - 1) + "],");

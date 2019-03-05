@@ -23,4 +23,12 @@ public class PatrolEquipmentManufacturerService {
     public List<PatrolEquipmentManufacturer> getAll(){
         return  patrolEquipmentManufacturerDao.getAll();
     }
+
+    public void delete(Integer manufacturerId) {
+        patrolEquipmentManufacturerDao.delete(manufacturerId);
+    }
+
+    public List<PatrolEquipmentManufacturer> getByHql(String hql) {
+        return patrolEquipmentManufacturerDao.getByHQL(hql);
+    }
 }

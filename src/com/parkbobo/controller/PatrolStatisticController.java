@@ -11,6 +11,8 @@ import com.system.utils.StringUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -141,10 +143,13 @@ public class PatrolStatisticController {
                     map.put("noSignCount",statisticVO.getExpectedCount() - effectiveSign);
                     map.put("startTime",statisticVO.getStartTime());
                     map.put("endTime",statisticVO.getEndTime());
-                    String hql1="from PatrolExceptionInfo where usregId= "+statisticVO.getUsregId();
+                    //String hql1="from PatrolExceptionInfo where usregId= "+statisticVO.getUsregId();
+                    String hql1="from PatrolExceptionInfo where 1=1";
                     hql1 += " and jobNum= '"+statisticVO.getJobNum()+"'";
-                    hql1 += " and createTime > '"+statisticVO.getStartTime()+"'";
-                    hql1 += " and createTime < '"+statisticVO.getEndTime()+"'";
+                    /*hql1 += " and createTime > '"+statisticVO.getStartTime()+"'";
+                    if(statisticVO.getEndTime()!=null){
+                        hql1 += " and createTime < '"+statisticVO.getEndTime()+"'";
+                    }*/
                     List<PatrolExceptionInfo> patrolExceptionInfos=patrolExceptionInfoService.getByHQL(hql1);
                     map.put("abnormalCount",patrolExceptionInfos.size());
                     mapList.add(map);
@@ -189,9 +194,11 @@ public class PatrolStatisticController {
         }
         String jobNum1=new String(b,"UTF-8");
 
-        String hql1="from PatrolExceptionInfo where usregId= "+usregId;
+        //String hql1="from PatrolExceptionInfo where usregId= "+usregId;
+        String hql1="from PatrolExceptionInfo where 1=1 ";
         if(StringUtils.isNotBlank(jobNum)){
             hql1 += " and jobNum= '"+jobNum1+"'";
+            //hql1 += " and jobNum= '"+jobNum+"'";
         }
         if(StringUtils.isNotBlank(startTime)){
             hql1 += " and createTime > '"+startTime+"'";
@@ -199,6 +206,7 @@ public class PatrolStatisticController {
         if(StringUtils.isNotBlank(endTime)){
             hql1 += " and createTime < '"+endTime+"'";
         }
+        hql1 += " order by createTime desc";
         List<PatrolExceptionInfo> patrolExceptionInfos=patrolExceptionInfoService.getByHQL(hql1);
         mv.addObject("patrolExceptionInfos",patrolExceptionInfos);
         mv.setViewName("manager/system/patrolStatistic/patrolExceptionInfos");
@@ -326,8 +334,16 @@ public class PatrolStatisticController {
         // 第四步，创建单元格，并设置值表头 设置表头居中
         HSSFCellStyle style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式
+        // 设置表格默认列宽度为20个字节
+
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setAlignment(HorizontalAlignment.CENTER);
         HSSFCell cell = null;   //设置单元格的数据类型
         for (int i = 0; i < headers.length; i++) {
+            sheet.setColumnWidth(i,10000);
             cell = row.createCell(i);
             cell.setCellValue(headers[i]);
             cell.setCellStyle(style);
@@ -335,7 +351,7 @@ public class PatrolStatisticController {
         // 第五步，写入实体数据 实际应用中这些数据从数据库得到，
         for(int i=0;i<dataList.size();i++){
             if (i<5) {
-                sheet.autoSizeColumn(i, true);
+                //sheet.autoSizeColumn(i, true);
             }
             Object[] obj = dataList.get(i);//遍历每个对象
             row = sheet.createRow(i+1);//创建所需的行数（从第二行开始写数据）

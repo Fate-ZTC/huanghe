@@ -16,6 +16,8 @@ import com.parkbobo.model.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
@@ -149,6 +152,7 @@ public class PatrolBackstageController {
 		String hql1="from PatrolExceptionInfo where usregId= "+id;
 		if(StringUtils.isNotBlank(jobNum)){
 			hql1 += " and jobNum= '"+jobNum1+"'";
+			//hql1 += " and jobNum= '"+jobNum+"'";
 		}
 
 		if(StringUtils.isNotBlank(formatStartTime)){
@@ -256,8 +260,15 @@ public class PatrolBackstageController {
 			// 第四步，创建单元格，并设置值表头 设置表头居中
 			HSSFCellStyle style = wb.createCellStyle();
 			style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式
+
+			style.setBorderBottom(BorderStyle.THIN);
+			style.setBorderLeft(BorderStyle.THIN);
+			style.setBorderRight(BorderStyle.THIN);
+			style.setBorderTop(BorderStyle.THIN);
+			style.setAlignment(HorizontalAlignment.CENTER);
 			HSSFCell cell = null;   //设置单元格的数据类型
 			for (int i = 0; i < headers.length; i++) {
+				sheet.setColumnWidth(i,5000);
 				cell = row.createCell(i);
 				cell.setCellValue(headers[i]);
 				cell.setCellStyle(style);
@@ -265,7 +276,7 @@ public class PatrolBackstageController {
 			// 第五步，写入实体数据 实际应用中这些数据从数据库得到，
 			for(int i=0;i<dataList.size();i++){
 				if (i<5) {
-					sheet.autoSizeColumn(i, true);
+					//sheet.autoSizeColumn(i, true);
 				}
 				Object[] obj = dataList.get(i);//遍历每个对象
 				row = sheet.createRow(i+1);//创建所需的行数（从第二行开始写数据）
@@ -380,6 +391,43 @@ public class PatrolBackstageController {
 		mv.setViewName("redirect:/firePatrolMap?id= "+maxid);
 		return mv;
 	}
+
+	/**
+	 * 安防巡更区域增加
+	 * @param regionName 区域名
+	 */
+	@RequestMapping("patrolRegAddAjax")
+	@ResponseBody
+	public Map<String, Object> patrolRegAddAjax(String regionName,String color,Integer campusNum) {
+		Map<String, Object> result = new HashMap<>();
+		PatrolRegion patrolRegion = new PatrolRegion();
+		Date date = new Date();
+		patrolRegion.setCreatetime(date);
+		patrolRegion.setIsDel((short)0);
+		patrolRegion.setLastUpdateTime(date);
+		patrolRegion.setRegionName(regionName);
+		patrolRegion.setCampusNum(campusNum);
+
+
+
+		//进行判断color
+		if("#".equals(color.substring(0,1))) {
+			patrolRegion.setColor(color.trim());
+		}else {
+			patrolRegion.setColor("#"+color.trim());
+		}
+
+		patrolRegionService.addRecord(patrolRegion);
+//		PatrolSignPointInfo patrolSignPointInfo =new PatrolSignPointInfo();
+//		patrolSignPointInfo.setPointName(patrolRegion.getRegionName());
+//		patrolSignPointInfo.setPatrolRegion(patrolRegion);
+//		patrolSignPointInfoService.add(patrolSignPointInfo);
+		Integer maxid=patrolRegionService.seleceMaxid();
+		result.put("success", true);
+		result.put("msg", "提交成功");
+		result.put("id", maxid);
+		return result;
+	}
 	/**
 	 * 安防巡更区域修改
 	 * @param regionId 区域id
@@ -404,6 +452,33 @@ public class PatrolBackstageController {
 		//新增跳转至配置巡更范围
 		mv.setViewName("redirect:/firePatrolMap?id= "+regionId);
 		return mv;
+	}
+
+	/**
+	 * 安防巡更区域修改
+	 * @param regionId 区域id
+	 * @param regionName 区域名
+	 */
+	@RequestMapping("patrolRegUpdateAjax")
+	@ResponseBody
+	public Map<String, Object> patrolRegUpdateAjax(Integer regionId,String regionName,String color,HttpServletResponse response) {
+		response.setCharacterEncoding("UTF-8");
+		Map<String, Object> result = new HashMap<>();
+		result.put("success", true);
+		PatrolRegion patrolRegion = patrolRegionService.getById(regionId);
+		patrolRegion.setRegionName(regionName);
+		if(color != null) {
+			if("#".equals(color.substring(0,1))) {
+				patrolRegion.setColor(color.trim());
+			}else {
+				patrolRegion.setColor("#"+color.trim());
+			}
+		}
+		patrolRegion.setLastUpdateTime(new Date());
+		patrolRegionService.update(patrolRegion);
+		result.put("msg", "保存成功");
+		result.put("id", regionId);
+		return result;
 	}
 
 
@@ -711,8 +786,16 @@ public class PatrolBackstageController {
         // 第四步，创建单元格，并设置值表头 设置表头居中
         HSSFCellStyle style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式
+		// 设置表格默认列宽度为20个字节
+
+		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderLeft(BorderStyle.THIN);
+		style.setBorderRight(BorderStyle.THIN);
+		style.setBorderTop(BorderStyle.THIN);
+		style.setAlignment(HorizontalAlignment.CENTER);
         HSSFCell cell = null;   //设置单元格的数据类型
         for (int i = 0; i < headers.length; i++) {
+        	sheet.setColumnWidth(i,10000);
             cell = row.createCell(i);
             cell.setCellValue(headers[i]);
             cell.setCellStyle(style);
@@ -720,7 +803,7 @@ public class PatrolBackstageController {
         // 第五步，写入实体数据 实际应用中这些数据从数据库得到，
         for(int i=0;i<dataList.size();i++){
             if (i<5) {
-                sheet.autoSizeColumn(i, true);
+                //sheet.autoSizeColumn(i, true);
             }
             Object[] obj = dataList.get(i);//遍历每个对象
             row = sheet.createRow(i+1);//创建所需的行数（从第二行开始写数据）

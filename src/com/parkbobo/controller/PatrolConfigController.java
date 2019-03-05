@@ -92,6 +92,17 @@ public class PatrolConfigController {
             ids+=p.getManufacturerId();
             ids+=",";
         }
+        List<PatrolEquipmentManufacturer> patrolEquipmentManufacturerList;
+        if(ids==""){
+			patrolEquipmentManufacturerList = patrolEquipmentManufacturerService.getAll();
+		}else{
+        	ids = ids.substring(0,ids.length()-1);
+        	String hql = "from PatrolEquipmentManufacturer where manufacturerId not in (" + ids + ")";
+        	patrolEquipmentManufacturerList = patrolEquipmentManufacturerService.getByHql(hql);
+		}
+		for (PatrolEquipmentManufacturer patrolEquipmentManufacturer:patrolEquipmentManufacturerList){
+        	patrolEquipmentManufacturerService.delete(patrolEquipmentManufacturer.getManufacturerId());
+		}
 		patrolConfig.setManufacturerId(ids);
 		if(patrolConfigTick.getIsLazyTime()==null){
 			patrolConfig.setLazyTime(null);

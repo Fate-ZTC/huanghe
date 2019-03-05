@@ -10,7 +10,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>巡更签到记录-列表</title>
+<title>巡更异常记录-列表</title>
 <link href="<%=path %>/page/css/style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<%=path %>/page/js/jquery.js"></script>
 <script type="text/javascript" src="<%=path %>/page/js/common.js"></script>
@@ -57,7 +57,7 @@
     <span>位置：</span>
     <ul class="placeul">
     <li><a href="#">安防巡更</a></li>
-    <li><a href="<%=path %>/patrolSignRecord_list">巡更签到记录</a></li>
+    <li><a href="<%=path %>/patrolSignRecord_list">巡更异常记录</a></li>
     </ul>
     </div>
     
@@ -105,7 +105,7 @@
         <%--<li onclick="forWardUrl('<%=path %>/firePatrolInfo_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>--%>
         <%--</sec:authorize>--%>
         <sec:authorize ifAnyGranted="patrolSignRecord_excelOut">
-        <li onclick="forWardUrlParam('<%=path %>/patrolSignRecord_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
+        <li onclick="forWardUrlParam('<%=path %>/patrolSignRecord_excelOut','0');"><span><img src="<%=path %>/page/images/t07.png" /></span>导出</li>
         </sec:authorize>
         </ul>
     
@@ -118,7 +118,7 @@
         <th width="40px"><input type="checkbox" name="checkAll" value="checkbox" id="checkAll" class="checkAll"/></th>
         <th width="100px">姓名</th>
         <th width="100px">工号</th>
-        <th width="100px">巡更签到时间</th>
+        <th width="100px">巡更时间</th>
         <th width="100px">巡更结果</th>
         <th width="50px">操作</th>
         </tr>
