@@ -141,7 +141,17 @@
         LMap.APIURL = "<%=LMap_APIURL%>";
         LMap.MAPSERVERURL = "<%=LMap_MAPSERVERURL%>";
 
-        var map = new LMap.Map2D("map", 2000);
+        var patrol1 = '';
+        <c:if test="${not empty patrolRegion}">
+        patrol1 = '${patrolRegion}';
+        </c:if>
+        var u = eval('('+patrol1+')');
+        var campusNum = u.campusNum;
+        var zoreid = 1170;
+        if(campusNum == 1){
+            zoreid = 1172;
+        }
+        var map = new LMap.Map2D("map", zoreid);
         /**
          * 放大地图比例
          */

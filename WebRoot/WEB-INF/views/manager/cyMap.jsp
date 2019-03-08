@@ -53,7 +53,8 @@
   var query = parseUrlQuery()
   LMap.APIURL = "<%=LMap_APIURL%>";
   LMap.MAPSERVERURL = "<%=LMap_MAPSERVERURL%>";
-  var map = new LMap.Map2D("map", 2000);
+  var zoreid = parseInt(query.zoreid);
+  var map = new LMap.Map2D("map",zoreid);
   /**
     * 放大地图比例
     */

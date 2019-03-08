@@ -29,7 +29,7 @@ $(function(){
 	<div class="place">
     <span>位置：</span>
     <ul class="placeul">
-    <li><a href="#">安防巡耿</a></li>
+    <li><a href="#">安防巡更</a></li>
     <li><a href="<%=path %>/patrolUser_list">巡更人员管理</a></li>
     <li><a href="#">添加</a></li>
     </ul>

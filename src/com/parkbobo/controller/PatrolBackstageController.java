@@ -709,7 +709,7 @@ public class PatrolBackstageController {
 	 * @return
 	 */
 	@RequestMapping("to_cyMap")
-	public ModelAndView toCyMap(String lat,String lon,HttpSession session) {
+	public ModelAndView toCyMap(String lat,String lon,String zoreid,HttpSession session) {
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("manager/cyMap");
 		return mv;
