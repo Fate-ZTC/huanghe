@@ -276,6 +276,7 @@ public class PatrolConfigService {
 		if(patrolUserRegion != null && frequencyTime != null) {
 			if(patrolUserRegion.getExceptionPushTime() == null) {
 				//第一次进行异常推送
+				System.out.println("xichang time is null");
 				return true;
 			}else {
 				//判断当前时间是否在指定到达时间内，在则不进行推送，不在则进行推送
@@ -291,6 +292,7 @@ public class PatrolConfigService {
 				long pushTimeInterval = new Date().getTime() - patrolUserRegion.getExceptionPushTime().getTime();
 				if (pushTimeInterval > frequencyTime * ONE_MINUTE_MSEC) {
 					//这里推送时间超过频率时间,能进行推送
+					System.out.println("now time ="+new Date().getTime()+",xichang time="+patrolUserRegion.getExceptionPushTime().getTime()+",fasong time ="+frequencyTime * ONE_MINUTE_MSEC);
 					return true;
 				}
 			}

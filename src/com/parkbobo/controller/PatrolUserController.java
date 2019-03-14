@@ -596,16 +596,16 @@ public class PatrolUserController {
 						pushInfo.setStatus(2);
 						pushInfo.setExceptionId(exception.getId());
 						pushInfoService.addExceptionPushInfo(pushInfo);
-						exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
 						//需要账号 再处理一下
 //						exceptionPushService.pushUsePatrolSend("3","异常推送",
 //								"请在" + startPatrolTime +"分钟内，到达指定位置",jobNum1);
-						exceptionPushService.pushUsePatrolSend("3","异常推送",
-								"请在" + startPatrolTime +"分钟内，到达指定位置",jobNum1);
 						patrolUserRegion.setExceptionPushTime(new Date());
 						//进行保存异常信息到异常信息表中
 						patrolExceptionService.addExceptionInfo(exception.getType(),patrolUserRegion.getId(),patrolUserRegion.getUsername(),jobNum1);
-
+						patrolUserRegionService.updateRecord(patrolUserRegion);
+						exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
+						exceptionPushService.pushUsePatrolSend("3","异常推送",
+								"请在" + startPatrolTime +"分钟内，到达指定位置",jobNum1);
 					}
 					//进行
 					patrolUserRegionService.updateRecord(patrolUserRegion);
@@ -651,12 +651,13 @@ public class PatrolUserController {
 					pushInfo.setStatus(2);
 					pushInfo.setExceptionId(exception.getId());
 					pushInfoService.addExceptionPushInfo(pushInfo);
-					exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
-					exceptionPushService.pushUsePatrolSend("3","异常推送：",
-							"您离开巡逻区域超过指定距离" + leaveDistance + "米,请尽快回到指定区域！",jobNum1);
 					patrolUserRegion.setExceptionPushTime(new Date());
 					//将异常信息记录在ExceptionInfo
 					patrolExceptionService.addExceptionInfo(exception.getType(),patrolUserRegion.getId(),patrolUserRegion.getUsername(),jobNum1);
+					patrolUserRegionService.updateRecord(patrolUserRegion);
+					exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
+					exceptionPushService.pushUsePatrolSend("3","异常推送：",
+							"您离开巡逻区域超过指定距离" + leaveDistance + "米,请尽快回到指定区域！",jobNum1);
 				}
 				patrolUserRegionService.updateRecord(patrolUserRegion);
 				out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
@@ -696,12 +697,15 @@ public class PatrolUserController {
 					pushInfo.setStatus(2);
 					pushInfo.setExceptionId(exception.getId());
 					pushInfoService.addExceptionPushInfo(pushInfo);
-					exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
-					exceptionPushService.pushUsePatrolSend("3","异常推送：",
-							"您离开指定区域超过规定时间" + leaveTime +"分钟，请尽快回到指定区域",jobNum1);
+
 					patrolUserRegion.setExceptionPushTime(new Date());
 					//将异常信息记录在ExceptionInfo
 					patrolExceptionService.addExceptionInfo(exception.getType(),patrolUserRegion.getId(),patrolUserRegion.getUsername(),jobNum1);
+					patrolUserRegionService.updateRecord(patrolUserRegion);
+
+					exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
+					exceptionPushService.pushUsePatrolSend("3","异常推送：",
+							"您离开指定区域超过规定时间" + leaveTime +"分钟，请尽快回到指定区域",jobNum1);
 				}
 				patrolUserRegionService.updateRecord(patrolUserRegion);
 				out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
@@ -743,11 +747,14 @@ public class PatrolUserController {
 					pushInfo.setStatus(2);
 					pushInfo.setExceptionId(exception.getId());
 					pushInfoService.addExceptionPushInfo(pushInfo);
-					exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
-					exceptionPushService.pushUsePatrolSend("3","异常推送：","已检测不到您的位置",jobNum1);
+
 					patrolUserRegion.setExceptionPushTime(new Date());
 					//将异常信息记录在ExceptionInfo
 					patrolExceptionService.addExceptionInfo(exception.getType(),patrolUserRegion.getId(),patrolUserRegion.getUsername(),jobNum1);
+					patrolUserRegionService.updateRecord(patrolUserRegion);
+
+					exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
+					exceptionPushService.pushUsePatrolSend("3","异常推送：","已检测不到您的位置",jobNum1);
 				}
 				patrolUserRegionService.updateRecord(patrolUserRegion);
 				out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
@@ -786,10 +793,13 @@ public class PatrolUserController {
 					pushInfo.setPushDate(new Date());
 					pushInfo.setExceptionId(exception.getId());
 					pushInfoService.addExceptionPushInfo(pushInfo);
-					exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
+
 					patrolUserRegion.setExceptionPushTime(new Date());
 					//将异常信息记录在ExceptionInfo
 					patrolExceptionService.addExceptionInfo(exception.getType(),patrolUserRegion.getId(),patrolUserRegion.getUsername(),jobNum1);
+					patrolUserRegionService.updateRecord(patrolUserRegion);
+
+					exceptionPushService.pushSend("2",title,content,adminUserIdsStr);
 				}
 				patrolUserRegionService.updateRecord(patrolUserRegion);
 				out.print("{\"status\":\"true\",\"Code\":1,\"uploadTime\":"
