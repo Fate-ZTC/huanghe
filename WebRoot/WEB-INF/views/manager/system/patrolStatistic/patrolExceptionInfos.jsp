@@ -28,7 +28,7 @@
         .item::before{content: ''; display: inline-block; width: 10px;height: 10px;border-radius: 50%;background-color: #0A99F1;}
         .item:last-child{border: none}
         .time{ flex: 2; margin-left: 20px;}
-        .info{flex: 1}
+        .info{flex: 3}
     </style>
 </head>
 <body>
