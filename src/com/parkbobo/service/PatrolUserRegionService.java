@@ -172,4 +172,12 @@ public class PatrolUserRegionService {
 	}
 
 
+    public Integer exist(String jobNum) {
+		boolean result = patrolUserRegionDao.existsByProperty("jobNum",jobNum);
+		if(result){
+			return 1;
+		}else {
+			return 0;
+		}
+    }
 }

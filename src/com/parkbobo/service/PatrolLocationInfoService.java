@@ -64,6 +64,11 @@ public class PatrolLocationInfoService {
 		return this.patrolLocationInfoDao.pageQuery(hql, pageSize==null?20:pageSize, page==null?1:page);
 	}
 
+	public List<PatrolLocationInfo> getByHql(String hql) {
+		return patrolLocationInfoDao.getByHQL(hql);
+	}
 
-	
+	public void merge(PatrolLocationInfo patrolLocationInfo) {
+		patrolLocationInfoDao.merge(patrolLocationInfo);
+	}
 }

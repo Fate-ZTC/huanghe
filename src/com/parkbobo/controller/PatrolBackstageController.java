@@ -52,6 +52,8 @@ public class PatrolBackstageController {
 	@Resource
 	private PatrolRegionService patrolRegionService;
 	@Resource
+	private PatrolRegionHistoryService patrolRegionHistoryService;
+	@Resource
 	private PatrolExceptionService patrolExceptionService;
 	@Resource
 	private PatrolEmergencyService patrolEmergencyService;
@@ -526,6 +528,18 @@ public class PatrolBackstageController {
 		String hql = "FROM PatrolRegion WHERE isDel=0 AND id=" + id;
 		List<PatrolRegion> patrolRegions = patrolRegionService.getByHQL(hql);
 		if(patrolRegions != null && patrolRegions.size() > 0) {
+			PatrolRegion patrolRegion = patrolRegions.get(0);
+			PatrolRegionHistory patrolRegionHistory = new PatrolRegionHistory();
+			patrolRegionHistory.setCreatetime(new Date());
+			patrolRegionHistory.setIsDel(patrolRegion.getIsDel());
+			patrolRegionHistory.setLastUpdateTime(patrolRegion.getLastUpdateTime());
+			patrolRegionHistory.setRegionName(patrolRegion.getRegionName());
+			patrolRegionHistory.setCampusNum(patrolRegion.getCampusNum());
+			patrolRegionHistory.setColor(patrolRegion.getColor());
+			patrolRegionHistory.setRegionLocation(patrolRegion.getRegionLocation());
+			patrolRegionHistory.setRegionId(patrolRegion.getId());
+			patrolRegionHistoryService.addRecord(patrolRegionHistory);
+
 			mv.addObject("patrolRegion", JSON.toJSONString(patrolRegions.get(0)));
 			mv.addObject("color",patrolRegions.get(0).getColor());
 		}

@@ -44,7 +44,7 @@ public class PatrolManagerController {
 	@Resource PatrolRegionService patrolRegionService;
 
 
-	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect};
+	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.DisableCircularReferenceDetect};
 	/**
 	 * 获取所有巡查员
 	 * @param response
@@ -58,6 +58,13 @@ public class PatrolManagerController {
 			out = response.getWriter();
 			String hql = "FROM PatrolUser WHERE isDel=0";
 			List<PatrolUser> allUser = this.patrolUserService.getAll(hql);
+			for (PatrolUser patrolUser:allUser){
+				if(patrolUser.getCampusNum()==0){
+					patrolUser.setCampusName("袁家岗校区");
+				}else{
+					patrolUser.setCampusName("缙云校区");
+				}
+			}
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(allUser,features)+"}");
 		} catch (IOException e) {
 			if(out==null){

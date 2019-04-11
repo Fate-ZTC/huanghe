@@ -136,12 +136,12 @@ public class PatrolConfigService {
      * @return
      */
 	public boolean isLeaveTime(Double lon,Double lat,Integer regionId,Integer leaveTime,
-							   PatrolUserRegion patrolUserRegion,boolean isInRegion) {
+							   PatrolUserRegion patrolUserRegion,boolean isInRegion, Integer leaveDistance) {
 		if(patrolUserRegion == null)
 			return true;
 
 		//这里还需要进行距离判断，超过距离才进行时间判断
-		boolean isLeave = isLeaveDistance(lon,lat,600,regionId);
+		boolean isLeave = isLeaveDistance(lon,lat,leaveDistance,regionId);
 		//离开
 		if(isLeave) {
 			if (patrolUserRegion.getLeaveRegionStartTime() == null) {

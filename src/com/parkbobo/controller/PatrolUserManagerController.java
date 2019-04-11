@@ -65,6 +65,9 @@ public class PatrolUserManagerController {
 		if(patrolUser != null && StringUtil.isNotEmpty(patrolUser.getJobNum())){
 			hql +=" and f.jobNum like '%"+patrolUser.getJobNum()+"%'";
 		}
+		if(patrolUser != null&&patrolUser.getCampusNum()!=null && patrolUser.getCampusNum()!=-1){
+			hql +=" and f.campusNum = "+patrolUser.getCampusNum();
+		}
 		hql += " order by f.id";
 		PageBean<PatrolUser> patrolUserPage = this.patrolUserService.getUsers(hql,pageSize==null?12:pageSize, page==null?1:page);
 		mv.addObject("patrolUserPage", patrolUserPage);
@@ -87,7 +90,7 @@ public class PatrolUserManagerController {
 			}
 			Date date = new Date();
 			patrolUser.setCreatetime(date);
-			patrolUser.setCampusNum(1);
+			//patrolUser.setCampusNum(1);
 			patrolUser.setIsDel((short)0);
 			patrolUser.setLastUpdateTime(date);
 			patrolUserService.addUser(patrolUser);
@@ -112,7 +115,7 @@ public class PatrolUserManagerController {
 		{
 			PatrolUser user = patrolUserService.getById(patrolUser.getId());
 			patrolUser.setLastUpdateTime(new Date());
-			patrolUser.setCampusNum(user.getCampusNum());
+			//patrolUser.setCampusNum(user.getCampusNum());
 			patrolUser.setClientId(user.getClientId());
 			patrolUser.setCreatetime(user.getCreatetime());
 			patrolUser.setIsDel((short)0);

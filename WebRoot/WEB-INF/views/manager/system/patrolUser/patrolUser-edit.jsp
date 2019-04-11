@@ -42,6 +42,10 @@ $(function(){
     <li><label>姓名<b>*</b></label><input name="username" value="${patrolUser.username}" type="text" class="dfinput" data-rule="名称:required;length[~100];"/></li>
     <li><label>密码<b>*</b></label><input name="password" type="password" value="${patrolUser.password }" class="dfinput"/></li>
     <li><label>工号<b>*</b></label><input name="jobNum" value="${patrolUser.jobNum}" type="text" class="dfinput" value="999" "/></li>
+    <li><label>校区<b>*</b></label>
+        <input name="campusNum" type="radio" <c:if test="${patrolUser.campusNum==0}"> checked</c:if> value="0" style="margin: auto;"/>&nbsp;&nbsp;袁家岗校区&nbsp;&nbsp;&nbsp;&nbsp;
+        <input name="campusNum" type="radio" <c:if test="${patrolUser.campusNum==1}"> checked</c:if>  value="1"/>&nbsp;&nbsp;缙云校区&nbsp;&nbsp;&nbsp;&nbsp;
+    </li>
     <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认保存"/></li>
     </ul>
     </form>
