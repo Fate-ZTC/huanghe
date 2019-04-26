@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import com.parkbobo.utils.CacheUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -230,6 +231,10 @@ public class PatrolUserController {
 					patrolUserRegion.setLastUpdateTime(date);
 					patrolUserRegion.setEndTime(date);
 					this.patrolUserRegionService.updateRecord(patrolUserRegion);
+
+					//删除缓存
+					CacheUtil.getInstance().removeCacheData(patrolUserRegion.getId().toString());
+
 					//向巡更记录中添加一条巡更记录
 					patrolSignRecord.setJobNum(patrolUserRegion.getJobNum());
 					patrolSignRecord.setUsername(patrolUserRegion.getUsername());
@@ -450,6 +455,28 @@ public class PatrolUserController {
 			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"未获取到巡逻信息\"}");
 			return;
 		}
+
+		Date date = new Date();
+		//获取缓存
+		PatrolLocationInfo info =(PatrolLocationInfo) CacheUtil.getInstance().getCacheData(patrolUserRegion.getId().toString());
+		if(info!=null){
+			Double seconds_per_timestep = 0D;
+			seconds_per_timestep = Double.valueOf(String.valueOf(
+					(date.getTime() -
+								info.getTimestamp().getTime())
+								/ 1000));
+			PatrolLocationInfo info1 = new PatrolLocationInfo();
+			info1.setLon(lon);
+			info1.setLat(lat);
+			info1.setTimestamp(date);
+			//计算两点间的速度，看点是否偏差过大
+			boolean result = patrolConfigService.isSpeed(info,info1,seconds_per_timestep);
+			if(!result){
+				out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"点定位距离偏差过大\"}");
+				return;
+			}
+		}
+
 		//获取相关配置信息
 		Integer emergencyStatus = patrolConfig.getIsEmergency();			//紧急状态
 		Integer startPatrolTime = patrolConfig.getStartPatrolTime();		//开始时间
@@ -495,7 +522,7 @@ public class PatrolUserController {
 
 		//创建实时经纬度信息
 		PatrolLocationInfo patrolLocationInfo = new PatrolLocationInfo();
-		Date date = new Date();
+
 		patrolLocationInfo.setCampusNum(campusNum);
 		patrolLocationInfo.setLon(lon);//经度
 		patrolLocationInfo.setLat(lat);//纬度
@@ -504,12 +531,14 @@ public class PatrolUserController {
 		patrolLocationInfo.setUsregId(patrolUserRegion.getId());
 		patrolLocationInfo.setTimestamp(date);
 		patrolLocationInfo.setUsername(patrolUserRegion.getUsername());
-		if(isArriveArea){
+		if(!isArriveArea){
 			patrolLocationInfo.setIsArrive(1);
 		}else{
 			patrolLocationInfo.setIsArrive(0);
 		}
 
+		//添加缓存
+		CacheUtil.getInstance().addCacheData(patrolUserRegion.getId().toString(),patrolLocationInfo);
 
 		//设置上传时间
 		patrolUserRegion.setLastUpdateTime(new Date());

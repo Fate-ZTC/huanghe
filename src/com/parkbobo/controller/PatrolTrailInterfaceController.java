@@ -277,6 +277,7 @@ public class PatrolTrailInterfaceController {
                         locationInfoVo.setIsArrive(patrolLocationInfo.getIsArrive().toString());
                         patrolLocationInfoVo.add(locationInfoVo);
                     }else{
+                        patrolLocationInfo = infoList.get(i);
                         if(patrolLocationInfo.getStatus().equals(infoList.get(i).getStatus())){
                             if(infoList.get(i).getStatus().equals(2)){
                                 if(!patrolLocationInfo.getPatrolException().getId().equals(infoList.get(i).getPatrolException().getId())){
@@ -285,7 +286,7 @@ public class PatrolTrailInterfaceController {
 
                                     patrolLocationMassageVo = new PatrolLocationMassageVo();
                                     patrolLocationInfoVo = new ArrayList<>();
-                                    patrolLocationInfo = infoList.get(i);
+
                                     if(patrolLocationInfo.getStatus()==1){
                                         patrolLocationMassageVo.setMassage("回到巡更区域");
                                         patrolLocationMassageVo.setIsAbnormal(0);
@@ -508,6 +509,7 @@ public class PatrolTrailInterfaceController {
                             locationInfoVo.setIsArrive(patrolLocationInfo.getIsArrive().toString());
                             patrolLocationInfoVo.add(locationInfoVo);
                         }else{
+                            patrolLocationInfo = infoList.get(i);
                             if(patrolLocationInfo.getStatus().equals(infoList.get(i).getStatus())){//点状态未变的情况
                                 if(infoList.get(i).getStatus().equals(2)){//为异常时的处理
                                     if(!patrolLocationInfo.getPatrolException().getId().equals(infoList.get(i).getPatrolException().getId())){//为异常时异常状态改变
@@ -516,7 +518,7 @@ public class PatrolTrailInterfaceController {
 
                                         patrolLocationMassageVo = new PatrolLocationMassageVo();
                                         patrolLocationInfoVo = new ArrayList<>();
-                                        patrolLocationInfo = infoList.get(i);
+
                                         if(patrolLocationInfo.getStatus()==1){
                                             patrolLocationMassageVo.setMassage("回到巡更区域");
                                             patrolLocationMassageVo.setIsAbnormal(0);

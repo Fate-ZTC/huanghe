@@ -198,6 +198,37 @@ public class PatrolConfigService {
 		return true;
 	}
 
+	/**
+	 * 判断两点间速度超过指定速度
+	 * @param oldli			原有的点
+	 * @param uli				现在到达的点
+	 * @param seconds_per_timestep	两点间的时间差
+	 * @return
+	 */
+	public boolean isSpeed(PatrolLocationInfo oldli,PatrolLocationInfo uli,double seconds_per_timestep) {
+		try {
+			//进行计算是否超过指定距离
+			String sql = "SELECT st_distance(st_geometryfromtext('POINT("+oldli.getLon()+" "+oldli.getLat()+")'), st_geometryfromtext('POINT("+uli.getLon()+" "+uli.getLat()+")')) AS distance";
+			double distance = patrolUserRegionService.getDistanceBySql(sql);
+			if(distance > 0.0) {
+				distance = distance * 111000;
+				if(seconds_per_timestep==0.0){
+					seconds_per_timestep = 0.1;
+				}
+				double speed = distance/seconds_per_timestep;
+				if(speed>=12.0){
+					return false;
+				}else{
+					return true;
+				}
+			}else {
+				return true;
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
 
 	/**
 	 * 进行计算人员是否超过规定时间没有进行上传经纬度
