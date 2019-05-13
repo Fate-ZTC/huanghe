@@ -413,7 +413,7 @@ public class PatrolTrailInterfaceController {
 
         try {
             out = response.getWriter();
-            String sql = "from PatrolUserRegion where jobNum = '" + jobNum + "' order by startTime desc";
+            String sql = "from PatrolUserRegion where jobNum = '" + jobNum + "' and endTime is not null order by startTime desc";
             List<PatrolUserRegion> patrolList = patrolUserRegionService.getByHQL(sql);
             SimpleDateFormat sp = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
             SimpleDateFormat sp1 = new SimpleDateFormat("HH:mm");
