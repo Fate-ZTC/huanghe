@@ -5,9 +5,6 @@ import com.mobile.model.InfoList;
 import com.mobile.service.InfoListService;
 import com.mobile.util.Configuration;
 import com.opensymphony.xwork2.ActionSupport;
-
-import org.apache.struts2.interceptor.ServletRequestAware;
-import org.apache.struts2.interceptor.ServletResponseAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -29,7 +26,7 @@ import java.util.List;
  *
  */
 @Controller
-public class InfoListInterface extends ActionSupport implements ServletResponseAware,ServletRequestAware {
+public class InfoListInterface extends ActionSupport{
 	/**
 	 * 
 	 */

@@ -17,8 +17,6 @@ import com.mobile.service.FreshMenService;
 import com.mobile.service.ModuleService;
 import com.mobile.service.UsersService;
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.struts2.interceptor.ServletRequestAware;
-import org.apache.struts2.interceptor.ServletResponseAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -44,7 +42,7 @@ import java.util.List;
  *
  */
 @Controller
-public class ModuleInterface extends ActionSupport implements ServletResponseAware,ServletRequestAware {
+public class ModuleInterface extends ActionSupport{
 	/**
 	 * 
 	 */
