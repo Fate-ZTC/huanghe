@@ -8,6 +8,7 @@
     final String API = Configuration.getInstance().getValue("map_api_url");
     final String LMap_APIURL = Configuration.getInstance().getValue("map_LMap_APIURL");
     final String LMap_MAPSERVERURL = Configuration.getInstance().getValue("map_LMap_MAPSERVERURL");
+    final String LMap_ZONEID = Configuration.getInstance().getValue("map_ZONEID");
 
 %>
 <!DOCTYPE html>
@@ -140,18 +141,19 @@
 
         LMap.APIURL = "<%=LMap_APIURL%>";
         LMap.MAPSERVERURL = "<%=LMap_MAPSERVERURL%>";
+        var zoneid = "<%=LMap_ZONEID%>";
 
         var patrol1 = '';
         <c:if test="${not empty patrolRegion}">
         patrol1 = '${patrolRegion}';
         </c:if>
-        var u = eval('('+patrol1+')');
+       /* var u = eval('('+patrol1+')');
         var campusNum = u.campusNum;
-        var zoreid = 1170;
+        var zoneid = 1170;
         if(campusNum == 1){
-            zoreid = 1172;
-        }
-        var map = new LMap.Map2D("map", zoreid);
+            zoneid = 1172;
+        }*/
+        var map = new LMap.Map2D("map", zoneid);
         /**
          * 放大地图比例
          */

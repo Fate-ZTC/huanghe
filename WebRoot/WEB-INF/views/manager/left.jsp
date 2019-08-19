@@ -186,7 +186,7 @@ $(function(){
 
 
 
-	   <%-- <sec:authorize ifAnyGranted="monthlyHandleManage,monthlyRenewManage">
+	   <sec:authorize ifAnyGranted="monthlyHandleManage,monthlyRenewManage">
 	    <!-- 消防巡查管理START -->
 	    <dd>
 	    <div class="title">
@@ -202,9 +202,9 @@ $(function(){
 	    	<sec:authorize ifAnyGranted="firePatrolConfig_list,firePatrolConfig_edit">
 	        <li><cite></cite><a href="<%=path %>/firePatrolConfig_list" target="rightFrame">巡查参数配置</a><i></i></li>
 	    	</sec:authorize>
-	    	&lt;%&ndash;<sec:authorize ifAnyGranted="firePatrolExc_list,firePatrolExc_add,firePatrolExc_edit,firePatrolExc_delete">&ndash;%&gt;
-	        &lt;%&ndash;<li><cite></cite><a href="<%=path %>/firePatrolExc_list" target="rightFrame">异常描述</a><i></i></li>&ndash;%&gt;
-	    	&lt;%&ndash;</sec:authorize>&ndash;%&gt;
+<%--	    	<sec:authorize ifAnyGranted="firePatrolExc_list,firePatrolExc_add,firePatrolExc_edit,firePatrolExc_delete">--%>
+<%--	        <li><cite></cite><a href="<%=path %>/firePatrolExc_list" target="rightFrame">异常描述</a><i></i></li>--%>
+<%--	    	</sec:authorize>--%>
 			<sec:authorize ifAnyGranted="firePatrolExc_list,firePatrolExc_add,firePatrolExc_edit,firePatrolExc_delete">
 				<li><cite></cite><a href="<%=path %>/firePatrolExc_list" target="rightFrame">术语管理</a><i></i></li>
 			</sec:authorize>
@@ -212,7 +212,7 @@ $(function(){
 	        </ul>    
 	    </dd>
 	    <!-- 消防巡查管理END -->
-	    </sec:authorize>--%>
+	    </sec:authorize>
     </dl>
     
 </body>
