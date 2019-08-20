@@ -62,7 +62,7 @@ public class ManagerService {
 	public PageBean<Manager> loadPage(String hql, int pageSize, int page) {
 		return managerDao.pageQuery(hql, pageSize, page);
 	}
-	public void add(Manager manager, String enablRegionIds, Manager loginManager) {
+	public void add(Manager manager, String enablRegionIds, Manager loginManager, String[] roles) {
 		ShaPasswordEncoder sp = new ShaPasswordEncoder();
 		manager.setPassword(sp.encodePassword(manager.getPassword(), manager.getUsername()));
 		manager.setLoginCount(0);

@@ -94,7 +94,7 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping("manager_add")
-	public ModelAndView add(String method,HttpSession session,Manager manager,String enablRegionIds,String tex){
+	public ModelAndView add(String method,HttpSession session,Manager manager,String enablRegionIds,String tex,String[] roles){
 		//添加
 		ModelAndView mv = new ModelAndView();
 		if(StringUtil.isNotEmpty(method) && method.equals("add"))
@@ -103,7 +103,7 @@ public class ManagerController {
 			manager.setRegisterTime(new Date());
 			System.out.println(manager.getUsername());
 			System.out.println(manager.getUserId());
-			managerService.add(manager, enablRegionIds, user);
+			managerService.add(manager, enablRegionIds, user, roles);
 			mv.setViewName("redirect:/manager_list?method=addSuccess");
 		}
 		//跳转到添加页面
