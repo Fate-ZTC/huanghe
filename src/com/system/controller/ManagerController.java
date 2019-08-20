@@ -1,10 +1,14 @@
 package com.system.controller;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import com.system.model.ManagerRole;
+import com.system.service.ManagerRoleService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +34,8 @@ public class ManagerController {
 	private static final long serialVersionUID = -210001639179001824L;
 	@Resource
 	private ManagerService managerService;
+	@Resource
+	private ManagerRoleService managerRoleService;
 	@Resource
 	private RoleService roleService;
 	@Resource
@@ -66,14 +72,14 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping("manager_edit")
-	public ModelAndView edit(String method,HttpSession session,Integer id,Manager manager,String enablRegionIds){
+	public ModelAndView edit(String method,HttpSession session,Integer id,Manager manager,String enablRegionIds,String[] roles){
 		//编辑
 		ModelAndView mv = new ModelAndView();
 		if(StringUtil.isNotEmpty(method) && method.equals("edit"))
 		{
 			Manager user = (Manager) session.getAttribute("loginUser");
 			manager.setRegisterTime(new Date());
-			managerService.update(manager, enablRegionIds, user);
+			managerService.update(manager, enablRegionIds, user, roles);
 			mv.setViewName("redirect:/manager_list?method=editSuccess");
 		}
 		//跳转到编辑页面
@@ -94,16 +100,27 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping("manager_add")
-	public ModelAndView add(String method,HttpSession session,Manager manager,String enablRegionIds,String tex){
+	public ModelAndView add(String method,HttpSession session,Manager manager,String enablRegionIds,String tex,String[] roles){
 		//添加
 		ModelAndView mv = new ModelAndView();
 		if(StringUtil.isNotEmpty(method) && method.equals("add"))
 		{
 			Manager user = (Manager) session.getAttribute("loginUser");
 			manager.setRegisterTime(new Date());
-			System.out.println(manager.getUsername());
-			System.out.println(manager.getUserId());
-			managerService.add(manager, enablRegionIds, user);
+			managerService.add(manager, enablRegionIds, user, roles);
+
+			//得到当前添加的用户Id
+//			int userId1=manager.getUserId();
+//			for(int i = 0 ; i < roles.length ; i++){
+//				Manager manager1=new Manager();
+//				manager1.setUserId(userId1);
+//				Role role1=new Role();
+//				role1.setRoleId(Integer.valueOf(roles[i]));
+//				ManagerRole managerRole=new ManagerRole();
+//				managerRole.setManager(manager1);
+//				managerRole.setRole(role1);
+//				managerRoleService.add(managerRole);
+//			}
 			mv.setViewName("redirect:/manager_list?method=addSuccess");
 		}
 		//跳转到添加页面
@@ -181,4 +198,5 @@ public class ManagerController {
 	public void setManagerPage(PageBean<Manager> managerPage) {
 		this.managerPage = managerPage;
 	}
+
 }

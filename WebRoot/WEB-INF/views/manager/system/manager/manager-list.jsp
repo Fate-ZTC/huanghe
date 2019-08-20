@@ -80,7 +80,11 @@ String path = request.getContextPath();
         <td>${u.realname}</td>
         <td>${u.qq}</td>
         <td>${u.department.name}</td>
-        <td>${u.role.name}</td>
+        <td>
+            <c:forEach items="${u.managerRoles}" var="v">
+                ${v.role.name}
+            </c:forEach>
+         </td>
         <td>
         	<sec:authorize ifAnyGranted="manager_resetPassword">
         	<a href="javascript:void(0);" onclick="resetPwd('<%=path %>/manager_resetPassword','${u.userId}');" class="tablelink">重置密码</a> |  

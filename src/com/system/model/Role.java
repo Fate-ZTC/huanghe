@@ -43,14 +43,13 @@ public class Role  implements java.io.Serializable {
      private String memo;
      private Set<RoleResources> roleResourceses = new HashSet<RoleResources>(0);
 
-   public Role(){}
-   public Role(Integer roleId){
+    public Role(){}
+    public Role(Integer roleId){
 	   this.roleId = roleId;
    }
     
     @Id 
     @GeneratedValue(strategy=GenerationType.AUTO, generator="generator")
-    
     @Column(name="role_id", unique=true, nullable=false)
 
     public Integer getRoleId() {
@@ -148,4 +147,12 @@ public class Role  implements java.io.Serializable {
 		this.roleType = roleType;
 	}
 
+//    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="role")
+//    public Set<Role> getRoles() {
+//        return roles;
+//    }
+//
+//    public void setRoles(Set<Role> roles) {
+//        this.roles = roles;
+//    }
 }

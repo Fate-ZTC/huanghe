@@ -78,4 +78,5 @@ public class RoleService {
 			optLogsService.addLogo("角色管理", manager, "删除角色,角色ID：" +ids);
 		}
 	}
+
 }

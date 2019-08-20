@@ -4,18 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 
 /**
@@ -31,7 +20,6 @@ public class Manager  implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 4133811498053033027L;
 	private Integer userId;
-    private Role role;
     private Department department;
     private String email;
     private String username;
@@ -53,11 +41,11 @@ public class Manager  implements java.io.Serializable {
     private Integer isAuth;
     private Integer status;
     private String memo;
+    private Set<ManagerRole> managerRoles = new HashSet<ManagerRole>(0);
     private Set<ManagerResources> managerResourceses = new HashSet<ManagerResources>(0);
     
     @Id 
     @GeneratedValue(strategy=GenerationType.AUTO, generator="generator")
-    
     @Column(name="user_id", unique=true, nullable=false)
 
     public Integer getUserId() {
@@ -67,18 +55,9 @@ public class Manager  implements java.io.Serializable {
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
-	@ManyToOne(fetch=FetchType.EAGER)
-        @JoinColumn(name="role_id")
-    public Role getRole() {
-        return this.role;
-    }
-    
-    public void setRole(Role role) {
-        this.role = role;
-    }
+
 	@ManyToOne(fetch=FetchType.EAGER)
         @JoinColumn(name="departmentid")
-
     public Department getDepartment() {
         return this.department;
     }
@@ -293,4 +272,13 @@ public class Manager  implements java.io.Serializable {
 	public void setManagerResourceses(Set<ManagerResources> managerResourceses) {
 		this.managerResourceses = managerResourceses;
 	}
+
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="manager")
+    public Set<ManagerRole> getManagerRoles() {
+        return managerRoles;
+    }
+
+    public void setManagerRoles(Set<ManagerRole> managerRoles) {
+        this.managerRoles = managerRoles;
+    }
 }

@@ -4,12 +4,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.system.dao.ManagerRoleDao;
+import com.system.model.*;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.parkbobo.utils.PageBean;
 import com.system.dao.ManagerDao;
-import com.system.model.Manager;
 
 
 @Component("managerService")
@@ -18,6 +19,8 @@ public class ManagerService {
 	private ManagerDao managerDao;
 	@Resource
 	private OptLogsService optLogsService;
+	@Resource(name= "managerRoleDaoImpl")
+	private ManagerRoleDao managerRoleDao;
 	public Manager updateUserInfo(Manager manager) {
 		Manager u = managerDao.get(manager.getUserId());
 		u.setRealname(manager.getRealname());
@@ -62,7 +65,7 @@ public class ManagerService {
 	public PageBean<Manager> loadPage(String hql, int pageSize, int page) {
 		return managerDao.pageQuery(hql, pageSize, page);
 	}
-	public void add(Manager manager, String enablRegionIds, Manager loginManager) {
+	public void add(Manager manager, String enablRegionIds, Manager loginManager, String[] roles) {
 		ShaPasswordEncoder sp = new ShaPasswordEncoder();
 		manager.setPassword(sp.encodePassword(manager.getPassword(), manager.getUsername()));
 		manager.setLoginCount(0);
@@ -70,18 +73,38 @@ public class ManagerService {
 		manager.setIsAuth(1);
 		manager.setStatus(0);
 		manager = managerDao.add(manager);
+			for (String str : roles) {
+				ManagerRole managerRole = new ManagerRole();
+				ManagerRoleId id = new ManagerRoleId();
+				id.setRoleId(Integer.valueOf(str));
+				id.setManagerId(manager.getUserId());
+				managerRole.setId(id);
+				managerRoleDao.merge(managerRole);
+		}
 		optLogsService.addLogo("用户管理", loginManager, "添加用户，用户名：" + manager.getUsername());
 	}
-	public void update(Manager manager, String enablRegionIds, Manager loginManager) {
+	public void update(Manager manager, String enablRegionIds, Manager loginManager, String[] roles) {
 		ShaPasswordEncoder sp = new ShaPasswordEncoder();
 		Manager u = managerDao.get(manager.getUserId());
 		u.setPassword(sp.encodePassword(manager.getPassword(), u.getUsername()));
 		u.setQq(manager.getQq());
 		u.setDepartment(manager.getDepartment());
-		u.setRole(manager.getRole());
+		u.setManagerRoles(manager.getManagerRoles());
 		u.setRealname(manager.getRealname());
 		u.setMobile(manager.getMobile());
 		managerDao.update(u);
+		List<ManagerRole> managerRoleList =this.managerRoleDao.getByHQL("from ManagerRole as mr where mr.id.managerId = " + u.getUserId());
+		for (ManagerRole mr : managerRoleList) {
+			this.managerRoleDao.delete(mr.getId());
+		}
+			for (String str : roles) {
+				ManagerRole managerRole = new ManagerRole();
+				ManagerRoleId id = new ManagerRoleId();
+				id.setRoleId(Integer.valueOf(str));
+				id.setManagerId(manager.getUserId());
+				managerRole.setId(id);
+				managerRoleDao.merge(managerRole);
+			}
 		optLogsService.addLogo("用户管理", loginManager, "修改用户，用户名：" + u.getUsername());
 	}
 	public void bulkDelete(String ids, Manager loginManager) {

@@ -66,12 +66,15 @@ $(function(){
         </select>
     </li>
     <li><label>角色<b>*</b></label>
-    	<select class="menu" name="role.roleId" data-rule="角色:required;">
-        	<option value="">-请选择-</option>
-        	<c:forEach items="${roleList}" var="r">
-				<option value="${r.roleId }" >${r.name}</option>
-        	</c:forEach>
-        </select>
+        <c:forEach items="${roleList}" var="r">
+            <input name="roles" data-rule="角色:required;" style="width: 15px;height:13px" type="checkbox" class="dfinput" value="${r.roleId}"/>${r.name}
+        </c:forEach>
+<%--    	<select class="menu" name="role.roleId" data-rule="角色:required;">--%>
+<%--        	<option value="">-请选择-</option>--%>
+<%--        	<c:forEach items="${roleList}" var="r">--%>
+<%--				<option value="${r.roleId }" >${r.name}</option>--%>
+<%--        	</c:forEach>--%>
+<%--        </select>--%>
     </li>
     <li><label>添加时间<b>*</b></label><input name="" type="text" style="height: 34px;" value="<fmt:formatDate value="<%=date %>" pattern="yyyy-MM-dd HH:mm:ss"/>"
     	data-rule="添加时间:required;" class="laydate-icon" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})"/></li>

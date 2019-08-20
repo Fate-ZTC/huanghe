@@ -71,18 +71,21 @@ $(function(){
         </select>
     </li>
     <li><label>角色<b>*</b></label>
-    	<select class="menu" name="role.roleId" data-rule="角色:required;">
-        	<option value="">-请选择-</option>
-        	<c:forEach items="${roleList}" var="r">
-        		<c:if test="${manager.role.roleId == r.roleId}">
-					<option value="${r.roleId }" selected="selected">${r.name}</option>
-				</c:if>
-				<c:if test="${manager.role.roleId != r.roleId}">
-					<option value="${r.roleId }" >${r.name}</option>
-				</c:if>
-				
-        	</c:forEach>
-        </select>
+        <c:forEach items="${roleList}" var="r">
+            <input name="roles" data-rule="角色:required;" style="width: 15px;height:13px" type="checkbox" class="dfinput" value="${r.roleId}"/>${r.name}
+        </c:forEach>
+<%--    	<select class="menu" name="role.roleId" data-rule="角色:required;">--%>
+<%--        	<option value="">-请选择-</option>--%>
+<%--        	<c:forEach items="${roleList}" var="r">--%>
+<%--        		<c:if test="${manager.role.roleId == r.roleId}">--%>
+<%--					<option value="${r.roleId }" selected="selected">${r.name}</option>--%>
+<%--				</c:if>--%>
+<%--				<c:if test="${manager.role.roleId != r.roleId}">--%>
+<%--					<option value="${r.roleId }" >${r.name}</option>--%>
+<%--				</c:if>--%>
+<%--				--%>
+<%--        	</c:forEach>--%>
+<%--        </select>--%>
     </li>
     <li><label>添加时间<b>*</b></label><input name="" type="text" style="height: 34px;"
     	value="<fmt:formatDate value="${manager.registerTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"

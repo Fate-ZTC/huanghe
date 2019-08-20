@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import com.system.model.*;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
@@ -14,11 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.system.model.Manager;
-import com.system.model.ManagerResources;
-import com.system.model.Resources;
-import com.system.model.Role;
-import com.system.model.RoleResources;
 import com.system.service.ManagerService;
 
 
@@ -64,26 +60,31 @@ public class MyUserDetailService implements UserDetailsService {
 	//取得用户的权限
 	private Set<GrantedAuthority> obtionGrantedAuthorities(Manager manager) {
 		Set<GrantedAuthority> authSet = new HashSet<GrantedAuthority>();
-		Set<ManagerResources> managerResourcees = manager.getManagerResourceses();
-		Role role = manager.getRole();
+		//Set<ManagerResources> managerResourcees = manager.getManagerResourceses();
+		Set<ManagerRole> managerRoles = manager.getManagerRoles();
 		//用户权限
-		for (ManagerResources managerResources : managerResourcees) {
+		/*for (ManagerResources managerResources : managerResourcees) {
 			Resources resources = managerResources.getResources();
 			if(resources.getEnable() == 1){
 				authSet.add(new GrantedAuthorityImpl(resources.getEnname()));
 			}
-		}
-		//用户角色权限
-		if(role != null && role.getEnable() == 1)
-		{
-			Set<RoleResources> roleResourcees  = role.getRoleResourceses();
-			for (RoleResources roleResources : roleResourcees) {
-				Resources resources = roleResources.getResources();
-				if(resources.getEnable() == 1) {
-					authSet.add(new GrantedAuthorityImpl(resources.getEnname()));
+		}*/
+		Role role = null;
+		for (ManagerRole managerRole : managerRoles) {
+			role = managerRole.getRole();
+			if(role != null && role.getEnable() == 1)
+			{
+				Set<RoleResources> roleResourcees  = role.getRoleResourceses();
+				for (RoleResources roleResources : roleResourcees) {
+					Resources resources = roleResources.getResources();
+					if(resources.getEnable() == 1) {
+						authSet.add(new GrantedAuthorityImpl(resources.getEnname()));
+					}
 				}
 			}
 		}
+		//用户角色权限
+
 		if (logger.isDebugEnabled()) {
 			logger.debug("真蛋疼,靠"); //$NON-NLS-1$
 		}
