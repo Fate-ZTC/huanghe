@@ -70,6 +70,14 @@ public class ManagerService {
 		manager.setIsAuth(1);
 		manager.setStatus(0);
 		manager = managerDao.add(manager);
+		for (String str : roles) {
+			ManagerRole managerRole = new ManagerRole();
+			ManagerRoleId id = new ManagerRoleId();
+			id.setRoleId(Integer.valueOf(str));
+			id.setManagerId(manager.getUserId());
+			managerRole.setId(id);
+			managerRoleDao.merge(managerRole);
+		}
 		optLogsService.addLogo("用户管理", loginManager, "添加用户，用户名：" + manager.getUsername());
 	}
 	public void update(Manager manager, String enablRegionIds, Manager loginManager) {
