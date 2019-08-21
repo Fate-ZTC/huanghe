@@ -12,6 +12,7 @@ import com.system.service.ManagerRoleService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.parkbobo.utils.PageBean;
@@ -159,6 +160,8 @@ public class ManagerController {
         mv.setViewName("redirect:/manager_list?method=restSuccess");
         return mv;
     }
+
+
     public List<Role> getRoleList() {
         return roleList;
     }

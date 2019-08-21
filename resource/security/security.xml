@@ -12,62 +12,7 @@
     <http pattern="/**/*.jpg" security="none"/>
 	<http pattern="/index.jsp" security="none"/>
 	<http pattern="/managerLogin" security="none"/>
-	<http pattern="/CostData" security="none"/>
-	<http pattern="/threeCarparkInterface_getEnLe" security="none"/>
-	<http pattern="/LeaveTimeOut" security="none"/>
-	<http pattern="/GetBillInfo" security="none"/>
-	<http pattern="/PassCarPort" security="none"/>
-	<http pattern="/PassVehicle" security="none"/>
-	<http pattern="/wxUsersManage_sendSmst" security="none"/>
-	<http pattern="/wxUsersManage_myZone" security="none"/>
-	<http pattern="/wxUsersManage_band" security="none"/>
-	<http pattern="/wxUsersManage_toBind" security="none"/>
-	<http pattern="/getMonthlypaymentRule" security="none"/>
-	<http pattern="/queryVehicleMonthly" security="none"/>
-	<http pattern="/handleBagVehicle" security="none"/>
-	<http pattern="/monthlyRenewList" security="none"/>
-	<http pattern="/monthlyRenew" security="none"/>
-	<http pattern="/monthly_temPay" security="none"/>
-	<http pattern="/monthly_wxPaySuccess" security="none"/>
-	<http pattern="/monthly_paySuccess" security="none"/>
-	<http pattern="/monthly_payStatus" security="none"/>
-	<http pattern="/authList" security="none"/>
-	<http pattern="/addDriver" security="none"/>
-	<http pattern="/uploadDriver" security="none"/>
-	<http pattern="/addDriving" security="none"/>
-	<http pattern="/uploadDriving" security="none"/>
-	<http pattern="/wxCarManage_toBind" security="none"/>
-	<http pattern="/wxCarManage_delete" security="none"/>
-	<http pattern="/wxCarManage_update" security="none"/>
-	<http pattern="/wxCarManage_add" security="none"/>
-	<http pattern="/wxCarManage_findCar" security="none"/>
-	<http pattern="/wxPort_verify" security="none"/>
-	<http pattern="/wxCost_toCost" security="none"/>
-	<http pattern="/wxCost_pushCost" security="none"/>
-	<http pattern="/wxCost_xyPushCost" security="none"/>
-	<http pattern="/wxCost_qrCode" security="none"/>
-	<http pattern="/wxCost_paySuccess" security="none"/>
-	<http pattern="/wxCost_payStatus" security="none"/>
-	<http pattern="/wxCost_wxPaySuccess" security="none"/>
-	<http pattern="/wxCost_payFailed" security="none"/>
-	<http pattern="/wxCost_ajaxCountPay" security="none"/>
-	<http pattern="/wxCost_temPay" security="none"/>
-	<http pattern="/Hik_test" security="none"/>
-	<http pattern="/wxCost_toTest" security="none"/>
-	<http pattern="/wxCost_ajaxCountTest" security="none"/>
-	<http pattern="/goParking" security="none"/>
-	<http pattern="/wxGoParking_to" security="none"/>
-	<http pattern="/manageLoginIn" security="none"/>
-	<http pattern="/carparkAllQuery" security="none"/>
-	<http pattern="/parkIncomeQuery" security="none"/>
-	<http pattern="/parkIncomePreQuery" security="none"/>
-	<http pattern="/flowQuery" security="none"/>
-	<http pattern="/usagePreQuery" security="none"/>
-	<http pattern="/wxParkingList_list" security="none"/>
-	<http pattern="/wxSearchCarNumber_toSearch" security="none"/>
-	<http pattern="/carNumberSer" security="none"/>
-	<http pattern="/wxUsersManage_sendSms" security="none"/>
-	<http pattern="/wxUsersManage_checkDriver" security="none"/>
+	<http pattern="/user_login" security="none"/>
 	<!--1、当把<http>的use-expressions设置为true时，会把<intercept-url>的access当成包含了Spring EL表达式解析。
 			表达式应该返回boolean，定义访问是否应该被允许，比如：
 			<http use-expressions="true">

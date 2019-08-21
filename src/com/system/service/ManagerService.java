@@ -1,6 +1,8 @@
 package com.system.service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -132,4 +134,5 @@ public class ManagerService {
 		managerDao.localUpdateOneField(id, "status", 0);
 		optLogsService.addLogo("用户管理", loginManager, "解锁用户,用户ID：" + id);
 	}
+
 }
