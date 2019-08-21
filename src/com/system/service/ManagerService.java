@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import com.system.dao.ManagerRoleDao;
 import com.system.model.*;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -86,7 +87,9 @@ public class ManagerService {
 	public void update(Manager manager, String enablRegionIds, Manager loginManager, String[] roles) {
 		ShaPasswordEncoder sp = new ShaPasswordEncoder();
 		Manager u = managerDao.get(manager.getUserId());
-		u.setPassword(sp.encodePassword(manager.getPassword(), u.getUsername()));
+		if(StringUtils.isNotBlank(manager.getPassword())){
+			u.setPassword(sp.encodePassword(manager.getPassword(), u.getUsername()));
+		}
 		u.setQq(manager.getQq());
 		u.setDepartment(manager.getDepartment());
 		u.setManagerRoles(manager.getManagerRoles());

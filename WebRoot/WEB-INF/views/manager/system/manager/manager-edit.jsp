@@ -54,7 +54,7 @@
         <input type="hidden" name="enablRegionIds" id="enablRegionIds"/>
         <ul class="forminfo">
             <li><label>用户名</label><input name="username" type="text" value="${manager.username}" class="dfinput" disabled="disabled"/></li>
-            <li><label>密码<b>*</b></label><input name="password" type="text" class="dfinput" data-rule="密码:required;password"/></li>
+            <li><label>密码</label><input name="password" type="text" class="dfinput"/></li>
             <li><label>姓名</label><input name="realname" type="text" class="dfinput" value="${manager.realname}" data-rule="姓名:length[~30]"/></li>
             <li><label>QQ</label><input name="qq" type="text" class="dfinput" value="${manager.qq}" data-rule="QQ:qq;length[~20]"/></li>
             <li><label>部门<b>*</b></label>
@@ -72,7 +72,8 @@
             </li>
             <li><label>角色<b>*</b></label>
                 <c:forEach items="${roleList}" var="r">
-                    <input name="roles" data-rule="角色:required;" style="width: 15px;height:13px" type="checkbox" class="dfinput" value="${r.roleId}"/>${r.name}
+
+                    <input name="roles" data-rule="角色:required;" style="width: 15px;height:13px" type="checkbox" <c:forEach items="${manager.managerRoles}" var="mr"><c:if test="${mr.role.roleId==r.roleId}">checked="checked"</c:if></c:forEach> class="dfinput" value="${r.roleId}"/>${r.name}
                 </c:forEach>
                 <%--    	<select class="menu" name="role.roleId" data-rule="角色:required;">--%>
                 <%--        	<option value="">-请选择-</option>--%>
