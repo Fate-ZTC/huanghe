@@ -9,7 +9,7 @@
     final String API = Configuration.getInstance().getValue("map_api_url");
     final String LMap_APIURL = Configuration.getInstance().getValue("map_LMap_APIURL");
     final String LMap_MAPSERVERURL = Configuration.getInstance().getValue("map_LMap_MAPSERVERURL");
-
+    final String LMap_ZONEID = Configuration.getInstance().getValue("map_ZONEID");
 %>
 <html>
 <head>
@@ -53,7 +53,7 @@
   var query = parseUrlQuery()
   LMap.APIURL = "<%=LMap_APIURL%>";
   LMap.MAPSERVERURL = "<%=LMap_MAPSERVERURL%>";
-  var zoreid = parseInt(query.zoreid);
+  var zoreid = "<%=LMap_ZONEID%>"
   var map = new LMap.Map2D("map",zoreid);
   /**
     * 放大地图比例

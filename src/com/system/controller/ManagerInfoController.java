@@ -76,6 +76,7 @@ public class ManagerInfoController{
 		else
 		{
 			mv.setViewName("manager/system/managerInfo/managerInfo-password");
+			mv.addObject("method",method);
 		}
 		return mv;
 	}
