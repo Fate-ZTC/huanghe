@@ -1,5 +1,8 @@
 package com.system.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -129,8 +132,8 @@ public class Role  implements java.io.Serializable {
     public void setMemo(String memo) {
         this.memo = memo;
     }
-    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="role")
 
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="role")
     public Set<RoleResources> getRoleResourceses() {
         return this.roleResourceses;
     }

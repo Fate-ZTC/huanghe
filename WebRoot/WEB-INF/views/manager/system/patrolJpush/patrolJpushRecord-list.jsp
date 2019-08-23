@@ -133,7 +133,7 @@
         <td><fmt:formatDate value="${d.helpTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 
             <td>
-                <a href="javascript:void(0);" onclick="catchLocaton('${d.lat},${d.lon}','${d.campusNum==1?"1172":"1170"}')" class="tablelink">查看位置</a> |
+                <a href="javascript:void(0);" onclick="catchLocaton('${d.lat},${d.lon}','2000')" class="tablelink">查看位置</a> |
                 <sec:authorize ifAnyGranted="patrolJpushRecord_delete">
                     <a href="javascript:void(0);" onclick="bulkDelete('<%=path %>/patrolJpushRecord_delete','${d.id}');" class="tablelink"> 删除</a>
                 </sec:authorize>

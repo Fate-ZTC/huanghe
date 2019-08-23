@@ -46,7 +46,7 @@ public class Resources  implements java.io.Serializable {
      private Date createTime;
      private Integer orderid;
      private String memo;
-     private Set<RoleResources> roleResourceses = new HashSet<RoleResources>(0);
+     //private Set<RoleResources> roleResourceses = new HashSet<RoleResources>(0);
      private Set<Resources> resourceses = new HashSet<Resources>(0);
 
    
@@ -193,15 +193,15 @@ public class Resources  implements java.io.Serializable {
     public void setMemo(String memo) {
         this.memo = memo;
     }
-@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="resources")
+/*@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="resources")
 
     public Set<RoleResources> getRoleResourceses() {
         return this.roleResourceses;
     }
-    
+
     public void setRoleResourceses(Set<RoleResources> roleResourceses) {
         this.roleResourceses = roleResourceses;
-    }
+    }*/
 @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="resources")
 
     public Set<Resources> getResourceses() {

@@ -98,7 +98,7 @@
         <th width="100px">姓名</th>
         <th width="100px">工号</th>
         <%--<th width="100px">应巡查</th>--%>
-        <th width="100px">实巡查</th>
+        <th width="100px">实巡更</th>
         <%--<th width="100px">未巡查</th>--%>
             <th width="100px">异常次数</th>
         </tr>
