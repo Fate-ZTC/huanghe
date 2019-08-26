@@ -15,7 +15,7 @@ String path = request.getContextPath();
 <script type="text/javascript" src="<%=path %>/page/validator/local/zh-CN.js"></script>
 <script type="text/javascript" src="<%=path %>/page/layer/layer.js"></script>
 <script type="text/javascript">
-	var method = '${method }';
+	var method = '${method}';
 	if(method=='passwordSuccess'){
 		layer.msg('更新成功', {icon: 1});
 	}else{
@@ -39,9 +39,8 @@ String path = request.getContextPath();
     <form action="<%=path %>/managerInfo_password" method="post" id="addForm" data-validator-option="{stopOnError:true, timely:1 ,theme:'yellow_right'}">
     <input type="hidden" name="method" value="edit" />
     <ul class="forminfo">
-    <li><label>新密码<b>*</b></label><input name="password" type="text" class="dfinput" data-rule="新密码:required;password"/></li>
-    <li><label>确认密码<b>*</b></label><input  type="text" class="dfinput" data-rule="确认密码:required;match[manager.password]"/></li>
-
+    <li><label>新密码<b>*</b></label><input name="password" type="password" class="dfinput" data-rule="新密码:required;password"/></li>
+    <li><label>确认密码<b>*</b></label><input  type="password" class="dfinput" data-rule="确认密码:required;match[manager.password]"/></li>
     <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认保存"/></li>
     </ul>
     </form>

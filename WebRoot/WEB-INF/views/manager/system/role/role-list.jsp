@@ -62,7 +62,7 @@ String path = request.getContextPath();
     	<li onclick="forWardUrl('<%=path %>/role_add');"><span><img src="<%=path %>/page/images/t01.png" /></span>添加</li>
     	</sec:authorize>
     	<sec:authorize ifAnyGranted="role_delete">
-        <li onclick="bulkDelete('<%=path %>/role_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>删除</li>
+        <li onclick="bulkDelete('<%=path %>/role_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
         </sec:authorize>
         </ul>
     

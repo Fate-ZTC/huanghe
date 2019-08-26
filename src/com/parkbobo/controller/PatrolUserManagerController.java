@@ -19,7 +19,11 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -61,6 +65,9 @@ public class PatrolUserManagerController {
 		if(patrolUser != null && StringUtil.isNotEmpty(patrolUser.getJobNum())){
 			hql +=" and f.jobNum like '%"+patrolUser.getJobNum()+"%'";
 		}
+		if(patrolUser != null&&patrolUser.getCampusNum()!=null && patrolUser.getCampusNum()!=-1){
+			hql +=" and f.campusNum = "+patrolUser.getCampusNum();
+		}
 		hql += " order by f.id";
 		PageBean<PatrolUser> patrolUserPage = this.patrolUserService.getUsers(hql,pageSize==null?12:pageSize, page==null?1:page);
 		mv.addObject("patrolUserPage", patrolUserPage);
@@ -83,7 +90,7 @@ public class PatrolUserManagerController {
 			}
 			Date date = new Date();
 			patrolUser.setCreatetime(date);
-			patrolUser.setCampusNum(1);
+			//patrolUser.setCampusNum(1);
 			patrolUser.setIsDel((short)0);
 			patrolUser.setLastUpdateTime(date);
 			patrolUserService.addUser(patrolUser);
@@ -108,7 +115,7 @@ public class PatrolUserManagerController {
 		{
 			PatrolUser user = patrolUserService.getById(patrolUser.getId());
 			patrolUser.setLastUpdateTime(new Date());
-			patrolUser.setCampusNum(user.getCampusNum());
+			//patrolUser.setCampusNum(user.getCampusNum());
 			patrolUser.setClientId(user.getClientId());
 			patrolUser.setCreatetime(user.getCreatetime());
 			patrolUser.setIsDel((short)0);
@@ -196,9 +203,20 @@ public class PatrolUserManagerController {
 			HSSFRow row = sheet.createRow((int) 0);
 			// 第四步，创建单元格，并设置值表头 设置表头居中    
 			HSSFCellStyle style = wb.createCellStyle(); 
-			style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式    
+			style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式
+
+			// 设置表格默认列宽度为20个字节
+
+		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderLeft(BorderStyle.THIN);
+		style.setBorderRight(BorderStyle.THIN);
+		style.setBorderTop(BorderStyle.THIN);
+		style.setAlignment(HorizontalAlignment.CENTER);
+
 			HSSFCell  cell = null;   //设置单元格的数据类型
+
 			for (int i = 0; i < headers.length; i++) {
+				sheet.setColumnWidth(i,10000);
 				cell = row.createCell(i);
 				cell.setCellValue(headers[i]);
 				cell.setCellStyle(style);
@@ -206,7 +224,7 @@ public class PatrolUserManagerController {
 			// 第五步，写入实体数据 实际应用中这些数据从数据库得到，    
 			for(int i=0;i<dataList.size();i++){
 				if (i<5) {
-					sheet.autoSizeColumn(i, true);
+					//sheet.autoSizeColumn(i, true);
 				}
 				Object[] obj = dataList.get(i);//遍历每个对象
 				row = sheet.createRow(i+1);//创建所需的行数（从第二行开始写数据）

@@ -30,14 +30,14 @@ import com.system.utils.StringUtil;
 public class RoleController implements Serializable{
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 8337140766523613719L;
 	@Resource
 	private RoleService roleService;
 	@Resource
 	private ResourcesService resourcesService;
-	
+
 	private String roleType;
 	/**
 	 * 角色列表
@@ -84,7 +84,7 @@ public class RoleController implements Serializable{
 		}
 		return mv;
 	}
-	
+
 	@RequestMapping("role_edit")
 	public ModelAndView edit(String method,String resourcesIds,Role role,HttpSession session,Integer id)
 	{
@@ -124,7 +124,7 @@ public class RoleController implements Serializable{
 	/**
 	 * 获取角色对应权限
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@RequestMapping("role_getRoleResources")
 	public void getRoleResources(String ids,HttpServletRequest request,HttpServletResponse response) throws IOException
@@ -142,5 +142,5 @@ public class RoleController implements Serializable{
 			out.close();
 		}
 	}
-	
+
 }

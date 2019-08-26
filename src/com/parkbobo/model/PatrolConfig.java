@@ -2,13 +2,7 @@ package com.parkbobo.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="patrol_config")
@@ -81,7 +75,18 @@ public class PatrolConfig implements Serializable {
 	 * 超出循环周期时间处理方式：overtime_deal，1记为应签，2丢弃
 	 */
 	private Integer overtimeDeal;
-	
+
+	/**
+	 * 设备厂商id
+	 */
+//	private PatrolEquipmentManufacturer patrolEquipmentManufacturer;
+	private String manufacturerId;
+
+	/**
+	 *是否定位巡更0定位，1签到
+	 */
+	private Integer isLocation;
+
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -197,5 +202,34 @@ public class PatrolConfig implements Serializable {
 
 	public void setOvertimeDeal(Integer overtimeDeal) {
 		this.overtimeDeal = overtimeDeal;
+	}
+
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "manufacturer_id")
+//	public PatrolEquipmentManufacturer getPatrolEquipmentManufacturer() {
+//		return patrolEquipmentManufacturer;
+//	}
+//
+//	public void setPatrolEquipmentManufacturer(PatrolEquipmentManufacturer patrolEquipmentManufacturer) {
+//		this.patrolEquipmentManufacturer = patrolEquipmentManufacturer;
+//	}
+
+
+	@Column(name = "manufacturer_id")
+	public String getManufacturerId() {
+		return manufacturerId;
+	}
+
+	public void setManufacturerId(String manufacturerId) {
+		this.manufacturerId = manufacturerId;
+	}
+
+	@Column(name = "is_location")
+	public Integer getIsLocation() {
+		return isLocation;
+	}
+
+	public void setIsLocation(Integer isLocation) {
+		this.isLocation = isLocation;
 	}
 }

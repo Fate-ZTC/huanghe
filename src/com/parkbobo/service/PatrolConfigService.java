@@ -78,6 +78,7 @@ public class PatrolConfigService {
 	}
 
 
+
 	/**
 	 * 进行判断位置没有发生变化是否超过指定时间
 	 * @param lon						经度
@@ -135,12 +136,12 @@ public class PatrolConfigService {
      * @return
      */
 	public boolean isLeaveTime(Double lon,Double lat,Integer regionId,Integer leaveTime,
-							   PatrolUserRegion patrolUserRegion,boolean isInRegion) {
+							   PatrolUserRegion patrolUserRegion,boolean isInRegion, Integer leaveDistance) {
 		if(patrolUserRegion == null)
 			return true;
 
 		//这里还需要进行距离判断，超过距离才进行时间判断
-		boolean isLeave = isLeaveDistance(lon,lat,600,regionId);
+		boolean isLeave = isLeaveDistance(lon,lat,leaveDistance,regionId);
 		//离开
 		if(isLeave) {
 			if (patrolUserRegion.getLeaveRegionStartTime() == null) {
@@ -197,6 +198,37 @@ public class PatrolConfigService {
 		return true;
 	}
 
+	/**
+	 * 判断两点间速度超过指定速度
+	 * @param oldli			原有的点
+	 * @param uli				现在到达的点
+	 * @param seconds_per_timestep	两点间的时间差
+	 * @return
+	 */
+	public boolean isSpeed(PatrolLocationInfo oldli,PatrolLocationInfo uli,double seconds_per_timestep) {
+		try {
+			//进行计算是否超过指定距离
+			String sql = "SELECT st_distance(st_geometryfromtext('POINT("+oldli.getLon()+" "+oldli.getLat()+")'), st_geometryfromtext('POINT("+uli.getLon()+" "+uli.getLat()+")')) AS distance";
+			double distance = patrolUserRegionService.getDistanceBySql(sql);
+			if(distance > 0.0) {
+				distance = distance * 111000;
+				if(seconds_per_timestep==0.0){
+					seconds_per_timestep = 0.1;
+				}
+				double speed = distance/seconds_per_timestep;
+				if(speed>=12.0){
+					return false;
+				}else{
+					return true;
+				}
+			}else {
+				return true;
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
 
 	/**
 	 * 进行计算人员是否超过规定时间没有进行上传经纬度
@@ -275,6 +307,7 @@ public class PatrolConfigService {
 		if(patrolUserRegion != null && frequencyTime != null) {
 			if(patrolUserRegion.getExceptionPushTime() == null) {
 				//第一次进行异常推送
+				System.out.println("xichang time is null");
 				return true;
 			}else {
 				//判断当前时间是否在指定到达时间内，在则不进行推送，不在则进行推送
@@ -290,6 +323,7 @@ public class PatrolConfigService {
 				long pushTimeInterval = new Date().getTime() - patrolUserRegion.getExceptionPushTime().getTime();
 				if (pushTimeInterval > frequencyTime * ONE_MINUTE_MSEC) {
 					//这里推送时间超过频率时间,能进行推送
+					System.out.println("now time ="+new Date().getTime()+",xichang time="+patrolUserRegion.getExceptionPushTime().getTime()+",fasong time ="+frequencyTime * ONE_MINUTE_MSEC);
 					return true;
 				}
 			}
@@ -369,9 +403,34 @@ public class PatrolConfigService {
 		patrolLocationInfo.setStatus(1);
 		patrolLocationInfo.setPatrolException(null);
 
+		//获取配置信息
+		PatrolConfig patrolConfig = this.patrolConfigService.getById(1);
 		patrolUserRegionService.updateRecord(patrolUserRegion);
-		patrolLocationInfoService.add(patrolLocationInfo);
+		//查询最新的一条定位数据信息
+		PatrolLocationInfo locationInfo= patrolLocationInfoService.getLocation(patrolLocationInfo.getJobNum(),patrolLocationInfo.getUsregId(),patrolLocationInfo.getCampusNum());
+		//获取的定位数据时间与最新的一条定位数据时间的差值
+		Long xcDate=null;
+		if(locationInfo!=null){
+			xcDate=patrolLocationInfo.getTimestamp().getTime()-locationInfo.getTimestamp().getTime();
+		}
+
+		//如果配置的定位数据上传周期为空，则直接上传，不为空则需要判断
+		if(patrolConfig.getSignRange()==null){
+			patrolLocationInfoService.add(patrolLocationInfo);
+		}
+		else{
+			if(locationInfo==null){
+				patrolLocationInfoService.add(patrolLocationInfo);
+			}
+			else if(xcDate>=patrolConfig.getSignRange()*1000){
+				patrolLocationInfoService.add(patrolLocationInfo);
+			}
+		}
+
+
+
 	}
+
 
 
 

@@ -7,6 +7,7 @@ import com.parkbobo.service.*;
 import com.parkbobo.utils.PageBean;
 import com.parkbobo.utils.message.MessageBean;
 import com.system.utils.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,15 +18,16 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * 巡更签到接口
- * @author RY
+ * 巡更定位接口
+ * @author ZQ
  * @version 1.0
- * @since 2018-7-9 10:12:26
+ * @since 2019-2-9 10:12:26
  */
 @Controller
 public class PatrolSignInterfaceController {
@@ -46,6 +48,8 @@ public class PatrolSignInterfaceController {
 	private PatrolPauseService patrolPauseService;
 	@Resource
 	private PatrolUserService patrolUserService;
+	@Resource
+	private PatrolExceptionInfoService patrolExceptionInfoService;
 
 	private static double EARTH_RADIUS = 6738.137;
 
@@ -55,15 +59,19 @@ public class PatrolSignInterfaceController {
 	 * @param jobNum
 	 */
 	@RequestMapping("loadPatrolSignConfig")
-	public void loadPatrolSignConfig(HttpServletResponse response, String jobNum){
+	public void loadPatrolSignConfig(HttpServletResponse response, String jobNum) throws UnsupportedEncodingException {
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = null;
 		StringBuffer json = new StringBuffer();
+		byte[] b= new byte[0];
+		if (jobNum != null)
+			b = jobNum.getBytes("ISO-8859-1");
+		String jobNum1 = new String(b, "utf-8");
 		try {
 			out = response.getWriter();
 			PatrolConfig config = patrolConfigService.getById(1);
-			PatrolUserRegion patrolUserRegion = patrolUserRegionService.getCountTime(jobNum);
+			PatrolUserRegion patrolUserRegion = patrolUserRegionService.getCountTime(jobNum1);
 			if(config != null){
                 json.append("{\"status\":true,");
                 json.append("\"code\":1,");
@@ -321,11 +329,16 @@ public class PatrolSignInterfaceController {
 	 * @param dateCount
 	 * @param queryStartDate
 	 */
+	/*定位版*/
 	@RequestMapping("patrolSignRecord")
-	public void patrolSignRecord(HttpServletResponse response, String jobNum, Integer dateCount, String queryStartDate){
+	public void patrolSignRecord(HttpServletResponse response, String jobNum, Integer dateCount, String queryStartDate) throws UnsupportedEncodingException {
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = null;
+		byte[] b = new byte[0];
+		if (jobNum != null)
+			b = jobNum.getBytes("ISO-8859-1");
+		String jobNum1 = new String(b, "utf-8");
 		StringBuffer json = new StringBuffer();
 		StringBuffer tmpJson = new StringBuffer();
 
@@ -337,7 +350,7 @@ public class PatrolSignInterfaceController {
                 queryStartDate = sdf.format(new Date());
             }
 
-			String hql = "from PatrolSignUserDateView where jobNum = '" + jobNum
+			String hql = "from PatrolSignUserDateView where jobNum = '" + jobNum1
                     + "' and signDate <= '" + queryStartDate
                     +"' order by signDate desc";
 			PageBean<PatrolSignUserDateView> pageBean = patrolSignUserDateViewService.pageQuery(hql, dateCount + 1, 1);
@@ -348,11 +361,11 @@ public class PatrolSignInterfaceController {
                 if(hasNext){
                     nextQueryStartDate = pageBean.getList().get(dateCount).getSignDate();
                     for(int i = 0; i < dateCount; i++){
-                        tmpJson.append(loadJsonWithJobNumDate(jobNum, pageBean.getList().get(i).getSignDate()) + ",");
+                        tmpJson.append(loadJsonWithJobNumDate(jobNum1, pageBean.getList().get(i).getSignDate()) + ",");
                     }
                 } else{
                     for(int i = 0; i < pageBean.getList().size(); i++){
-                        tmpJson.append(loadJsonWithJobNumDate(jobNum, pageBean.getList().get(i).getSignDate()) + ",");
+                        tmpJson.append(loadJsonWithJobNumDate(jobNum1, pageBean.getList().get(i).getSignDate()) + ",");
                     }
                 }
 
@@ -390,6 +403,85 @@ public class PatrolSignInterfaceController {
 			out.close();
 		}
 	}
+
+	/*签到版*/
+	@RequestMapping("signPatrolSignRecord")
+	public void signPatrolSignRecord(HttpServletResponse response, String jobNum, Integer dateCount, String queryStartDate) throws UnsupportedEncodingException {
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html;charset=UTF-8");
+		PrintWriter out = null;
+		StringBuffer json = new StringBuffer();
+		StringBuffer tmpJson = new StringBuffer();
+
+		byte[] b = new byte[0];
+		if (jobNum != null)
+			b = jobNum.getBytes("ISO-8859-1");
+		String jobNum1 = new String(b, "utf-8");
+
+		try {
+			out = response.getWriter();
+
+			if(StringUtil.isEmpty(queryStartDate)){
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				queryStartDate = sdf.format(new Date());
+			}
+
+			String hql = "from PatrolSignUserDateView where jobNum = '" + jobNum1
+					+ "' and signDate <= '" + queryStartDate
+					+"' order by signDate desc";
+			PageBean<PatrolSignUserDateView> pageBean = patrolSignUserDateViewService.pageQuery(hql, dateCount + 1, 1);
+
+			if(pageBean.getList().size() > 0){
+				Boolean hasNext = pageBean.getList().size() > dateCount ? true : false;
+				String nextQueryStartDate = "";
+				if(hasNext){
+					nextQueryStartDate = pageBean.getList().get(dateCount).getSignDate();
+					for(int i = 0; i < dateCount; i++){
+						tmpJson.append(signLoadJsonWithJobNumDate(jobNum1, pageBean.getList().get(i).getSignDate()) + ",");
+					}
+				} else{
+					for(int i = 0; i < pageBean.getList().size(); i++){
+						tmpJson.append(signLoadJsonWithJobNumDate(jobNum1, pageBean.getList().get(i).getSignDate()) + ",");
+					}
+				}
+
+				json.append("{\"status\":true,");
+				json.append("\"code\":1,");
+				json.append("\"errorMsg\":\"获取成功\",");
+				json.append("\"hasNext\":" + hasNext + ",");
+				json.append("\"queryStartDate\":\"" + nextQueryStartDate + "\",");
+				json.append("\"data\":[" + tmpJson.deleteCharAt(tmpJson.length() - 1) + "]");
+				json.append("}");
+				System.out.println(json);
+
+			} else{
+				json.append("{\"status\":false,");
+				json.append("\"code\":-2,");
+				json.append("\"errorMsg\":\"没有签到信息了\",");
+				json.append("\"hasNext\":false,");
+				json.append("\"queryStartDate\":\"\",");
+				json.append("\"data\":[]}");
+			}
+
+			out.print(json);
+		} catch (Exception e) {
+			e.printStackTrace();
+			json = new StringBuffer();
+			json.append("{\"status\":false,");
+			json.append("\"code\":-2,");
+			json.append("\"errorMsg\":\"接口错误\",");
+			json.append("\"hasNext\":false,");
+			json.append("\"queryStartDate\":\"\",");
+			json.append("\"data\":[]}");
+			out.print(json);
+		} finally {
+			out.flush();
+			out.close();
+		}
+	}
+
+
+
 
 	/**
 	 * 管理端获取签到点位数据
@@ -478,11 +570,26 @@ public class PatrolSignInterfaceController {
 	 * @param username
 	 */
 	@RequestMapping("startPause")
-	public void startPause(HttpServletResponse response, String cause, String usercode, String username){
+	public void startPause(HttpServletResponse response, String cause, String usercode, String username) throws UnsupportedEncodingException {
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = null;
 		StringBuffer json = new StringBuffer();
+		byte[] b= new byte[0];
+		if(cause!=null){
+			b=cause.getBytes("ISO_8859-1");
+		}
+		String cause1=new String(b,"UTF-8");
+		b= new byte[0];
+		if(usercode!=null){
+			b=usercode.getBytes("ISO_8859-1");
+		}
+		String usercode1=new String(b,"UTF-8");
+		b= new byte[0];
+		if(username!=null){
+			b=username.getBytes("ISO_8859-1");
+		}
+		String username1=new String(b,"UTF-8");
 
 		try {
 			out = response.getWriter();
@@ -490,10 +597,13 @@ public class PatrolSignInterfaceController {
 			PatrolPause checkPause = patrolPauseService.checkPauseStatus();
 			if(checkPause == null){
 				PatrolPause patrolPause = new PatrolPause();
-				patrolPause.setCause(cause);
+				patrolPause.setCause(cause1);
+				//patrolPause.setCause(cause);
 				patrolPause.setPauseStart(new Date());
-				patrolPause.setUsercode(usercode);
-				patrolPause.setUsername(username);
+				patrolPause.setUsercode(usercode1);
+				patrolPause.setUsername(username1);
+				//patrolPause.setUsercode(usercode);
+				//patrolPause.setUsername(username);
 
 				patrolPauseService.add(patrolPause);
 
@@ -819,7 +929,9 @@ public class PatrolSignInterfaceController {
 				endMillis = userRegion.getEndTime().getTime();
 			}
 
-			Long expectedCount = calculateNeedSignCount(userRegion.getStartTime().getTime(), endMillis, patrolConfig.getSignRange(), patrolConfig.getOvertimeDeal())*regionPointCountMap.get(userRegion.getRegionId());
+			//应巡
+			Long expectedCount=(endMillis - userRegion.getStartTime().getTime()) / (patrolConfig.getSignRange() * 60 * 1000);;
+//			Long expectedCount = calculateNeedSignCount(userRegion.getStartTime().getTime(), endMillis, patrolConfig.getSignRange(), patrolConfig.getOvertimeDeal())*regionPointCountMap.get(userRegion.getRegionId());
 
 			if(!statisticVOMap.containsKey(userRegion.getJobNum())){
 				PatrolsignStatisticVO statisticVO = new PatrolsignStatisticVO();
@@ -827,6 +939,8 @@ public class PatrolSignInterfaceController {
 				statisticVO.setUsername(userRegion.getUsername());
 				statisticVO.setExpectedCount(Integer.parseInt(String.valueOf(expectedCount)));
 				statisticVO.setSignedCount(0);
+				statisticVO.setAbnormalCount(userRegion.getAbnormalCount());
+				statisticVO.setUsregId(userRegion.getId());
 
 				statisticVOMap.put(userRegion.getJobNum(), statisticVO);
 			} else{
@@ -840,14 +954,25 @@ public class PatrolSignInterfaceController {
 
 		for(PatrolUser patrolUser : patrolUserList){
 			if(statisticVOMap.containsKey(patrolUser.getJobNum())){
+				//获取实巡的记录
 				Integer effectiveSign = patrolSignRecordService.countEffectiveWithTimeRange(patrolUser.getJobNum(), startTime, endTime);
+				//获取异常次数
+//				Integer expectedCount = patrolSignRecordService.expectedCountWithTimeRange(patrolUser.getJobNum(), startTime, endTime);
+				Integer expectedCount= patrolExceptionInfoService.expectedCountWithTimeRange(patrolUser.getJobNum(), startTime, endTime);
 				PatrolsignStatisticVO statisticVO = statisticVOMap.get(patrolUser.getJobNum());
+
 				json.append("{");
 				json.append("\"jobNum\":\"" + statisticVO.getJobNum() + "\",");
 				json.append("\"username\":\"" + statisticVO.getUsername() + "\",");
+				//应巡
 				json.append("\"expectedCount\":" + statisticVO.getExpectedCount() + ",");
+				//实巡
 				json.append("\"signedCount\":" + effectiveSign + ",");
+				//异常次数
+				json.append("\"abnormalCount\":\"" + expectedCount + "\",");
+				//未巡
 				json.append("\"noSignCount\":" + (statisticVO.getExpectedCount() - effectiveSign>0?statisticVO.getExpectedCount() - effectiveSign:0));
+
 				json.append("},");
 			} else{
 				json.append("{");
@@ -855,6 +980,7 @@ public class PatrolSignInterfaceController {
 				json.append("\"username\":\"" + patrolUser.getUsername() + "\",");
 				json.append("\"expectedCount\":0,");
 				json.append("\"signedCount\":0,");
+				json.append("\"abnormalCount\":0,");
 				json.append("\"noSignCount\":0");
 				json.append("},");
 			}
@@ -890,14 +1016,125 @@ public class PatrolSignInterfaceController {
 				+ "' order by signTime desc";
 		List<PatrolSignRecord> recordList = patrolSignRecordService.getByHql(hql);
 
+		/*需要处理一下，到时候签到记录对应定位记录，签到点位对应定位的点位*/
 		for(PatrolSignRecord record : recordList){
+//			System.out.println(record.getPatrolSignPointInfo().getPatrolRegion().getId());
 			tmpJson.append("{");
-			tmpJson.append("\"pointName\":\"" + (record.getPatrolSignPointInfo()==null?"":record.getPatrolSignPointInfo().getPointName()) + "\",");
+//			tmpJson.append("\"pointName\":\"" + (record.getPatrolSignPointInfo()==null?"":record.getPatrolSignPointInfo().getPointName()) + "\",");
 			if(record.getPatrolSignPointInfo()!=null&&record.getPatrolSignPointInfo().getPatrolRegion()!=null){
 			    tmpJson.append("\"regionName\":\"" + record.getPatrolSignPointInfo().getPatrolRegion().getRegionName() + "\",");
             }else{
                 tmpJson.append("\"regionName\":\""+""+"\",");
             }
+            //通过区域id和时间查出用户区域id
+            String hql1="from PatrolUserRegion where regionId= "+record.getPatrolSignPointInfo().getPatrolRegion().getId();
+			hql1+=" and jobNum= '"+jobNum+"'";
+			hql1 += " and start_time < '"+record.getSignTime()+"'";
+			hql1 += " and end_time >= '"+record.getSignTime()+"'";
+			List<PatrolUserRegion> list=patrolUserRegionService.getByHQL(hql1);
+			Integer listId=-1;
+			String signRange="";
+			Integer status=0;
+			String hql2="";
+			if(list.size()>0){
+				//通过区域id和时间和工号查出异常
+				 hql2="from PatrolExceptionInfo where usregId= "+list.get(0).getId();
+				hql2 += " and jobNum= '"+jobNum+"'";
+				String strStartTime=list.get(0).getFormatStartTime();
+				String strEndTIme=list.get(0).getFormatEndTime();
+				SimpleDateFormat s=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				SimpleDateFormat s8=new SimpleDateFormat("HH:mm");
+				s.parse(strStartTime);
+				s.parse(strEndTIme);
+				String s1=s8.format(s.parse(strStartTime));
+				String s2=s8.format(s.parse(strEndTIme));
+
+				 signRange=s1+"-"+s2;
+				hql2 += " and createTime > '"+ strStartTime+"'";
+				hql2 += " and createTime < '"+strEndTIme+"'";
+				status=list.get(0).getStatus();
+			}else{
+				 hql2="from PatrolExceptionInfo where usregId= "+listId;
+				hql2 += " and jobNum= '"+jobNum+"'";
+			}
+
+
+
+
+
+			//拼接开始时间和结束时间
+//			String strStartTime=date+" "+record.getNoSignRange().substring(0,record.getNoSignRange().indexOf("-"));
+//			String strEndTIme=date+" "+record.getNoSignRange().substring(record.getNoSignRange().indexOf("-")+1);
+
+			List<PatrolExceptionInfo> patrolExceptionInfos=patrolExceptionInfoService.getByHQL(hql2);
+
+			StringBuffer tmpJson1 = new StringBuffer();
+			//判断在开始时间和结束时间段内是否存在异常，是则向json中添加异常list
+			if(patrolExceptionInfos!=null&&patrolExceptionInfos.size()!=0){
+
+				for(PatrolExceptionInfo patrolExceptionInfo : patrolExceptionInfos){
+					tmpJson1.append("{");
+					SimpleDateFormat sdf1=new SimpleDateFormat("HH:mm");
+					String str=sdf1.format(patrolExceptionInfo.getCreateTime());
+					tmpJson1.append("\"patrolExceptionInfoTime\":\"" + str + "\",");
+					tmpJson1.append("\"patrolExceptionInfoName\":\"" + patrolExceptionInfo.getExceptionName() + "\"");
+					tmpJson1.append("},");
+				}
+				tmpJson.append("\"patrolExceptionInfoList\":[" + tmpJson1.deleteCharAt(tmpJson1.length() - 1) + "],");
+				tmpJson.append("\"exceptionStatus\":" + status + ",");
+			}
+			else{
+				tmpJson.append("\"patrolExceptionInfoList\":[],");
+				tmpJson.append("\"exceptionStatus\":" + status + ",");
+//				tmpJson1.append("{");
+//				tmpJson1.append("},");
+//				tmpJson.append("\"patrolExceptionInfoList\":[" + tmpJson1.deleteCharAt(tmpJson1.length() - 1) + "],");
+			}
+
+			tmpJson.append("\"signStatus\":" + record.getSignType() + ",");
+			tmpJson.append("\"signTime\":\"" + (record.getSignTime() == null ? "" : simpleDateFormat.format(record.getSignTime())) + "\",");
+//			tmpJson.append("\"signRange\":\"" + (record.getNoSignRange() == null ? "" : record.getNoSignRange()) + "\"");
+			tmpJson.append("\"signRange\":\"" + signRange + "\",");
+			tmpJson.append("\"pointName\":\"" + (record.getPatrolSignPointInfo()==null?"":record.getPatrolSignPointInfo().getPointName()) + "\"");
+			tmpJson.append("},");
+		}
+
+		json.append("{");
+		json.append("\"dateString\":\"" + dateString + "\",");
+		json.append("\"recordList\":[" + tmpJson.deleteCharAt(tmpJson.length() - 1) + "]");
+		json.append("}");
+
+		return json;
+	}
+
+
+	public StringBuffer signLoadJsonWithJobNumDate(String jobNum, String date) throws ParseException {
+		StringBuffer json = new StringBuffer();
+		StringBuffer tmpJson = new StringBuffer();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat df = new SimpleDateFormat("MM月dd日");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+
+		String dateString = "";
+		if(date.equals(sdf.format(new Date()))){
+			dateString = "今天";
+		} else{
+			dateString = df.format(sdf.parse(date));
+		}
+
+		String hql = "from PatrolSignRecord where jobNum = '" + jobNum
+				+ "' and to_char(signTime, 'yyyy-MM-dd') = '" + date
+				+ "' order by signTime desc";
+		List<PatrolSignRecord> recordList = patrolSignRecordService.getByHql(hql);
+
+		for(PatrolSignRecord record : recordList){
+			tmpJson.append("{");
+			tmpJson.append("\"pointName\":\"" + (record.getPatrolSignPointInfo()==null?"":record.getPatrolSignPointInfo().getPointName()) + "\",");
+			if(record.getPatrolSignPointInfo()!=null&&record.getPatrolSignPointInfo().getPatrolRegion()!=null){
+				tmpJson.append("\"regionName\":\"" + record.getPatrolSignPointInfo().getPatrolRegion().getRegionName() + "\",");
+			}else{
+				tmpJson.append("\"regionName\":\""+""+"\",");
+			}
 			tmpJson.append("\"signStatus\":" + record.getSignType() + ",");
 			tmpJson.append("\"signTime\":\"" + (record.getSignTime() == null ? "" : simpleDateFormat.format(record.getSignTime())) + "\",");
 			tmpJson.append("\"signRange\":\"" + (record.getNoSignRange() == null ? "" : record.getNoSignRange()) + "\"");
@@ -911,6 +1148,92 @@ public class PatrolSignInterfaceController {
 
 		return json;
 	}
+
+
+
+
+//	/**
+//	 * 根据工号、日期
+//	 * 获取签到记录，倒序
+//	 * @param jobNum
+//	 * @param date
+//	 * @return
+//	 * @throws ParseException
+//	 */
+//	public StringBuffer loadJsonWithJobNumDate(String jobNum, String date) throws ParseException {
+//		StringBuffer json = new StringBuffer();
+//		StringBuffer tmpJson = new StringBuffer();
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//		SimpleDateFormat df = new SimpleDateFormat("MM月dd日");
+//		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+//
+//		String dateString = "";
+//		if(date.equals(sdf.format(new Date()))){
+//			dateString = "今天";
+//		} else{
+//			dateString = df.format(sdf.parse(date));
+//		}
+//
+//		String hql = "from PatrolSignRecord where jobNum = '" + jobNum
+//				+ "' and to_char(signTime, 'yyyy-MM-dd') = '" + date
+//
+//				+ "' order by signTime desc";
+//		List<PatrolSignRecord> recordList = patrolSignRecordService.getByHql(hql);
+//
+//		/*需要处理一下，因为区域中对应的点位可以是两个，不需要点位，去除点位*/
+//		for(PatrolSignRecord record : recordList){
+//			System.out.println(record.getPatrolSignPointInfo().getPatrolRegion().getId());
+//			tmpJson.append("{");
+//			tmpJson.append("\"pointName\":\"" + (record.getPatrolSignPointInfo()==null?"":record.getPatrolSignPointInfo().getPointName()) + "\",");
+//			if(record.getPatrolSignPointInfo()!=null&&record.getPatrolSignPointInfo().getPatrolRegion()!=null){
+//				tmpJson.append("\"regionName\":\"" + record.getPatrolSignPointInfo().getPatrolRegion().getRegionName() + "\",");
+//			}else{
+//				tmpJson.append("\"regionName\":\""+""+"\",");
+//			}
+//			//通过区域id和时间查出用户区域id
+//			String hql1="from PatrolUserRegion where regionId= "+record.getPatrolSignPointInfo().getPatrolRegion().getId();
+//			hql1+=" and jobNum= '"+jobNum+"'";
+//			hql1 += " and start_time < '"+record.getSignTime()+"'";
+//			hql1 += " and end_time > '"+record.getSignTime()+"'";
+//			List<PatrolUserRegion> list=patrolUserRegionService.getByHQL(hql1);
+//
+//			//通过区域id和时间查出异常
+//			String hql2="from PatrolExceptionInfo where usregId= "+list.get(0).getId();
+//			hql2 += " and jobNum= '"+jobNum+"'";
+//			String strStartTime=date+" "+record.getNoSignRange().substring(0,record.getNoSignRange().indexOf("-"));
+//			String strEndTIme=date+" "+record.getNoSignRange().substring(record.getNoSignRange().indexOf("-")+1);
+//			hql2 += " and createTime > '"+ strStartTime+"'";
+//			hql2 += " and createTime < '"+strEndTIme+"'";
+//			List<PatrolExceptionInfo> patrolExceptionInfos=patrolExceptionInfoService.getByHQL(hql2);
+//
+//			if(patrolExceptionInfos!=null&&patrolExceptionInfos.size()!=0){
+//				for(PatrolExceptionInfo patrolExceptionInfo : patrolExceptionInfos){
+//					tmpJson.append("\"patrolExceptionInfoTime\":\"" + patrolExceptionInfos.get(0).getCreateTime() + "\",");
+//					tmpJson.append("\"patrolExceptionInfoName\":\"" + patrolExceptionInfos.get(0).getExceptionName() + "\",");
+//				}
+////				tmpJson.append("\"patrolExceptionInfo\":" + patrolExceptionInfos + ",");
+////				tmpJson.append("\"patrolExceptionInfoTime\":" + patrolExceptionInfos.get(0).getCreateTime() + ",");
+////				tmpJson.append("\"patrolExceptionInfoName\":" + patrolExceptionInfos.get(0).getExceptionName() + ",");
+//			}
+//			tmpJson.append("\"signStatus\":" + record.getSignType() + ",");
+//			tmpJson.append("\"signTime\":\"" + (record.getSignTime() == null ? "" : simpleDateFormat.format(record.getSignTime())) + "\",");
+//			tmpJson.append("\"signRange\":\"" + (record.getNoSignRange() == null ? "" : record.getNoSignRange()) + "\"");
+//			tmpJson.append("},");
+//		}
+//
+//		json.append("{");
+//		json.append("\"dateString\":\"" + dateString + "\",");
+//		json.append("\"recordList\":[" + tmpJson.deleteCharAt(tmpJson.length() - 1) + "]");
+//		json.append("}");
+//
+//		return json;
+//	}
+
+
+
+
+
+
 
 	/**
 	 * 计算用户当前位置是否在签到范围内
@@ -991,10 +1314,15 @@ public class PatrolSignInterfaceController {
 	 * @return
 	 */
 	public Long calculateNeedSignCount(Long startMillis, Long endMillis, Integer signRange, Integer overtimeDeal){
-		if(overtimeDeal == 1){
-			return (endMillis - startMillis) / (signRange * 60 * 1000) + ((endMillis - startMillis) % (signRange * 60 * 1000) == 0 ? 0 : 1);
-		} else{
-			return (endMillis - startMillis) / (signRange * 60 * 1000);
-		}
+//		if(overtimeDeal == 1){
+//			return (endMillis - startMillis) / (signRange * 60 * 1000) + ((endMillis - startMillis) % (signRange * 60 * 1000) == 0 ? 0 : 1);
+//		} else{
+//			return (endMillis - startMillis) / (signRange * 60 * 1000);
+//		}
+		Long a=endMillis - startMillis;
+		Integer b=signRange * 60 * 1000;
+//		return (endMillis - startMillis) / (signRange * 60 * 1000);
+		Long c=(endMillis - startMillis) / (signRange * 60 * 1000);
+		return c;
 	}
 }

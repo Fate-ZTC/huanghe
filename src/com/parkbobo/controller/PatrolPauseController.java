@@ -6,6 +6,8 @@ import com.parkbobo.utils.PageBean;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -141,8 +143,15 @@ public class PatrolPauseController {
         // 第四步，创建单元格，并设置值表头 设置表头居中
         HSSFCellStyle style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式
-        HSSFCell cell = null;   //设置单元格的数据类型
+        // 设置表格默认列宽度为20个字节
+
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setAlignment(HorizontalAlignment.CENTER);HSSFCell cell = null;   //设置单元格的数据类型
         for (int i = 0; i < headers.length; i++) {
+            sheet.setColumnWidth(i,10000);
             cell = row.createCell(i);
             cell.setCellValue(headers[i]);
             cell.setCellStyle(style);

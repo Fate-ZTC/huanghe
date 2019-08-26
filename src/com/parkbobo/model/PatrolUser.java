@@ -3,13 +3,7 @@ package com.parkbobo.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="patrol_user")
@@ -45,6 +39,10 @@ public class PatrolUser implements Serializable{
 	 */
 	private Integer campusNum;
 	/**
+	 * 校区名称
+	 */
+	private String campusName;
+	/**
 	 * 个推id
 	 */
 	private String clientId;
@@ -56,6 +54,12 @@ public class PatrolUser implements Serializable{
 	 * 最后更新时间
 	 */
 	private Date lastUpdateTime;
+
+	/**
+	 * 是否推送,0是，1否
+	 */
+	private Integer isJpush;
+
 	@Id
 	@Column(name="id",unique=true,nullable=false)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -121,5 +125,22 @@ public class PatrolUser implements Serializable{
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
-	
+
+	@Column(name = "is_jpush")
+	public Integer getIsJpush() {
+		return isJpush;
+	}
+
+	public void setIsJpush(Integer isJpush) {
+		this.isJpush = isJpush;
+	}
+
+	@Transient
+	public String getCampusName() {
+		return campusName;
+	}
+
+	public void setCampusName(String campusName) {
+		this.campusName = campusName;
+	}
 }

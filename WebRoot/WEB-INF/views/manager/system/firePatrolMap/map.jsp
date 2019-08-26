@@ -8,6 +8,7 @@
     final String API = Configuration.getInstance().getValue("map_api_url");
     final String LMap_APIURL = Configuration.getInstance().getValue("map_LMap_APIURL");
     final String LMap_MAPSERVERURL = Configuration.getInstance().getValue("map_LMap_MAPSERVERURL");
+    final String LMap_ZONEID = Configuration.getInstance().getValue("map_ZONEID");
 
 %>
 <!DOCTYPE html>
@@ -138,13 +139,21 @@
 
 
 
-
-
-
         LMap.APIURL = "<%=LMap_APIURL%>";
         LMap.MAPSERVERURL = "<%=LMap_MAPSERVERURL%>";
+        var zoneid = "<%=LMap_ZONEID%>";
 
-        var map = new LMap.Map2D("map", 1001);
+        var patrol1 = '';
+        <c:if test="${not empty patrolRegion}">
+        patrol1 = '${patrolRegion}';
+        </c:if>
+       /* var u = eval('('+patrol1+')');
+        var campusNum = u.campusNum;
+        var zoneid = 1170;
+        if(campusNum == 1){
+            zoneid = 1172;
+        }*/
+        var map = new LMap.Map2D("map", zoneid);
         /**
          * 放大地图比例
          */
@@ -207,19 +216,19 @@
                                 pointRadius: 6,
                                 graphicName: "#02a6cf",
                                 fillColor: "#02a6cf",
-                                fillOpacity: 1,
+                                fillOpacity: 0.1,
                                 strokeWidth: 2,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#02a6cf"
                             },
                             "Line": {
                                 strokeWidth: 4,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#00ccff"
                             },
                             "Polygon":{
                                 strokeWidth: 2,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 fillColor: "#02a6c0",
                                 strokeColor: "#02a6c0"
                             }
@@ -235,19 +244,19 @@
                                 pointRadius: 6,
                                 graphicName: "circle",
                                 fillColor: "white",
-                                fillOpacity: 0.5,
+                                fillOpacity: 0.1,
                                 strokeWidth: 1,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#02a6cf"
                             },
                             "Line": {
                                 strokeWidth: 4,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#00ccff"
                             },
                             "Polygon":{
                                 strokeWidth: 2,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#00ccff"
                             }
                         }
@@ -262,19 +271,19 @@
                                 pointRadius: 6,
                                 graphicName: "circle",
                                 fillColor: "white",
-                                fillOpacity: 0.5,
+                                fillOpacity: 0.1,
                                 strokeWidth: 1,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#02a6cf"
                             },
                             "Line": {
                                 strokeWidth: 4,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#00ccff"
                             },
                             "Polygon":{
                                 strokeWidth: 2,
-                                strokeOpacity: 1,
+                                strokeOpacity: 0.1,
                                 strokeColor: "#02a6cf"
                             }
                         }
@@ -463,7 +472,7 @@
                 "default":new LMap.Style({
                     cursor:'pointer',
                     fillColor: (color == "" || color == undefined) ? "#02a6cf" : color ,
-                    fillOpacity: 0.4,
+                    fillOpacity: 0.1,
                     strokeColor: (color == "" || color == undefined) ? "#02a6cf" : color ,
                     strokeWidth: 1
                 }),
@@ -471,7 +480,7 @@
                 }),
                 "temporary":new LMap.Style({
                     fillColor: (color == "" || color == undefined) ? "#02a6cf" : color ,
-                    fillOpacity: 0.4,
+                    fillOpacity: 0.1,
                     strokeColor: (color == "" || color == undefined) ? "#02a6cf" : color ,
                     strokeWidth: 1
                 })

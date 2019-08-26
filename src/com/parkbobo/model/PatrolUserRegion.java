@@ -1,5 +1,7 @@
 package com.parkbobo.model;
 
+import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -82,6 +84,15 @@ public class PatrolUserRegion implements Serializable{
 	 * 区域id
      */
 	private int campusNum;
+	/**
+	 * 历史巡更区域id
+     */
+	private Integer historyRegionId;
+
+/*	*//**
+	 * 异常数据
+	 *//*
+	private PatrolExceptionInfo patrolExceptionInfo;*/
 
 	public PatrolUserRegion() {}
 
@@ -255,5 +266,14 @@ public class PatrolUserRegion implements Serializable{
 
 	public void setCampusNum(int campusNum) {
 		this.campusNum = campusNum;
+	}
+
+	@Column(name="history_region_id")
+	public Integer getHistoryRegionId() {
+		return historyRegionId;
+	}
+
+	public void setHistoryRegionId(Integer historyRegionId) {
+		this.historyRegionId = historyRegionId;
 	}
 }

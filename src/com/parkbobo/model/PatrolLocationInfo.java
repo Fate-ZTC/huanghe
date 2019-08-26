@@ -63,6 +63,17 @@ public class PatrolLocationInfo implements Serializable{
 	 * 是否异常   1正常  2异常
 	 */
 	private Integer status;
+
+	/**
+	 * 区域名称
+	 *
+	 */
+	private String regionName;
+	/**
+	 * 是否在巡更区域内
+	 *
+	 */
+	private Integer isArrive;
 	
 	@Id
 	@Column(name="id",unique=true,nullable=false)
@@ -137,8 +148,22 @@ public class PatrolLocationInfo implements Serializable{
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	
-	
-	
-	
+
+	@Column(name="region_name")
+	public String getRegionName() {
+		return regionName;
+	}
+
+	public void setRegionName(String regionName) {
+		this.regionName = regionName;
+	}
+
+	@Column(name="is_arrive")
+	public Integer getIsArrive() {
+		return isArrive;
+	}
+
+	public void setIsArrive(Integer isArrive) {
+		this.isArrive = isArrive;
+	}
 }

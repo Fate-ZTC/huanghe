@@ -84,7 +84,7 @@
     
     	<ul class="toolbar">
         <sec:authorize ifAnyGranted="patrolStatistic_excelOut">
-        <li onclick="forWardUrlParam('<%=path %>/patrolStatistic_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
+        <li onclick="forWardUrlParam('<%=path %>/patrolStatistic_excelOut','0');"><span><img src="<%=path %>/page/images/t07.png" /></span>导出</li>
         </sec:authorize>
         </ul>
     
@@ -97,9 +97,10 @@
         <th width="40px"><input type="checkbox" name="checkAll" value="checkbox" id="checkAll" class="checkAll"/></th>
         <th width="100px">姓名</th>
         <th width="100px">工号</th>
-        <th width="100px">应巡查</th>
-        <th width="100px">实巡查</th>
-        <th width="100px">未巡查</th>
+        <%--<th width="100px">应巡查</th>--%>
+        <th width="100px">实巡更</th>
+        <%--<th width="100px">未巡查</th>--%>
+            <th width="100px">异常次数</th>
         </tr>
         </thead>
         <tbody>
@@ -108,9 +109,16 @@
         <td><input type="checkbox" name="checkbox" value="${d.pauseId}" id="checkbox_${d.pauseId}" class="checkItem"/></td>
         <td>${d.username}</td>
         <td>${d.jobNum}</td>
-        <td>${d.expectedCount}</td>
+        <%--<td>${d.expectedCount}</td>--%>
         <td>${d.signedCount}</td>
-        <td>${d.noSignCount}</td>
+        <%--<td>${d.noSignCount}</td>--%>
+
+
+            <td>
+
+                <a  style="color:red;" href="javascript:void(0);" onclick="upHtm(${d.usregId},'${d.jobNum}','${d.startTime}','${d.endTime}');">${d.abnormalCount}</a>
+
+            </td>
         </tr>
         </c:forEach>
         </tbody>
@@ -207,6 +215,21 @@
     //             }
     //         }
     //     }
+
+    var the_host = "<%=path%>/";
+    function upHtm(usregId,jobNum,startTime,endTime) {
+        startTime = $("#start-time").val();
+        endTime = $("#end-time").val();
+        layer.open({
+            type:2,
+            title:'异常详情',
+            area: ['772px', '470px'],
+            content:"<%=basePath%>toSelectPatrolExceptionInfosByjobNum?usregId=" + usregId+"&jobNum=" + jobNum +"&startTime="+startTime+"&endTime="+endTime
+        })
+        <%--window.location.href = "<%=basePath%>toSelectPatrolExceptionInfosByjobNum?usregId=" + usregId+"&jobNum=" + jobNum +"&startTime="+startTime+"&endTime="+endTime;--%>
+    }
+
+
 	</script>
 
 </body>

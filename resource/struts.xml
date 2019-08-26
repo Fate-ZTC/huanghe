@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!-- 指定Web应用的默认编码集,相当于调用HttpServletRequest的setCharacterEncoding方法 -->
+    <constant name="struts.i18n.encoding" value="UTF-8"/>
+    <!-- 设置浏览器是否缓存静态内容,默认值为true(生产环境下使用),开发阶段最好关闭 -->
+    <constant name="struts.serve.static.browserCache" value="false"/>
+    <!-- 当struts的配置文件修改后,系统是否自动重新加载该文件,默认值为false(生产环境下使用),开发阶段最好打开 -->
+    <constant name="struts.configuration.xml.reload" value="false"/>
+    <!-- 开发模式下使用,这样可以打印出更详细的错误信息 -->
+    <constant name="struts.devMode" value="false" />
+    <!-- struts的action交由spring创建和管理 -->
+    <constant name="struts.objectFactory" value="spring" />
+    <!--  struts文件上传大小限制 -->
+    <constant name="struts.multipart.maxSize" value="10000000000000" />
+    <!-- 文件上传临时文件存放路径 -->
+    <constant name="struts.multipart.saveDir" value="/tmp"/>
+	<!--&lt;!&ndash; 综合服务 &ndash;&gt;
+	<include file="struts-service.xml"/>-->
+    <!-- 全局Package -->
+    <package name="def" extends="struts-default" >
+    	<interceptors >
+    		<interceptor name="myInterceptor" class="com.parkbobo.myinterceptor.MyInterceptor"></interceptor>
+    		<interceptor-stack name="teamwareStack">
+                <interceptor-ref name="myInterceptor"/>
+                <interceptor-ref name="defaultStack"/>
+            </interceptor-stack>
+    	</interceptors>
+		<default-interceptor-ref name="teamwareStack"/>
+		<global-results>
+			<result name="nologin">/WEB-INF/jsp/mobile/nologin.jsp</result>
+			<result name="checkFail">/WEB-INF/jsp/mobile/checkFail.jsp</result>
+			<result name="tokenFail">/WEB-INF/jsp/mobile/tokenFail.jsp</result>
+			<result name="weixinnologin">/WEB-INF/jsp/mobile/weixin/login.jsp</result>
+		</global-results>
+	</package>
+	<!-- 移动端接口 -->
+    <package name="mobile" extends="def" namespace="/">
+		<action name="*_*" class="{1}Action" method="{2}">
+			<result name="{2}">/WEB-INF/jsp/mobile/{1}/{1}-{2}.jsp</result>
+		</action>
+		<!-- 用户上传头像 -->
+		<action name="uploadHead" class="usersAction"></action>
+		<!-- 上传认证附件 -->
+		<action name="uploadFile" class="uploadFileAction"></action>
+		<!-- 支付宝返回通知 -->
+		<action name="alipayNotify" class="alipayNotifyAction"></action>
+		
+		<!-- app下载 -->
+		<action name="app" class="appVersionAction">
+    		<result name="input">/error.jsp</result>
+			<exception-mapping result="client-abort-exception" exception="org.apache.catalina.connector.ClientAbortException"></exception-mapping>
+			<result name="downloadApp" type="stream">
+				 <param name="contentType">application/vnd.android.package-archive;</param>
+				 <param name="inputName">inputStream</param>
+				 <param name="contentDisposition">attachment;filename="${fileName}"</param>
+				 <param name="bufferSize">4096</param>
+				 <param name="contentLength">${contentLength}</param>
+			 </result>
+    	</action>
+    	
+    	<action name="parkdata" class="carparkAction" method="getAllZip">
+    		<result name="input">/error.jsp</result>
+			<exception-mapping result="client-abort-exception" exception="org.apache.catalina.connector.ClientAbortException"></exception-mapping>
+			<result name="download" type="stream">
+				 <param name="contentType">application/vnd.android.package-archive;</param>
+				 <param name="inputName">inputStream</param>
+				 <param name="contentDisposition">attachment;filename="${fileName}"</param>
+				 <param name="bufferSize">4096</param>
+				 <param name="contentLength">${contentLength}</param>
+			 </result>
+    	</action>
+    	
+    	<action name="getMapNavigation" class="mapAction" method="getMapNavigation">
+    		<result name="input">/error.jsp</result>
+			<exception-mapping result="client-abort-exception" exception="org.apache.catalina.connector.ClientAbortException"></exception-mapping>
+			<result name="download" type="stream">
+				 <param name="contentType">application/vnd.android.package-archive;</param>
+				 <param name="inputName">inputStream</param>
+				 <param name="contentDisposition">attachment;filename="${fileName}"</param>
+				 <param name="bufferSize">4096</param>
+				 <param name="contentLength">${contentLength}</param>
+			 </result>
+    	</action>
+    	
+    	<action name="weixin" class="weixinAction">
+			<result name="activity">/WEB-INF/jsp/mobile/weixin/weixinActivity.jsp</result>
+		</action>
+		<action name="weixinUser_login" class="weixinUserAction" method="login">
+			<result name="login">/WEB-INF/jsp/mobile/weixin/login.jsp</result>
+		</action>
+			
+		<action name="weixinUser_register" class="weixinUserAction" method="register">
+			<result name="register">/WEB-INF/jsp/mobile/weixin/register.jsp</result>
+		</action>
+		
+		<action name="weixinUser_regUser" class="weixinUserAction" method="regUser">
+			<result name="regUser" type="redirect">/weixinUser_login</result>
+		</action>
+		<action name="weixinUser_loginCheck" class="weixinUserAction" method="loginCheck">
+			<result name="reg" type="redirect">/weixinUser_register</result>
+			<result name="loginCheck" type="redirect">/weixinShare_parkable</result>
+		</action>
+		
+		<action name="weixinShare_list" class="weixinShareAction" method="list">
+			<result name="list">/WEB-INF/jsp/mobile/weixin/berthshare_list.jsp</result>
+			<result name="lists">/WEB-INF/jsp/mobile/weixin/berthshare_lists.jsp</result>
+			<result name="eblist">/WEB-INF/jsp/mobile/weixin/berthshare_eblist.jsp</result>
+		</action>
+		
+			
+		<action name="weixinShare_parkable" class="weixinShareAction" method="parkable">
+			<result name="parkable">/WEB-INF/jsp/mobile/weixin/carportable.jsp</result>
+			<result name="login" type="redirect">/weixinUser_login</result>
+		</action>
+		
+		<action name="weixinShare_isAppiontment" class="weixinShareAction" method="is_appiontment">
+		</action>
+		
+		<action name="weixinOrder_list" class="orderAction" method="list">
+			<result name="list">/WEB-INF/jsp/mobile/weixin/order.jsp</result>
+			<result name="login" type="redirect">/weixinUser_login</result>
+		</action>
+		
+		<action name="weixinOrder_booklist" class="orderAction" method="bookList">
+			<result name="list">/WEB-INF/jsp/mobile/weixin/bookorder.jsp</result>
+			<result name="login" type="redirect">/weixinUser_login</result>
+		</action>
+		
+		
+		<action name="weixinOrder_mteo" class="orderAction" method="manuallyTakeEffectOrder">
+			<result name="detailed">/WEB-INF/jsp/mobile/weixin/detailed.jsp</result>
+		</action>
+		
+		<action name="weixinOrder_detailed" class="orderAction" method="detailed">
+			<result name="detailed">/WEB-INF/jsp/mobile/weixin/detailed.jsp</result>
+		</action>
+		
+		<action name="weixinOrder_ebdetailed" class="orderAction" method="detailed">
+			<result name="detailed">/WEB-INF/jsp/mobile/weixin/ebdetailed.jsp</result>
+		</action>
+		
+		<action name="weixinOrder_paysuss" class="orderAction" method="paysuss">
+			<result name="paysuss">/WEB-INF/jsp/mobile/weixin/paysuss.jsp</result>
+		</action>
+		
+		<action name="weixinOrder_ebpaysuss" class="orderAction" method="paysuss">
+			<result name="paysuss">/WEB-INF/jsp/mobile/weixin/ebpaysuss.jsp</result>
+		</action>
+		<action name="weixinOrder_pay" class="orderAction" method="pay">
+			<result name="pay">/WEB-INF/jsp/mobile/weixin/pay.jsp</result>
+		</action>
+		
+		<action name="weixinOrder_ebpay" class="orderAction" method="ebpay">
+			<result name="ebpay">/WEB-INF/jsp/mobile/weixin/ebpay.jsp</result>
+		</action>
+		
+		<action name="weixinOrder_ebxfpay" class="orderAction" method="ebxfpay">
+			<result name="ebxfpay">/WEB-INF/jsp/mobile/weixin/ebxfpay.jsp</result>
+		</action>
+		
+		<action name="weixinOrder_ebpayWait" class="orderAction" method="ebpayWait">
+			<result name="ebpayWait">/WEB-INF/jsp/mobile/weixin/payWait.jsp</result>
+		</action>
+		
+		<action name="weixinOrder_ebpaySuccess" class="orderAction" method="ebpaySuccess">
+			<result name="ebpaySuccess">/WEB-INF/jsp/mobile/weixin/paySuccess.jsp</result>
+		</action>
+		
+		<action name="weixinOrder_ebpayFail" class="orderAction" method="ebpayFail">
+			<result name="ebpayFail">/WEB-INF/jsp/mobile/weixin/payFail.jsp</result>
+		</action>
+		
+		<action name="weixinOrder_submit" class="orderAction" method="submitOrder">
+			<result name="lists" type="redirect">/weixinOrder_pay</result>
+		</action>
+		<action name="weixinOrder_submitBook" class="orderAction" method="submitBookOrder">
+			<result name="lists" type="redirect">/weixinOrder_pay</result>
+		</action>
+		<action name="weixinOrder_failure" class="orderAction" method="failure">
+			<result name="lists" type="redirect">/weixinOrder_pay</result>
+		</action>
+		
+		
+		<action name="weixinOrderBook_failure" class="orderAction" method="appiontmentfailure">
+			<result name="lists" type="redirect">/weixinOrder_pay</result>
+		</action>
+		
+		<action name="weixinPort" class="weixinMsgAction" method="weixinPort"></action>
+		
+		<action name="weixinOrder_byValue" class="orderAction" method="byValue">
+			<result name="carNum">/WEB-INF/jsp/mobile/weixin/carNum.jsp</result>
+		</action>
+		
+		<action name="weixinOrder_inputcarNum" class="orderAction" method="inputcarNum">
+			<result name="carNum">/WEB-INF/jsp/mobile/weixin/carNum.jsp</result>
+		</action>
+
+		<action name="weixinOrder_currentorder" class="orderAction" method="currentorder">
+			<result name="currentorder">/WEB-INF/jsp/mobile/weixin/order.jsp</result>
+		</action>
+		
+		<action name="weixinOrder_renews" class="orderAction" method="renew">
+			<result name="renew">/WEB-INF/jsp/mobile/weixin/renew.jsp</result>
+		</action>
+		
+		<action name="weixinShare_carportNum" class="weixinShareAction" method="carportNum">
+			<result name="renew">/WEB-INF/jsp/mobile/weixin/renew.jsp</result>
+		</action>
+		<action name="weixinShare_carportBookNum" class="weixinShareAction" method="carportBookNum">
+			<result name="renew">/WEB-INF/jsp/mobile/weixin/renew.jsp</result>
+		</action>
+		
+		<action name="weixinActivity_recharge" class="orderAction" method="to_recharge">
+			<result name="to_recharge">/WEB-INF/jsp/mobile/weixin/red/red-packets-before.jsp</result>
+			<result name="login" type="redirect">/weixinUser_login</result></action>
+		
+		<action name="weixinOrder_recharge" class="orderAction" method="recharge">
+		</action>
+		
+		<action name="weixinOrder_retrieve" class="orderAction" method="retrieve"></action>
+		
+		<!-- 微信红包 -->
+		<action name="weixinRed_grabRed" class="weixinRedAction" method="grabRed">
+			<result name="grabRed">/WEB-INF/jsp/mobile/weixin/red/red-packets-before.jsp</result>
+		</action>
+		<!-- 酒城停车微信-->
+		<action name="wxSearchCarNumber_toSearch" class="wxSearchCarNumberAction" method="toSearch">
+			<result name="toSearch">/WEB-INF/jsp/mobile/weixin/hik/search.jsp</result>
+		</action>
+		
+		<action name="wxSearchCarNumber_searchCarNumber" class="wxSearchCarNumberAction" method="searchCarNumber"></action>
+		
+		<action name="wxParkingList_list" class="wxParkingListAction" method="list">
+				<result name="list">/WEB-INF/jsp/mobile/weixin/hik/parking_list.jsp</result>
+		</action>
+			<action name="wxPort_verify" class="wxPortAction" method="verify"></action>
+		<action name="wxGoParking_to" class="wxGoParkingAction" method="to">
+				<result name="to">/WEB-INF/jsp/mobile/weixin/hik/go_parking.jsp</result>
+		</action>
+    </package>
+
+    
+ </struts>
+	
