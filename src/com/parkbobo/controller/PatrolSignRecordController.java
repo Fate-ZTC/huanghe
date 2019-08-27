@@ -6,6 +6,8 @@ import com.parkbobo.utils.PageBean;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -127,7 +129,7 @@ public class PatrolSignRecordController {
             }
         }
         //设置表格标题行
-        String[] headers = new String[] {"姓名","工号", "巡更签到时间","巡更结果"};
+        String[] headers = new String[] {"姓名","工号", "巡更时间","巡更结果"};
         List<Object[]> dataList = new ArrayList<Object[]>();
         Object[] objs = null;
         if (list!=null && list.size()>0) {
@@ -151,8 +153,17 @@ public class PatrolSignRecordController {
         // 第四步，创建单元格，并设置值表头 设置表头居中
         HSSFCellStyle style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式
+
+        // 设置表格默认列宽度为20个字节
+
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setAlignment(HorizontalAlignment.CENTER);
         HSSFCell cell = null;   //设置单元格的数据类型
         for (int i = 0; i < headers.length; i++) {
+            sheet.setColumnWidth(i,10000);
             cell = row.createCell(i);
             cell.setCellValue(headers[i]);
             cell.setCellStyle(style);
@@ -160,7 +171,7 @@ public class PatrolSignRecordController {
         // 第五步，写入实体数据 实际应用中这些数据从数据库得到，
         for(int i=0;i<dataList.size();i++){
             if (i<5) {
-                sheet.autoSizeColumn(i, true);
+                //sheet.autoSizeColumn(i, true);
             }
             Object[] obj = dataList.get(i);//遍历每个对象
             row = sheet.createRow(i+1);//创建所需的行数（从第二行开始写数据）

@@ -3,13 +3,7 @@ package com.parkbobo.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="patrol_exception_info")
@@ -28,6 +22,7 @@ public class PatrolExceptionInfo implements Serializable{
 	 * 用户区域
 	 */
 	private Integer usregId;
+	/*private PatrolUserRegion patrolUserRegion;*/
 	/**
 	 * 用户名
 	 */
@@ -48,6 +43,9 @@ public class PatrolExceptionInfo implements Serializable{
 	 * 时间戳
 	 */
 	private Date createTime;
+	/**
+	 * 巡更
+	 */
 	@Id
 	@Column(name="id",nullable=false,unique=true)
 	@GeneratedValue(generator="generator", strategy = GenerationType.AUTO)
@@ -57,13 +55,24 @@ public class PatrolExceptionInfo implements Serializable{
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	@Column(name="usregid")
+
+
+/*	@ManyToOne(cascade = {CascadeType.ALL})
+	@JoinColumn(name="usregid")
+	public PatrolUserRegion getPatrolUserRegion() {
+		return patrolUserRegion;
+	}
+
+	public void setPatrolUserRegion(PatrolUserRegion patrolUserRegion) {
+		this.patrolUserRegion = patrolUserRegion;
+	}*/
 	public Integer getUsregId() {
 		return usregId;
 	}
 	public void setUsregId(Integer usregId) {
 		this.usregId = usregId;
 	}
+
 	@Column(name="username")
 	public String getUsername() {
 		return username;

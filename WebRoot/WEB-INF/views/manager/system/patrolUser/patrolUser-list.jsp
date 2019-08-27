@@ -9,7 +9,9 @@ String path = request.getContextPath();
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>巡更人员管理-列表</title>
 <link href="<%=path %>/page/css/style.css" rel="stylesheet" type="text/css" />
+<link href="<%=path %>/page/css/select.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<%=path %>/page/js/jquery.js"></script>
+<script type="text/javascript" src="<%=path %>/page/js/select-ui.min.js"></script>
 <script type="text/javascript" src="<%=path %>/page/js/common.js"></script>
 <script type="text/javascript" src="<%=path %>/page/layer/layer.js"></script>
 <script type="text/javascript">
@@ -22,6 +24,15 @@ String path = request.getContextPath();
 		layer.msg('删除成功', {icon: 1});
 	}else{
 	}
+    $(function() {
+        //选择框
+        $(".select3").uedSelect({
+            width : 150
+        });
+        /**
+         * 弹出页面
+         */
+    });
 </script>
 </head>
 <body>
@@ -39,6 +50,15 @@ String path = request.getContextPath();
     <ul class="seachform">
     	<li><label>巡更人员姓名:</label><input name="username" value="${patrolUser.username}" type="text" class="scinput" /></li>
 		<li><label>巡更人员账号:</label><input name="jobNum" value="${patrolUser.jobNum}" type="text" class="scinput" /></li>
+        <li><label>校区</label>
+            <div class="vocation">
+                <select class="select3" name="campusNum" >
+                    <option value="-1">-请选择-</option>
+                    <option value="0" <c:if test="${patrolUser.campusNum==0}"> selected</c:if>>袁家岗校区</option>
+                    <option value="1" <c:if test="${patrolUser.campusNum==1}"> selected</c:if>>缙云校区</option>
+                </select>
+            </div>
+        </li>
 		<li><label>&nbsp;</label><input name="" type="submit" class="scbtn" value="搜索"/>
 		<input type="hidden" name="pageSize" value="${pageSize}" />
 		<input type="hidden" name="page" id="page" value="${page}"/>
@@ -55,7 +75,7 @@ String path = request.getContextPath();
         <li onclick="bulkDelete('<%=path %>/patrolUser_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
         </sec:authorize>
         <sec:authorize ifAnyGranted="patrolUser_list">
-        <li onclick="forWardUrl_param('<%=path %>/patrolUser_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
+        <li onclick="forWardUrl_param('<%=path %>/patrolUser_excelOut','0');"><span><img src="<%=path %>/page/images/t07.png" /></span>导出</li>
         </sec:authorize>
         </ul>
     
@@ -68,6 +88,7 @@ String path = request.getContextPath();
         <th width="40px"><input type="checkbox" name="checkAll" value="checkbox" id="checkAll" class="checkAll"/></th>
         <th width="150px">巡更人员姓名</th>
         <th width="150px">巡更人员账号</th>
+        <th width="150px">所属校区</th>
         <th width="150px">更新时间</th>
         <th width="150px">操作</th>
         </tr>
@@ -78,6 +99,14 @@ String path = request.getContextPath();
         <td><input type="checkbox" name="checkbox" value="${d.id}" id="checkbox_${d.id}" class="checkItem"/></td>
         <td>${d.username}</td>
         <td>${d.jobNum}</td>
+        <td><c:choose>
+            <c:when test="${d.campusNum == 0}">
+                袁家岗校区
+            </c:when>
+            <c:when test="${d.campusNum == 1}">
+                缙云校区
+            </c:when>
+        </c:choose></td>
         <td><fmt:formatDate value="${d.lastUpdateTime}" pattern="yyyy-MM-dd HH:mm"/></td>
         <td>
         	<sec:authorize ifAnyGranted="patrolUser_edit">

@@ -35,6 +35,9 @@
     margin-left: 4rem;
     margin-top: 3rem;
 }
+.layui-layer-content{
+    padding: 10px;
+}
 .scbtn {
     width: 60px;
 }
@@ -90,7 +93,7 @@
         <%--<li onclick="forWardUrl('<%=path %>/firePatrolInfo_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>--%>
         <%--</sec:authorize>--%>
         <sec:authorize ifAnyGranted="patrolPause_excelOut">
-        <li onclick="forWardUrlParam('<%=path %>/patrolPause_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
+        <li onclick="forWardUrlParam('<%=path %>/patrolPause_excelOut','0');"><span><img src="<%=path %>/page/images/t07.png" /></span>导出</li>
         </sec:authorize>
         </ul>
     
@@ -179,7 +182,6 @@
         $(".layui-layer-title").text("暂停巡更原因");
         layer.open({
           type: 1,
-          skin: 'layui-layer-rim', //加上边框
           area: ['420px', '240px'], //宽高
           content: cause
         });

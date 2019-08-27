@@ -53,6 +53,35 @@ public class ExceptionPushService {
     }
 
 
+
+    /**
+     * 进行消息推送(消防管理端)
+     * @param title		标题
+     * @param content	内容
+     * @param alias		推送人员
+     */
+    public void pushSendHelp(Integer id,String title,String content,String userCode,String userName,Double lon, Double lat,String type,String alias) {
+        if(alias != null && !"".equals(alias)) {
+            /*因为暂定移动救援只需要推使用端的，所以把key改成了使用端的key，如果后面需要不同推送，再做修改*/
+            JPushClientExample push = new JPushClientExample(USE_PATROL_APP_KEY, USE_PATROL_SECRET);
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("id",id.toString());
+            map.put("title", title);
+            map.put("userName",userName);
+            map.put("content", content);
+            map.put("userCode",userCode);
+            map.put("lon",lon.toString());
+            map.put("lat",lat.toString());
+            map.put("type",type);
+            //TODO 这里进行测试推送
+//            String test_al = "ydtest";
+            push.aliasSendMsg(title, content, map, alias);
+        }
+    }
+
+
+
+
     /**
      * 消息推送(安防巡更使用端)
      * @param type      类型(使用端推送：3)

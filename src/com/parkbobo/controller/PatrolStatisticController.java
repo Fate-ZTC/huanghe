@@ -2,13 +2,17 @@ package com.parkbobo.controller;
 
 import com.parkbobo.VO.PatrolsignStatisticVO;
 import com.parkbobo.model.PatrolConfig;
+import com.parkbobo.model.PatrolExceptionInfo;
 import com.parkbobo.model.PatrolUser;
 import com.parkbobo.model.PatrolUserRegion;
 import com.parkbobo.service.*;
 import com.parkbobo.utils.PageBean;
+import com.system.utils.StringUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -49,6 +53,8 @@ public class PatrolStatisticController {
     private PatrolPauseService patrolPauseService;
     @Resource
     private PatrolUserService patrolUserService;
+    @Resource
+    private PatrolExceptionInfoService patrolExceptionInfoService;
 
     @RequestMapping("patrolStatistic_list")
     public ModelAndView statisticController(String startTime,String endTime,String name,String jobNum,Integer page,Integer pageSize){
@@ -82,13 +88,17 @@ public class PatrolStatisticController {
                 endMillis = userRegion.getEndTime().getTime();
             }
 
+            //计算应该签到的次数
             Long expectedCount = calculateNeedSignCount(userRegion.getStartTime().getTime(), endMillis, patrolConfig.getSignRange(), patrolConfig.getOvertimeDeal());
 
             if(!statisticVOMap.containsKey(userRegion.getJobNum())){
                 PatrolsignStatisticVO statisticVO = new PatrolsignStatisticVO();
                 statisticVO.setJobNum(userRegion.getJobNum());
                 statisticVO.setUsername(userRegion.getUsername());
+                statisticVO.setUsregId(userRegion.getId());
                 statisticVO.setExpectedCount(Integer.parseInt(String.valueOf(expectedCount)));
+                statisticVO.setStartTime(userRegion.getStartTime());
+                statisticVO.setEndTime(userRegion.getEndTime());
                 statisticVO.setSignedCount(0);
 
                 statisticVOMap.put(userRegion.getJobNum(), statisticVO);
@@ -122,21 +132,36 @@ public class PatrolStatisticController {
             for(PatrolUser patrolUser : patrolUserList) {
                 if (statisticVOMap.containsKey(patrolUser.getJobNum())) {
                     Map<String,Object> map = new HashMap<>();
+                    //查出实际签到次数
                     Integer effectiveSign = patrolSignRecordService.countEffective(patrolUser.getJobNum(), startTime, endTime);
                     PatrolsignStatisticVO statisticVO = statisticVOMap.get(patrolUser.getJobNum());
+                    map.put("usregId",statisticVO.getUsregId());
                     map.put("jobNum",statisticVO.getJobNum());
                     map.put("username",statisticVO.getUsername());
                     map.put("expectedCount",statisticVO.getExpectedCount());
                     map.put("signedCount",effectiveSign);
                     map.put("noSignCount",statisticVO.getExpectedCount() - effectiveSign);
+                    map.put("startTime",statisticVO.getStartTime());
+                    map.put("endTime",statisticVO.getEndTime());
+                    //String hql1="from PatrolExceptionInfo where usregId= "+statisticVO.getUsregId();
+                    String hql1="from PatrolExceptionInfo where 1=1";
+                    hql1 += " and jobNum= '"+statisticVO.getJobNum()+"'";
+                    /*hql1 += " and createTime > '"+statisticVO.getStartTime()+"'";
+                    if(statisticVO.getEndTime()!=null){
+                        hql1 += " and createTime < '"+statisticVO.getEndTime()+"'";
+                    }*/
+                    List<PatrolExceptionInfo> patrolExceptionInfos=patrolExceptionInfoService.getByHQL(hql1);
+                    map.put("abnormalCount",patrolExceptionInfos.size());
                     mapList.add(map);
                 }else{
                     Map<String,Object> map = new HashMap<>();
+                    map.put("usregId",0);
                     map.put("jobNum",patrolUser.getJobNum());
                     map.put("username",patrolUser.getUsername());
                     map.put("expectedCount",0);
                     map.put("signedCount",0);
                     map.put("noSignCount",0);
+                    map.put("abnormalCount",0);
                     mapList.add(map);
                 }
             }
@@ -151,6 +176,40 @@ public class PatrolStatisticController {
         mv.addObject("data",mapList);
         mv.addObject("userPageBean",userPageBean);
         mv.setViewName("manager/system/patrolStatistic/patrolStatistic-list");
+        return mv;
+    }
+
+
+    /**
+     * 查看异常详情 by jobNum(by jobNum没啥特殊意义，只是为了区分)
+     * @param jobNum
+     * @return
+     */
+    @RequestMapping("/toSelectPatrolExceptionInfosByjobNum")
+    public ModelAndView toSelectPatrolExceptionInfos(Integer usregId,String jobNum,String startTime,String endTime) throws UnsupportedEncodingException {
+        ModelAndView mv = new ModelAndView();
+        byte[] b= new byte[0];
+        if(jobNum!=null){
+            b=jobNum.getBytes("ISO_8859-1");
+        }
+        String jobNum1=new String(b,"UTF-8");
+
+        //String hql1="from PatrolExceptionInfo where usregId= "+usregId;
+        String hql1="from PatrolExceptionInfo where 1=1 ";
+        if(StringUtils.isNotBlank(jobNum)){
+            hql1 += " and jobNum= '"+jobNum1+"'";
+            //hql1 += " and jobNum= '"+jobNum+"'";
+        }
+        if(StringUtils.isNotBlank(startTime)){
+            hql1 += " and createTime > '"+startTime+"'";
+        }
+        if(StringUtils.isNotBlank(endTime)){
+            hql1 += " and createTime < '"+endTime+"'";
+        }
+        hql1 += " order by createTime desc";
+        List<PatrolExceptionInfo> patrolExceptionInfos=patrolExceptionInfoService.getByHQL(hql1);
+        mv.addObject("patrolExceptionInfos",patrolExceptionInfos);
+        mv.setViewName("manager/system/patrolStatistic/patrolExceptionInfos");
         return mv;
     }
 
@@ -275,8 +334,16 @@ public class PatrolStatisticController {
         // 第四步，创建单元格，并设置值表头 设置表头居中
         HSSFCellStyle style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式
+        // 设置表格默认列宽度为20个字节
+
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setAlignment(HorizontalAlignment.CENTER);
         HSSFCell cell = null;   //设置单元格的数据类型
         for (int i = 0; i < headers.length; i++) {
+            sheet.setColumnWidth(i,10000);
             cell = row.createCell(i);
             cell.setCellValue(headers[i]);
             cell.setCellStyle(style);
@@ -284,7 +351,7 @@ public class PatrolStatisticController {
         // 第五步，写入实体数据 实际应用中这些数据从数据库得到，
         for(int i=0;i<dataList.size();i++){
             if (i<5) {
-                sheet.autoSizeColumn(i, true);
+                //sheet.autoSizeColumn(i, true);
             }
             Object[] obj = dataList.get(i);//遍历每个对象
             row = sheet.createRow(i+1);//创建所需的行数（从第二行开始写数据）

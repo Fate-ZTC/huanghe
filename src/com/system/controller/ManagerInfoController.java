@@ -76,6 +76,7 @@ public class ManagerInfoController{
 		else
 		{
 			mv.setViewName("manager/system/managerInfo/managerInfo-password");
+			mv.addObject("method",method);
 		}
 		return mv;
 	}
@@ -137,6 +138,8 @@ public class ManagerInfoController{
 			out.close();
 		}
 	}
+
+
 	@RequestMapping("managerInfo_checkMobile")
 	public void checkMobile(Manager manager,HttpServletRequest request,HttpServletResponse response,Integer id) throws IOException{
 		manager.setMobile(request.getParameter("mobile"));

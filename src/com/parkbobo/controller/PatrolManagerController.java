@@ -2,6 +2,7 @@ package com.parkbobo.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,8 +41,10 @@ public class PatrolManagerController {
 	@Resource
 	private PatrolEmergencyService patrolEmergencyService;
 
+	@Resource PatrolRegionService patrolRegionService;
 
-	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect};
+
+	private static SerializerFeature[] features = {SerializerFeature.WriteMapNullValue,SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.DisableCircularReferenceDetect};
 	/**
 	 * 获取所有巡查员
 	 * @param response
@@ -55,6 +58,13 @@ public class PatrolManagerController {
 			out = response.getWriter();
 			String hql = "FROM PatrolUser WHERE isDel=0";
 			List<PatrolUser> allUser = this.patrolUserService.getAll(hql);
+			for (PatrolUser patrolUser:allUser){
+				if(patrolUser.getCampusNum()==0){
+					patrolUser.setCampusName("袁家岗校区");
+				}else{
+					patrolUser.setCampusName("缙云校区");
+				}
+			}
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(allUser,features)+"}");
 		} catch (IOException e) {
 			if(out==null){
@@ -365,32 +375,40 @@ public class PatrolManagerController {
 		List<PatrolUser> allUsers = patrolUserService.getAll(hql);
 		List<PatrolUserRegion> patrolUsersRe = new ArrayList<PatrolUserRegion>();
 		List<PatrolLocationInfo> patrolLocationInfos = new ArrayList<PatrolLocationInfo>();
+		Date lastUpdateTime=null;
+		String regionName=null;
 		for (PatrolUser patrolUser : allUsers) {
 			String jobNum = patrolUser.getJobNum();
 			List<PatrolUserRegion> patrolUserRegions = patrolUserRegionService.getByProperty("jobNum", jobNum,"startTime",false);
 			if (patrolUserRegions!=null && patrolUserRegions.size()>0) {
 				PatrolUserRegion patrolUserRegion = patrolUserRegions.get(0);
 				//这里进行判断是否存在结束时间,结束时间为null说明没有正在巡查的人员
+				lastUpdateTime=patrolUserRegion.getLastUpdateTime();
+				regionName=patrolRegionService.getById(patrolUserRegion.getRegionId()).getRegionName();
 				if(null == patrolUserRegion.getEndTime()) {
 					patrolUsersRe.add(patrolUserRegion);
 				}
 			}
 		}
+
 		if (patrolUsersRe!=null && patrolUsersRe.size()>0) {
 			for (PatrolUserRegion patrolUserRegion : patrolUsersRe) {
 				List<PatrolLocationInfo> patrolLocationInfo = patrolLocationInfoService.getByProperty("usregId", patrolUserRegion.getId(), "timestamp", false);
 				if(patrolLocationInfo!=null && patrolLocationInfo.size()>0) {
+					patrolLocationInfo.get(0).setRegionName(patrolRegionService.getById(patrolUserRegion.getRegionId()).getRegionName());
 					patrolLocationInfos.add(patrolLocationInfo.get(0));
 				}
 			}
 
+			SimpleDateFormat sdf=new SimpleDateFormat("HH:mm:ss");
+			String strDate=sdf.format(lastUpdateTime);
 			//获取刷新时间
 			PatrolConfig patrolConfig = patrolConfigService.getById(1);
 			Integer refreshTime = patrolConfig.getRefreshTime();
 			if(refreshTime == null) {refreshTime = 5;}//设置默认为5秒
 
 			if(patrolLocationInfos != null && patrolLocationInfos.size()>0) {
-				out.print("{\"status\":\"true\",\"Code\":1,\"refreshTime\":"+refreshTime+",\"data\":"+JSONObject.toJSONString(patrolLocationInfos,features)+"}");
+				out.print("{\"status\":\"true\",\"Code\":1,\"refreshTime\":"+refreshTime+",\"lastUpdateTime\":"+"\""+strDate+"\""+",\"regionName\":"+"\""+regionName+"\""+",\"data\":"+JSONObject.toJSONString(patrolLocationInfos,features)+"}");
 			}else{
 				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"暂无信息\"}");
 			}

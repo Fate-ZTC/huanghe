@@ -61,7 +61,7 @@ String path = request.getContextPath();
     <div class="tools">
     	<ul class="toolbar">
     	<sec:authorize ifAnyGranted="memberManager_delete">
-        <li onclick="bulkDelete('<%=path %>/memberManager_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>删除</li>
+        <li onclick="bulkDelete('<%=path %>/memberManager_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
         </sec:authorize>
         </ul>
     </div>

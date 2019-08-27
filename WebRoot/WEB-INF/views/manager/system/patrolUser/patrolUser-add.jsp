@@ -29,7 +29,7 @@ $(function(){
 	<div class="place">
     <span>位置：</span>
     <ul class="placeul">
-    <li><a href="#">安防巡耿</a></li>
+    <li><a href="#">安防巡更</a></li>
     <li><a href="<%=path %>/patrolUser_list">巡更人员管理</a></li>
     <li><a href="#">添加</a></li>
     </ul>
@@ -42,6 +42,10 @@ $(function(){
     <li><label>姓名<b>*</b></label><input name="username" type="text" class="dfinput" data-rule="名称:required;length[~100];"/></li>
     <li><label>密码<b>*</b></label><input name="password" type="password" class="dfinput" value="" /></li>
     <li><label>工号<b>*</b></label><input name="jobNum" type="text" class="dfinput"/></li>
+    <li><label>校区<b>*</b></label>
+        <input name="campusNum" type="radio" value="0" checked style="margin: auto;"/>&nbsp;&nbsp;袁家岗校区&nbsp;&nbsp;&nbsp;&nbsp;
+        <input name="campusNum" type="radio" value="1"/>&nbsp;&nbsp;缙云校区&nbsp;&nbsp;&nbsp;&nbsp;
+    </li>
     <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认添加"/></li>
     </ul>
     </form>

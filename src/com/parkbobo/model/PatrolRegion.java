@@ -31,7 +31,7 @@ public class PatrolRegion implements Serializable{
 	 */
 	private String regionName;
 	/**
-	 * 校区编号
+	 * 校区编号，0南校区，1北校区
 	 */
 	private Integer campusNum;
 	/**

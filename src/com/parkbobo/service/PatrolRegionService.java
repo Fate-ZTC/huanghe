@@ -39,7 +39,7 @@ public class PatrolRegionService {
 		if(regionId!=null && regionId > 0){
 			hql += " and id = "+regionId;
 		}
-		if(campusNum!=null){
+		if(campusNum!=null && campusNum >= 0){
 			hql +=" and campusNum = "+campusNum;
 		}
 		hql +=" order by lastUpdateTime desc";
@@ -49,8 +49,11 @@ public class PatrolRegionService {
 	public void update(PatrolRegion patrolRegion){
 		this.patrolRegionDao.update(patrolRegion);
 	}
-	public void addRecord(PatrolRegion patrolRegion) {
-		this.patrolRegionDao.add(patrolRegion);
+	public PatrolRegion addRecord(PatrolRegion patrolRegion) {
+		return this.patrolRegionDao.add(patrolRegion);
+	}
+	public Integer seleceMaxid(){
+		 return this.patrolRegionDao.selectMaxid("select max(id) from patrol_region");
 	}
 
 

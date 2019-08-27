@@ -44,4 +44,7 @@ public class PatrolRegionDaoImpl extends BaseDaoSupport<PatrolRegion> implements
         }
         return 0;
     }
+
+
+
 }
