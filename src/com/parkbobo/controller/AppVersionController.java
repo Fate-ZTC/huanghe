@@ -69,13 +69,10 @@ public class AppVersionController {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-
         java.io.BufferedInputStream bis = null;
         java.io.BufferedOutputStream bos = null;
-
         String downLoadPath = appVersion.getAttached();
         System.out.println(downLoadPath);
-
         try {
             long fileLength = new File(downLoadPath).length();
             response.setContentType("application/x-msdownload;");
@@ -85,6 +82,8 @@ public class AppVersionController {
             bos = new BufferedOutputStream(response.getOutputStream());
             byte[] buff = new byte[2048];
             int bytesRead;
+            appVersion.setDownloadcount(appVersion.getDownloadcount() + 1);
+            appVersionService.save(appVersion);
             while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
                 bos.write(buff, 0, bytesRead);
             }
