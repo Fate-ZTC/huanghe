@@ -1,10 +1,10 @@
-package com.mobile.service;
+package com.parkbobo.service;
 
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.mobile.dao.AppVersionDao;
+import com.parkbobo.dao.AppVersionDao;
 import com.system.utils.PageBean;
 import org.springframework.stereotype.Component;
 
