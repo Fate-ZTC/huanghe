@@ -1,6 +1,8 @@
 package com.parkbobo.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.parkbobo.service.LoginService;
+import com.system.model.Department;
 import com.system.model.Manager;
 import com.system.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +34,7 @@ public class LoginController {
      * @return
      **/
     @RequestMapping("user_login")
-    @ResponseBody
-    public List<Role> managerLogin(@RequestParam("username") String username, @RequestParam("password") String passsword){
+    public String managerLogin(@RequestParam("username") String username, @RequestParam("password") String passsword){
         Manager manager=new Manager();
         manager.setUsername(username);
         manager.setPassword(passsword);
@@ -50,6 +51,7 @@ public class LoginController {
             role1.setIscore(role.getIscore());
             roleList1.add(role1);
         }
-        return roleList1;
+        Department department = loginService.findDepartment(manager);
+        return JSONObject.toJSONString(roleList1)+JSONObject.toJSONString(department);
     }
 }
