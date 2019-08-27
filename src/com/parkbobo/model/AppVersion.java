@@ -1,4 +1,4 @@
-package com.mobile.model;
+package com.parkbobo.model;
 
 import java.util.Date;
 

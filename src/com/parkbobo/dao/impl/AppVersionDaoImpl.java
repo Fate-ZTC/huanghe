@@ -1,13 +1,11 @@
 package com.parkbobo.dao.impl;
 
-import com.mobile.dao.impl.GisBaseDAOSupport;
 import com.parkbobo.dao.AppVersionDao;
+import com.parkbobo.model.AppVersion;
 import org.springframework.stereotype.Component;
 
-
-import com.mobile.model.AppVersion;
 @Component("appVersionDaoImpl")
-public class AppVersionDaoImpl extends GisBaseDAOSupport<AppVersion> implements
-		AppVersionDao {
+public class AppVersionDaoImpl  extends BaseDaoSupport<AppVersion>
+		implements AppVersionDao {
 
 }

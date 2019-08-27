@@ -9,9 +9,10 @@ import com.system.utils.PageBean;
 import org.springframework.stereotype.Component;
 
 
-import com.mobile.model.AppVersion;
+import com.parkbobo.model.AppVersion;
+import org.springframework.stereotype.Service;
 
-@Component("appVersionService")
+@Service("appVersionService")
 public class AppVersionService 
 {
 	@Resource(name="appVersionDaoImpl")
@@ -28,12 +29,7 @@ public class AppVersionService
 		appVersion.setIsDel(1);
 		this.appVersionDao.merge(appVersion);
 	}
-	
-	public PageBean<AppVersion> getPage(String hql, int pageSize, int page)
-	{
-		return this.appVersionDao.pageQuery(hql, pageSize, page);
-	}
-	
+
 	public List<AppVersion> getByHql(String hql)
 	{
 		return this.appVersionDao.getByHQL(hql);
