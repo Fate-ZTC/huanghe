@@ -1,13 +1,18 @@
 package com.parkbobo.controller;
 
+import com.mobile.model.AppVersion;
+import com.mobile.service.AppVersionService;
+import com.opensymphony.xwork2.ActionContext;
 import com.parkbobo.model.FirePatrolUser;
-import com.parkbobo.utils.PageBean;
+import com.system.utils.PageBean;
 import com.system.utils.StringUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 /**
  * APP管理
@@ -16,30 +21,44 @@ import java.io.UnsupportedEncodingException;
  */
 @Controller
 public class AppManagerController {
+    @Resource
+    private AppVersionService appVersionService;
     /**
-     * 巡查人员
+     * APP列表
      * @return
      * @throws UnsupportedEncodingException
      */
     @RequestMapping("appManagerList")
-    public ModelAndView list(FirePatrolUser firePatrolUser, Integer page, Integer pageSize) throws UnsupportedEncodingException
+    public ModelAndView list(AppVersion appVersion, Integer page, Integer pageSize) throws UnsupportedEncodingException
     {
+
+//        if(model != null && model.getMemo() != null && !"".equals(model.getMemo())){
+//            hql += "and memo like '%" + model.getMemo() + "%' ";
+//        }
+
+//        PageBean<AppVersion> pageBean = this.appVersionService.getPage(hql, getPageSize(),getPage());
+//        ActionContext.getContext().getValueStack().set("page", pageBean);
+//        return "list";
         ModelAndView mv = new ModelAndView();
+        String hql = "from AppVersion as a where a.isDel = 0 and a.type = 1 ";
 
-        String hql = "from  FirePatrolUser f where isDel = 0";
 
-        if(firePatrolUser != null && StringUtil.isNotEmpty(firePatrolUser.getUsername()))
-        {
-            hql+=" and f.username like '%" + firePatrolUser.getUsername() + "%'";
-        }
-        if(firePatrolUser!= null && StringUtil.isNotEmpty(firePatrolUser.getJobNum())){
-            hql +=" and f.jobNum like '%"+firePatrolUser.getJobNum()+"%'";
-        }
-        hql += " order by f.id";
+        hql += "order by a.posttime desc ";
+
+
+//        if(firePatrolUser != null && StringUtil.isNotEmpty(firePatrolUser.getUsername()))
+//        {
+//            hql+=" and f.username like '%" + firePatrolUser.getUsername() + "%'";
+//        }
+//        if(firePatrolUser!= null && StringUtil.isNotEmpty(firePatrolUser.getJobNum())){
+//            hql +=" and f.jobNum like '%"+firePatrolUser.getJobNum()+"%'";
+//        }
+//        hql += " order by f.id";
+        PageBean<AppVersion> appVersionPage = this.appVersionService.getByHql(hql, 1, 10);
 //        PageBean<FirePatrolUser> firePatrolUserPage = this.firePatrolUserService.getUsers(hql,pageSize==null?12:pageSize, page==null?1:page);
-//        mv.addObject("firePatrolUserPage", firePatrolUserPage);
-//        mv.addObject("firePatrolUser",firePatrolUser);
-//        mv.setViewName("manager/system/firePatrol/fireUser-list");
+        mv.addObject("appVersionPage", appVersionPage);
+        mv.addObject("appVersion",appVersion);
+        mv.setViewName("manager/system/appVersion/appVersion-list");
         return mv;
     }
 }

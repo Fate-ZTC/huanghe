@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.mobile.dao.AppVersionDao;
+import com.parkbobo.model.FirePatrolException;
 import com.system.utils.PageBean;
 import org.springframework.stereotype.Component;
 
@@ -34,9 +35,14 @@ public class AppVersionService
 		return this.appVersionDao.pageQuery(hql, pageSize, page);
 	}
 	
-	public List<AppVersion> getByHql(String hql)
-	{
-		return this.appVersionDao.getByHQL(hql);
+//	public List<AppVersion> getByHql(String hql)
+//	{
+//		return this.appVersionDao.getByHQL(hql);
+//	}
+
+	public PageBean<AppVersion> getByHql(String hql, int pageSize, int page) {
+
+		return this.appVersionDao.pageQuery(hql, pageSize, page);
 	}
 	
 	public AppVersion getById(String versionCode)
