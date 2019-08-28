@@ -1386,7 +1386,7 @@ public class PatrolUserController {
 		try{
             out = response.getWriter();
             String title="求救信号";
-            String content="有学生报警，请尽快赶往事发地点！";
+            String content="有巡更巡查人员报警，请尽快赶往事发地点！";
 //		String adminUserIdsStr = exceptionPushService.getPartrolAdminUserId("2");
             //到时候需要获取一下管理端的账号，目前传的是all，广播
             String hql="from PatrolUser where 1=1";
