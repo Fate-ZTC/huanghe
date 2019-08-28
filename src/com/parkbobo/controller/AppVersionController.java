@@ -1,6 +1,6 @@
 package com.parkbobo.controller;
 
-import com.parkbobo.service.AppVersionService;
+import com.parkbobo.service.AppVersionMobileService;
 import com.system.model.AppVersion;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +23,8 @@ import java.util.List;
  **/
 @Controller
 public class AppVersionController {
-    @Resource(name = "appVersionService")
-    private AppVersionService appVersionService;
+    @Resource(name = "appVersionMobileService")
+    private AppVersionMobileService appVersionService;
     @RequestMapping("update")
     @ResponseBody
     public String update(@RequestParam("type") String type, HttpServletRequest request, HttpServletResponse response){

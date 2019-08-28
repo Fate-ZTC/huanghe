@@ -9,8 +9,8 @@ import com.system.dao.AppVersionDao;
 import com.system.model.AppVersion;
 import org.springframework.stereotype.Service;
 
-@Service("appVersionService")
-public class AppVersionService 
+@Service("appVersionMobileService")
+public class AppVersionMobileService
 {
 	@Resource(name="appVersionDaoImpl")
 	private AppVersionDao appVersionDao;

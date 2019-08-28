@@ -213,6 +213,22 @@ $(function(){
 	    </dd>
 	    <!-- 消防巡查管理END -->
 	    </sec:authorize>
+
+
+<%--	   <sec:authorize ifAnyGranted="monthlyHandleManage,monthlyRenewManage">--%>
+	    <!-- 消防巡查管理START -->
+	    <dd>
+	    <div class="title">
+	    <span><img src="<%=path %>/page/images/leftico01.png" /></span>APP版本管理
+	    </div>
+	    	<ul class="menuson">
+<%--	    	<sec:authorize ifAnyGranted="firePatrolUserList,firePatrolUser_add,firePatrolUser_edit,firePatrolUser_delete">--%>
+	        <li><cite></cite><a href="<%=path %>/appManagerList" target="rightFrame">APP版本管理</a><i></i></li>
+<%--	    	</sec:authorize>--%>
+	        </ul>
+	    </dd>
+	    <!-- 消防巡查管理END -->
+<%--	    </sec:authorize>--%>
     </dl>
     
 </body>
