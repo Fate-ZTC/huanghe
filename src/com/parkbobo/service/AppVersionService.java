@@ -4,12 +4,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.parkbobo.dao.AppVersionDao;
-import com.system.utils.PageBean;
-import org.springframework.stereotype.Component;
 
-
-import com.parkbobo.model.AppVersion;
+import com.system.dao.AppVersionDao;
+import com.system.model.AppVersion;
 import org.springframework.stereotype.Service;
 
 @Service("appVersionService")

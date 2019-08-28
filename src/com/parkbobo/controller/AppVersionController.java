@@ -1,7 +1,7 @@
 package com.parkbobo.controller;
 
-import com.parkbobo.model.AppVersion;
 import com.parkbobo.service.AppVersionService;
+import com.system.model.AppVersion;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
