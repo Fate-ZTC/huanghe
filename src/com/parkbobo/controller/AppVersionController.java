@@ -27,20 +27,13 @@ public class AppVersionController {
     private AppVersionService appVersionService;
     @RequestMapping("update")
     @ResponseBody
-    public String update(@RequestParam("versionCode") String versionCode, @RequestParam("type") String type, HttpServletRequest request){
+    public String update(@RequestParam("type") String type, HttpServletRequest request, HttpServletResponse response){
         //主机ip+端口
         String contentPath = "http://"+request.getServerName()+":"+request.getServerPort();
+        response.setContentType("text/html;charset=utf-8");
         List<AppVersion> appVersions = this.appVersionService.getByHql("From AppVersion as a where a.isDel = 0 and a.type ="+type+" order by a.posttime desc");
         AppVersion version = appVersions.get(0);
         //版本号
-        String versionCode1 = version.getVersioncode();
-        //是否强制更新
-        String forceUpdate = version.getNeedUpdate();
-        //比较版本号
-        int nowVersionCode = Integer.valueOf(versionCode);
-        //最新版本号
-        int newVersionCode = Integer.valueOf(versionCode1);
-        if(newVersionCode > nowVersionCode && forceUpdate.equals("Y")){
             StringBuilder s = new StringBuilder();
             s.append("{");
             s.append("\"versionCode\":\"" + version.getVersioncode() + "\",");
@@ -51,10 +44,7 @@ public class AppVersionController {
             s.append("\"needUpdate\":\"" + version.getNeedUpdate() + "\"");
             s.append("}");
             return s.toString();
-        }else{
-            return "当前版本不需要更新";
         }
-    }
 
     //通过版本号来下载APP
     @RequestMapping("download")
