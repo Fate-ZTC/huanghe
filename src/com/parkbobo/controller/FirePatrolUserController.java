@@ -734,12 +734,12 @@ public class FirePatrolUserController {
 	 * @param response
 	 */
 	@RequestMapping("/getBuildingType")
-	public void getBuildingType(HttpServletResponse response) {
+	public void getBuildingType(HttpServletResponse response,String campusId) {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
-			String hql = "FROM FirePatrolBuildingType WHERE campusId=1 ORDER BY sort";
+			String hql = "FROM FirePatrolBuildingType WHERE campusId="+campusId+" ORDER BY sort";
 			List<FirePatrolBuildingType> firePatrolBuildingTypes = buildingTypeService.getBuildingType(hql);
 			MessageListBean<FirePatrolBuildingType> message = new MessageListBean<>();
 			message.setCode(200);
@@ -1192,7 +1192,7 @@ public class FirePatrolUserController {
 			response.setCharacterEncoding("UTF-8");
 			out = response.getWriter();
 			MessageBean messageBean = new MessageBean();
-			if(jobNum == null || campusNum <= 0) {
+			if(jobNum == null || campusNum < 0) {
 				messageBean.setStatus(false);
 				messageBean.setMessage("参数不能为空");
 				out.write(JSON.toJSONString(messageBean));
