@@ -1,16 +1,11 @@
-package com.mobile.service;
+package com.system.service;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import com.mobile.dao.AppVersionDao;
-import com.parkbobo.model.FirePatrolException;
-import com.system.utils.PageBean;
+import com.parkbobo.utils.PageBean;
+import com.system.dao.AppVersionDao;
+import com.system.model.AppVersion;
 import org.springframework.stereotype.Component;
 
-
-import com.mobile.model.AppVersion;
+import javax.annotation.Resource;
 
 @Component("appVersionService")
 public class AppVersionService 
@@ -48,5 +43,12 @@ public class AppVersionService
 	public AppVersion getById(String versionCode)
 	{
 		return this.appVersionDao.get(versionCode);
+	}
+	public void update(AppVersion appVersion) {
+		this.appVersionDao.merge(appVersion);
+	}
+
+	public PageBean<AppVersion> loadPage(String hql, int pageSize, int page){
+		return appVersionDao.pageQuery(hql, pageSize, page);
 	}
 }
