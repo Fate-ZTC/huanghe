@@ -55,7 +55,6 @@ public class AppManagerController {
         mv.addObject("type",type);
         mv.addObject("name",name);
         mv.setViewName("manager/system/appVersion/appVersion-list");
-
         return mv;
     }
     /**
