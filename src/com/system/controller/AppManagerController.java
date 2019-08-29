@@ -44,8 +44,9 @@ public class AppManagerController {
 
                 hql += " and a.type ="+type;
         }
-        if(StringUtil.isNotEmpty(name)){
-            hql += " and a.versioncode like '%"+name+"%' or  a.name like '%"+name+"%' or  a.content like '%"+name+"%'";
+        if(name!=null&&!name.equals("")){
+//        if(StringUtil.isNotEmpty(name)){
+            hql += " and a.versioncode like '%"+name+"%' or (a.name like '%"+name+"%' and a.isDel=0) or (a.content like '%"+name+"%' and a.isDel=0)";
         }
         hql += " order by a.posttime desc ";
 //        PageBean<AppVersion> appVersionPage = this.appVersionService.getByHql(hql, pageSize==null?12:pageSize, page==null?1:page);
