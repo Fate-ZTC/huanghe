@@ -29,7 +29,7 @@ public class AppVersionController {
     @ResponseBody
     public String update(@RequestParam("type") String type, HttpServletRequest request, HttpServletResponse response){
         //主机ip+端口
-        String contentPath = "http://"+request.getServerName()+":"+request.getServerPort();
+        String contentPath = "http://"+request.getServerName()+":"+request.getServerPort()+"/"+request.getServletContext().getContextPath();
         response.setContentType("text/html;charset=utf-8");
         List<AppVersion> appVersions = this.appVersionService.getByHql("From AppVersion as a where a.isDel = 0 and a.type ="+type+" order by a.posttime desc");
         AppVersion version = appVersions.get(0);
