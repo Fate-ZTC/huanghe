@@ -61,7 +61,7 @@ if(message != '' && message != 'null'){
     <ul>
     	<li>
 	    	<input name="username" type="text" class="loginuser" title="请输入用户名" value="<%=username %>" placeholder="请输入用户名" autocomplete="off"/></li>
-	    <li><input name="password" type="password" class="loginpwd" title="请输入密码" placeholder="请输入密码" value="<%=password %>" autocomplete="off"/></li>
+	    <li><input name="loginkey" type="password" class="loginpwd" title="请输入密码" placeholder="请输入密码" value="<%=password %>" autocomplete="off"/></li>
 	    <li class="yzm">
 	    	<span><input name="validateCode" type="text" title="请输入验证码" placeholder="请输入验证码"  autocomplete="off"/></span>
 	    	<img src="captcha?w=112&h=44&f=36" style="float:right;border: 1px solid #A6CAFF;cursor: pointer;" title="看不清?换一张" alt="看不清?，换一张" id="captcha"/>

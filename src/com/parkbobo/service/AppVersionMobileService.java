@@ -1,18 +1,16 @@
-package com.mobile.service;
+package com.parkbobo.service;
 
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.mobile.dao.AppVersionDao;
-import com.system.utils.PageBean;
-import org.springframework.stereotype.Component;
 
+import com.system.dao.AppVersionDao;
+import com.system.model.AppVersion;
+import org.springframework.stereotype.Service;
 
-import com.mobile.model.AppVersion;
-
-@Component("appVersionService")
-public class AppVersionService 
+@Service("appVersionMobileService")
+public class AppVersionMobileService
 {
 	@Resource(name="appVersionDaoImpl")
 	private AppVersionDao appVersionDao;
@@ -28,12 +26,7 @@ public class AppVersionService
 		appVersion.setIsDel(1);
 		this.appVersionDao.merge(appVersion);
 	}
-	
-	public PageBean<AppVersion> getPage(String hql, int pageSize, int page)
-	{
-		return this.appVersionDao.pageQuery(hql, pageSize, page);
-	}
-	
+
 	public List<AppVersion> getByHql(String hql)
 	{
 		return this.appVersionDao.getByHQL(hql);

@@ -29,7 +29,7 @@ import com.system.utils.WebUtils;
 public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 	private static final Logger logger = Logger.getLogger(MyUsernamePasswordAuthenticationFilter.class);
 	public static final String USERNAME = "username";//用户名
-	public static final String PASSWORD = "password";//密码
+	public static final String PASSWORD = "loginkey";//密码
 	public static final String REMEMBER = "remember";//记住密码
 	public static final String VALIDATE_CODE = "validateCode";//验证码
 	@Resource(name = "managerService")	

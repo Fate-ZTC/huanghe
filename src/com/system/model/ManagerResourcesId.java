@@ -8,7 +8,6 @@ import javax.persistence.Embeddable;
  * UsersResourcesId entity. @author MyEclipse Persistence Tools
  */
 @Embeddable
-
 public class ManagerResourcesId  implements java.io.Serializable {
 
 
