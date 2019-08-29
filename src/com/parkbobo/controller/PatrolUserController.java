@@ -10,7 +10,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import com.parkbobo.utils.CacheUtil;
+import com.parkbobo.utils.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +20,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.parkbobo.model.*;
 import com.parkbobo.service.*;
-import com.parkbobo.utils.GisUtils;
-import com.parkbobo.utils.JPushClientExample;
-import com.parkbobo.utils.PageBean;
 import com.parkbobo.utils.message.MessageBean;
 import com.system.utils.StringUtil;
 import com.vividsolutions.jts.geom.Geometry;
@@ -76,6 +73,9 @@ public class PatrolUserController {
 
 	@Resource
 	private PatrolRegionHistoryService patrolRegionHistoryService;
+
+	public static final String APPKEY = Configuration.getInstance().getValue("AppKey");
+	public static final String SECRET = Configuration.getInstance().getValue("Secret");
 
 
 
@@ -317,7 +317,7 @@ public class PatrolUserController {
 		//进行判断是否进行上传经纬度
 		if(lon==null||lat==null) {
 			out.print("{\"status\":\"false\",\"errorCode\":-2,\"errorMsg\":\"此人已关闭定位\"}");
-			JPushClientExample push = new JPushClientExample("4636b7d218171e7cf4a89e5c", "b4d131ecf1c2438fb492feac");
+			JPushClientExample push = new JPushClientExample(APPKEY, SECRET);
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("type", "1");
 			map.put("content","异常报告");
@@ -365,7 +365,7 @@ public class PatrolUserController {
 						patrolLocationInfo.setPatrolException(patrolE2);
 						patrolUserRegion.setPatrolException(patrolE1);
 						patrolLocationInfo.setStatus(2);
-						JPushClientExample push = new JPushClientExample("4636b7d218171e7cf4a89e5c", "b4d131ecf1c2438fb492feac");
+						JPushClientExample push = new JPushClientExample(APPKEY, SECRET);
 						Map<String, String> map = new HashMap<String, String>();
 						map.put("type", "1");
 						map.put("content","异常报告");
@@ -390,7 +390,7 @@ public class PatrolUserController {
 						patrolUserRegion.setPatrolException(patrolE1);
 						patrolLocationInfo.setPatrolException(patrolE1);
 						patrolLocationInfo.setStatus(2);
-						JPushClientExample push = new JPushClientExample("4636b7d218171e7cf4a89e5c", "b4d131ecf1c2438fb492feac");
+						JPushClientExample push = new JPushClientExample(APPKEY, SECRET);
 						Map<String, String> map = new HashMap<String, String>();
 						map.put("type", "1");
 						map.put("content","异常报告");
