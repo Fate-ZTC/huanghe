@@ -82,7 +82,7 @@
             <th width="100px">版本号</th>
             <th width="100px">版本名称</th>
             <th width="350px">版本描述</th>
-            <th width="100px">强制更新（Y/N）</th>
+            <th width="150px">强制更新（Y/N）</th>
             <th width="150px">发布时间</th>
             <th width="100px">下载次数</th>
             <th width="100px">操作</th>
