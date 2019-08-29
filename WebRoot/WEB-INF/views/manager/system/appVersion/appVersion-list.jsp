@@ -32,7 +32,7 @@
     <span>位置：</span>
     <ul class="placeul">
         <li><a href="#">APP管理</a></li>
-        <li><a href="<%=path %>/firePatrolUserList">APP版本管理</a></li>
+        <li><a href="<%=path %>/appManagerList">APP版本管理</a></li>
     </ul>
 </div>
 
