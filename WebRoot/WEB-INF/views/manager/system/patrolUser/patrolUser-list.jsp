@@ -54,8 +54,10 @@ String path = request.getContextPath();
             <div class="vocation">
                 <select class="select3" name="campusNum" >
                     <option value="-1">-请选择-</option>
-                    <option value="0" <c:if test="${patrolUser.campusNum==0}"> selected</c:if>>袁家岗校区</option>
+                    <option value="0" <c:if test="${patrolUser.campusNum==0}"> selected</c:if>>主校区</option>
+<%--
                     <option value="1" <c:if test="${patrolUser.campusNum==1}"> selected</c:if>>缙云校区</option>
+--%>
                 </select>
             </div>
         </li>
@@ -101,11 +103,11 @@ String path = request.getContextPath();
         <td>${d.jobNum}</td>
         <td><c:choose>
             <c:when test="${d.campusNum == 0}">
-                袁家岗校区
+                主校区
             </c:when>
-            <c:when test="${d.campusNum == 1}">
+            <%--<c:when test="${d.campusNum == 1}">
                 缙云校区
-            </c:when>
+            </c:when>--%>
         </c:choose></td>
         <td><fmt:formatDate value="${d.lastUpdateTime}" pattern="yyyy-MM-dd HH:mm"/></td>
         <td>

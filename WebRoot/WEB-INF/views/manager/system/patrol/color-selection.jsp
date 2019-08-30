@@ -48,8 +48,8 @@
 							<div class="vocation">
 								<select class="select3" name="campusNum" >
 									<option value="-1">-请选择-</option>
-									<option value="0">袁家岗校区</option>
-									<option value="1">缙云校区</option>
+									<option value="0">主校区</option>
+<%--									<option value="1">缙云校区</option>--%>
 								</select>
 							</div>
 						</li>

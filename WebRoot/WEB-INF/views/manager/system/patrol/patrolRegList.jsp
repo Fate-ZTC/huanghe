@@ -76,8 +76,8 @@
                             <div class="vocation">
                                 <select class="select3" name="campusNum" >
                                     <option value="-1">-请选择-</option>
-                                    <option value="0">袁家岗校区</option>
-                                    <option value="1">缙云校区</option>
+                                    <option value="0">主校区</option>
+                                   <%-- <option value="1">缙云校区</option>--%>
 
                                       <%--  <option value="0" <c:if test="${campusNum==0}">南校区</c:if>>
                                         </option>
@@ -129,11 +129,11 @@
 							<td>
 								<c:choose>
 									<c:when test="${m.campusNum == 0}">
-										袁家岗校区
+										主校区
 									</c:when>
-									<c:when test="${m.campusNum == 1}">
-										缙云校区
-									</c:when>
+<%--									<c:when test="${m.campusNum == 1}">--%>
+<%--										缙云校区--%>
+<%--									</c:when>--%>
 								</c:choose>
 							</td>
 					        <td>${m.lastUpdateTime}</td>

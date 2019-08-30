@@ -70,8 +70,8 @@
     		<div class="vocation">
 				<select class="select3" id="select" name="campusNum" style="opacity: 1;" >
 		        	<option value="-1" <c:if test="${campusNum!=0&&campusNum!=1}">selected = "selected"</c:if>>-请选择-</option>
-                    <option value="0" <c:if test="${campusNum==0}">selected</c:if>>袁家岗校区</option>
-                    <option value="1" <c:if test="${campusNum==1}">selected</c:if>>缙云校区</option>
+                    <option value="0" <c:if test="${campusNum==0}">selected</c:if>>主校区</option>
+<%--                    <option value="1" <c:if test="${campusNum==1}">selected</c:if>>缙云校区</option>--%>
                     <%--<c:if test="${patrolStatus == 0}">--%>
                         <%--<option value="0">设备异常</option>--%>
                     <%--</c:if>--%>
@@ -129,7 +129,7 @@
         <td><input type="checkbox" name="checkbox" value="${d.id}" id="checkbox_${d.id}" class="checkItem"/></td>
         <td>${d.userCode}</td>
         <td>${d.userName}</td>
-            <td>${d.campusNum==1?"缙云校区":"袁家岗校区"}</td>
+            <td>${d.campusNum==1?"":"主校区"}</td>
         <td><fmt:formatDate value="${d.helpTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 
             <td>

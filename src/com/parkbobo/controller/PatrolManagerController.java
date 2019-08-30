@@ -60,9 +60,9 @@ public class PatrolManagerController {
 			List<PatrolUser> allUser = this.patrolUserService.getAll(hql);
 			for (PatrolUser patrolUser:allUser){
 				if(patrolUser.getCampusNum()==0){
-					patrolUser.setCampusName("袁家岗校区");
+					patrolUser.setCampusName("主校区");
 				}else{
-					patrolUser.setCampusName("缙云校区");
+					//patrolUser.setCampusName("缙云校区");
 				}
 			}
 			out.print("{\"status\":\"true\",\"Code\":1,\"data\":"+JSONObject.toJSONString(allUser,features)+"}");
