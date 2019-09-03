@@ -1,7 +1,12 @@
 package com.parkbobo.model;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -82,6 +87,33 @@ public class FirePatrolInfo implements Serializable{
 	 * 巡查人员工号
      */
 	private String jobNum;
+
+	/***
+	 * 设备名称
+	 **/
+	private String equipmentName;
+
+	public String getEquipmentName() {
+		return equipmentName;
+	}
+
+	public void setEquipmentName(String equipmentName) {
+		this.equipmentName = equipmentName;
+	}
+
+	public String getLocationName() {
+		return locationName;
+	}
+
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
+	}
+
+	/***
+	 * 位置
+	 **/
+	private String locationName;
+
 
 	@Id
 	@Column(name="id",nullable=false,unique=true)
@@ -193,5 +225,87 @@ public class FirePatrolInfo implements Serializable{
 
 	public void setJobNum(String jobNum) {
 		this.jobNum = jobNum;
+	}
+
+
+	/**
+	 * 用于转换对象
+	 * @param map
+	 * @return
+	 */
+	public static FirePatrolInfo toObject(Map<String,Object> map) {
+		FirePatrolInfo firePatrolInfo = new FirePatrolInfo();
+		firePatrolInfo.setId((Integer) map.get("id"));
+		String username = map.get("username").toString();
+		if(username != null) {
+			firePatrolInfo.setUserName(username);
+		}
+		if(map.get("timestamp") != null && !"".equals(map.get("timestamp"))) {
+			//这里进行时间转换
+			String dateStr = map.get("timestamp").toString();
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			try {
+				if(dateStr.contains(".")) {
+					//将格式为:2018-08-09 10:00:00.123进行切割
+					String[] split = dateStr.split("\\.");
+					if(split != null && split.length > 0) {
+						dateStr = split[0];
+					}
+				}
+				Date timestamp = format.parse(dateStr);
+				firePatrolInfo.setTimestamp(timestamp);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		if(map.get("lon") != null) {
+			firePatrolInfo.setLon((Double) map.get("lon"));
+		}
+		if(map.get("lat") != null) {
+			firePatrolInfo.setLat((double) map.get("lat"));
+		}
+
+		Integer equipmentId = Integer.valueOf(map.get("equipment_id").toString());
+		if(equipmentId != null && !"".equals(equipmentId)) {
+			FireFightEquipment fireFightEquipment = new FireFightEquipment();
+			fireFightEquipment.setName(map.get("name").toString());
+			fireFightEquipment.setId(equipmentId);
+			firePatrolInfo.setFireFightEquipment(fireFightEquipment);
+		}
+		firePatrolInfo.setCampusNum((Integer) map.get("campus_num"));
+		if(map.get("username") != null) {
+			firePatrolInfo.setUserName((String) map.get("username"));
+		}
+		if(map.get("job_num") != null) {
+			firePatrolInfo.setJobNum((String) map.get("job_num"));
+		}
+		if(map.get("floorid") != null) {
+			firePatrolInfo.setFloorid((String) map.get("floorid"));
+		}
+		if(map.get("patrol_status") !=null) {
+			firePatrolInfo.setPatrolStatus((Integer) map.get("patrol_status"));
+		}
+		firePatrolInfo.setLocationName(map.get("location_name").toString());
+		return firePatrolInfo;
+	}
+
+
+	/**
+	 * 将list中查询出来的数组转化成对象列表
+	 * @param list
+	 * @return
+	 */
+	public static List<FirePatrolInfo> toObjectList(List<Map<String,Object>> list) {
+		List<FirePatrolInfo> firePatrolInfos = new ArrayList<>();
+		if(list != null && list.size() > 0) {
+			for(Map<String,Object> map:list) {
+				FirePatrolInfo firePatrolInfo = toObject(map);
+				if(firePatrolInfo != null) {
+					firePatrolInfos.add(firePatrolInfo);
+				}
+			}
+
+		}
+		return firePatrolInfos;
 	}
 }

@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.parkbobo.dao.FirePatrolInfoDao;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -67,6 +68,8 @@ public class FirePatrolUserController {
 	private FirePatrolBuildingInfoService firePatrolBuildingInfoService;
 	@Resource
 	private FireFightEquipmentHistoryDao fireFightEquipmentHistoryDao;
+	@Resource
+	private FirePatrolInfoDao firePatrolInfoDao;
 	@Resource
 	private FirePatrolBuildingInfoDao firePatrolBuildingInfoDao;
 
@@ -823,7 +826,8 @@ public class FirePatrolUserController {
                 return;
             }
 
-            FirePatrolUseStatisticsVO useStatisticsVO = new FirePatrolUseStatisticsVO();
+            List<FirePatrolUseStatisticsVO> useStatisticsVOList = new ArrayList<>();
+			FirePatrolUseStatisticsVO useStatisticsVO = new FirePatrolUseStatisticsVO();
 
             //这里进行统计列表信息
             String hql = "FROM FirePatrolBuildingType WHERE campusId=1";
@@ -899,53 +903,50 @@ public class FirePatrolUserController {
 
 			System.out.println(sb.toString());
 			//保存巡查数量
-			FirePatrolUseEquNumVO firePatrolUseEquNumVO = new FirePatrolUseEquNumVO();
 			List<Object[]> statisticsNum = fireFightEquipmentHistoryService.getBySql(sb.toString());
 			if(statisticsNum != null && statisticsNum.size() > 0) {
-				Object[] objects = statisticsNum.get(0);
-				//这里进行设置
-				if(objects[0] != null) {
-					//总设备数
-					firePatrolUseEquNumVO.setAllCount(Integer.parseInt(objects[0].toString()));
+					Object[] objects = statisticsNum.get(0);
+					FirePatrolUseEquNumVO firePatrolUseEquNumVO = new FirePatrolUseEquNumVO();
+					//这里进行设置
+					if (objects[0] != null) {
+						//总设备数
+						firePatrolUseEquNumVO.setAllCount(Integer.parseInt(objects[0].toString()));
+					}
+					if (objects[1] != null) {
+						//正常设备
+						firePatrolUseEquNumVO.setNormalCount(Integer.parseInt(objects[1].toString()));
+					}
+					if (objects[2] != null) {
+						//异常设备
+						firePatrolUseEquNumVO.setExceptionCount(Integer.parseInt(objects[2].toString()));
+					}
+					if (objects[3] != null) {
+						//时间
+						firePatrolUseEquNumVO.setMonth(objects[3].toString());
+					}
+					if (objects[4] != null) {
+						//巡查次数
+						firePatrolUseEquNumVO.setTotalcheckcount(Integer.parseInt(objects[4].toString()));
+					}
+					//设置统计数量
+					useStatisticsVO.setFirePatrolUseEquNumVO(firePatrolUseEquNumVO);
 				}
-				if(objects[1] != null) {
-					//正常设备
-					firePatrolUseEquNumVO.setNormalCount(Integer.parseInt(objects[1].toString()));
-				}
-				if(objects[2] != null) {
-					//异常设备
-					firePatrolUseEquNumVO.setExceptionCount(Integer.parseInt(objects[2].toString()));
-				}
-				if(objects[3] != null) {
-					//时间
-					firePatrolUseEquNumVO.setMonth(objects[3].toString());
-				}
-				if(objects[4] != null) {
-					//巡查次数
-					firePatrolUseEquNumVO.setTotalcheckcount(Integer.parseInt(objects[4].toString()));
-				}
-				//设置统计数量
-				useStatisticsVO.setFirePatrolUseEquNumVO(firePatrolUseEquNumVO);
-			}
 
             //TODO 统计
 			StringBuffer entitySb = new StringBuffer();
-			entitySb.append("SELECT ffqh.* ");
-			entitySb.append("FROM fire_fight_equipment_history ffqh ");
-			entitySb.append("LEFT JOIN fire_patrol_building_info fpbi ON ffqh.building_code = fpbi.building_id ");
-			entitySb.append("LEFT JOIN fire_patrol_building_type fpbt ON fpbt.\"type\" = fpbi.\"type\" ");
-			entitySb.append("WHERE ");
-			//不是全部的情况
-			if(buildingType > 0) {
-				entitySb.append(" fpbt.\"type\" = '" + buildingType + "' AND");
-			}
-			entitySb.append(" ffqh.job_num = '"+ jobNum + "' ");
-			entitySb.append(" AND ffqh.last_update_time BETWEEN '" + startStr + "' AND '" + endStr + "'");
-			entitySb.append(" ORDER BY ffqh.last_update_time DESC ").append(" LIMIT ").append(pageSize).append(" OFFSET ").append((page-1)*pageSize);
+			entitySb.append("SELECT fpi.*,ffe.name,ffeh.location_name ");
+			entitySb.append("FROM fire_patrol_info as fpi ");
+			entitySb.append("LEFT Join fire_fight_equipment_history as ffeh on ffeh.old_id=fpi.equipment_id and ffeh.last_update_time BETWEEN '"+startStr+"'"+
+					"AND '"+endStr+"'" +
+					"LEFT JOIN fire_fight_equipment as ffe on ffe.id=fpi.equipment_id");
+			entitySb.append(" WHERE");
+			entitySb.append(" fpi.job_num = '"+ jobNum + "' ");
+			entitySb.append(" AND fpi.timestamp BETWEEN '" + startStr + "' AND '" + endStr + "'");
+			entitySb.append(" ORDER BY fpi.timestamp DESC ").append(" LIMIT ").append(pageSize).append(" OFFSET ").append((page-1)*pageSize);
 			System.out.println(entitySb.toString());
 			//这里进行查询数据
-			List<Map<String,Object>> entitys = fireFightEquipmentHistoryDao.findForJdbc(entitySb.toString());
-			List<FireFightEquipmentHistory> histories = FireFightEquipmentHistory.toObjectList(entitys);
+			List<Map<String,Object>> entitys = firePatrolInfoDao.findForJdbc(entitySb.toString());
+			List<FirePatrolInfo> histories = FirePatrolInfo.toObjectList(entitys);
 			//这里进行组装数据
 
 			//查询记录总条数
@@ -968,7 +969,7 @@ public class FirePatrolUserController {
 			useStatisticsVO.setNextPage((page * pageSize >= count) ? false : true);
 			useStatisticsVO.setPage(page);
 			useStatisticsVO.setPageSize(pageSize);
-			useStatisticsVO.setList(histories);
+			useStatisticsVO.setFirePatrolInfoList(histories);
 
 
 			//设置选中类型0 为全部 其他的是大楼type
