@@ -934,8 +934,9 @@ public class FirePatrolUserController {
 
             //TODO 统计
 			StringBuffer entitySb = new StringBuffer();
-			entitySb.append("SELECT fpi.*,ffe.name,ffeh.location_name ");
+			entitySb.append("SELECT fpi.*,ffe.name,ffeh.location_name,fp.img_url ");
 			entitySb.append("FROM fire_patrol_info as fpi ");
+			entitySb.append("LEFT JOIN fire_patrol_img as fp ON fp.info_id=fpi.id");
 			entitySb.append("LEFT Join fire_fight_equipment_history as ffeh on ffeh.old_id=fpi.equipment_id and ffeh.last_update_time BETWEEN '"+startStr+"'"+
 					"AND '"+endStr+"'" +
 					"LEFT JOIN fire_fight_equipment as ffe on ffe.id=fpi.equipment_id");
