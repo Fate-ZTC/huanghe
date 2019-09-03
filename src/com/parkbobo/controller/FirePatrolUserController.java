@@ -78,7 +78,7 @@ public class FirePatrolUserController {
 	 * @param jobNum 工号
 	 * @param password 密码
 	 * @return json
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@RequestMapping("firePatrolUserLogin")
 	public void userLogin(HttpServletResponse response,String jobNum,String password) throws IOException{
@@ -113,7 +113,7 @@ public class FirePatrolUserController {
 	}
 	/**
 	 * 获取所有消防异常信息
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@RequestMapping("getAllFireExceptions")
 	public void getAllFireExceptions(HttpServletResponse response) throws IOException{
@@ -138,7 +138,7 @@ public class FirePatrolUserController {
 		}
 	}
 	/**
-	 * 获取当前登录用户上传的信息 
+	 * 获取当前登录用户上传的信息
 	 * @param jobNum 工号
 	 * @param response
 	 * @throws IOException
@@ -174,7 +174,7 @@ public class FirePatrolUserController {
 			String filename = file.getOriginalFilename();
 			File filepath = new File(path,filename);
 			//判断路径是否存在，如果不存在就创建一个
-			if (!filepath.getParentFile().exists()) { 
+			if (!filepath.getParentFile().exists()) {
 				filepath.getParentFile().mkdirs();
 			}
 			//将上传文件保存到一个目标文件当中
@@ -1267,5 +1267,5 @@ public class FirePatrolUserController {
 		Calendar calendar2 = Calendar.getInstance();
 		calendar2.setTime(date2);
 		return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) && calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH);
-	} 
+	}
 }

@@ -93,6 +93,19 @@ public class FirePatrolInfo implements Serializable{
 	 **/
 	private String equipmentName;
 
+	public String getImgUrl() {
+		return imgUrl;
+	}
+
+	public void setImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
+
+	/***
+	 * 异常图片
+	 **/
+	private String imgUrl;
+
 	public String getEquipmentName() {
 		return equipmentName;
 	}
@@ -286,6 +299,7 @@ public class FirePatrolInfo implements Serializable{
 			firePatrolInfo.setPatrolStatus((Integer) map.get("patrol_status"));
 		}
 		firePatrolInfo.setLocationName(map.get("location_name").toString());
+		firePatrolInfo.setImgUrl(map.get("img_url").toString());
 		return firePatrolInfo;
 	}
 
