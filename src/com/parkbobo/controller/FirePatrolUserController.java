@@ -371,10 +371,10 @@ public class FirePatrolUserController {
 			FireFightEquipment fireFightEquipment = this.fireFightEquipmentService.getById(equipmentId);
 			FirePatrolConfig patrolConfig = this.firePatrolConfigService.getById(1);
 			GisUtil g = GisUtil.getInstance();
-            if(fireFightEquipment == null) {
-                out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"没有查找到设备信息\"}");
-                return;
-            }
+			if(fireFightEquipment == null) {
+				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"没有查找到设备信息\"}");
+				return;
+			}
 			if(g.distanceByLngLat(lon, lat, (double)fireFightEquipment.getLon(), (double)fireFightEquipment.getLat())>patrolConfig.getDistance()){
 				out.print("{\"status\":\"false\",\"errorCode\":-1,\"errorMsg\":\"请在指定区域内上传数据\"}");
 				return;
@@ -412,13 +412,13 @@ public class FirePatrolUserController {
 				statusVO.setDeviceStatus("0");											//巡查状态
 				statusVO.setDeviceId(fireFightEquipment.getPointid().toString());					//设备消防专题图id
 				firePatrolEquipmentSychService.updateFirePatrolEquipmentVOStatus(statusVO);
-                String jobNum = patrolUser.getJobNum();
-                int campusNum = patrolUser.getCampusNum();
-                boolean isStart = firePatrolTimeQuantumService.isStartTime(jobNum,campusNum);
+				String jobNum = patrolUser.getJobNum();
+				int campusNum = patrolUser.getCampusNum();
+				boolean isStart = firePatrolTimeQuantumService.isStartTime(jobNum,campusNum);
 
-                if(isStart) {
-                    isStart(jobNum,campusNum,firePatrolTimeQuantumService);
-                }
+				if(isStart) {
+					isStart(jobNum,campusNum,firePatrolTimeQuantumService);
+				}
 
 				List<FirePatrolImg> list = new ArrayList<FirePatrolImg>();
 
@@ -458,8 +458,8 @@ public class FirePatrolUserController {
 					//没有查询到设备表中数据,进行添加新的数据
 					FireFightEquipmentHistory fireFightEquipmentHistory = new FireFightEquipmentHistory();
 					fireFightEquipmentHistory.setName(fireFightEquipment.getName());
-                    fireFightEquipmentHistory.setFloorid(fireFightEquipment.getFloorid());
-                    fireFightEquipmentHistory.setBuildingCode(fireFightEquipment.getBuildingCode());
+					fireFightEquipmentHistory.setFloorid(fireFightEquipment.getFloorid());
+					fireFightEquipmentHistory.setBuildingCode(fireFightEquipment.getBuildingCode());
 					fireFightEquipmentHistory.setCampusNum(fireFightEquipment.getCampusNum());
 					fireFightEquipmentHistory.setCheckStatus((short)1);
 					fireFightEquipmentHistory.setStatus((short)0);
