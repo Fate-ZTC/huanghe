@@ -1,5 +1,8 @@
 package com.parkbobo.model;
 
+import com.parkbobo.controller.FirePatrolManagerController;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,15 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.servlet.http.HttpServletResponse;
 
 @Entity
 @Table(name="fire_patrol_info")
@@ -93,39 +89,16 @@ public class FirePatrolInfo implements Serializable{
 	 **/
 	private String equipmentName;
 
-	public String getImgUrl() {
-		return imgUrl;
-	}
-
-	public void setImgUrl(String imgUrl) {
-		this.imgUrl = imgUrl;
-	}
-
 	/***
 	 * 异常图片
 	 **/
-	private String imgUrl;
-
-	public String getEquipmentName() {
-		return equipmentName;
-	}
-
-	public void setEquipmentName(String equipmentName) {
-		this.equipmentName = equipmentName;
-	}
-
-	public String getLocationName() {
-		return locationName;
-	}
-
-	public void setLocationName(String locationName) {
-		this.locationName = locationName;
-	}
+	private List<String> imgUrl;
 
 	/***
 	 * 位置
 	 **/
 	private String locationName;
+
 
 
 	@Id
@@ -240,6 +213,34 @@ public class FirePatrolInfo implements Serializable{
 		this.jobNum = jobNum;
 	}
 
+	@Transient
+	public List<String> getImgUrl() {
+		return imgUrl;
+	}
+
+	public void setImgUrl(List<String> imgUrl) {
+		this.imgUrl = imgUrl;
+	}
+
+	@Transient
+	public String getEquipmentName() {
+		return equipmentName;
+	}
+
+	public void setEquipmentName(String equipmentName) {
+		this.equipmentName = equipmentName;
+	}
+
+	@Transient
+	public String getLocationName() {
+		return locationName;
+	}
+
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
+	}
+
+
 
 	/**
 	 * 用于转换对象
@@ -299,7 +300,10 @@ public class FirePatrolInfo implements Serializable{
 			firePatrolInfo.setPatrolStatus((Integer) map.get("patrol_status"));
 		}
 		firePatrolInfo.setLocationName(map.get("location_name").toString());
-		firePatrolInfo.setImgUrl(map.get("img_url").toString());
+		firePatrolInfo.setDescription(map.get("description").toString());
+		//得到异常ID,获取图片和异常详情
+		Integer fpid = Integer.valueOf(map.get("id(1)").toString());
+		FirePatrolManagerController firePatrolManagerController = new FirePatrolManagerController();
 		return firePatrolInfo;
 	}
 
