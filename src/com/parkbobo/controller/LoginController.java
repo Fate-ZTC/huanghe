@@ -1,6 +1,8 @@
 package com.parkbobo.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.parkbobo.service.LoginService;
+import com.system.model.Department;
 import com.system.model.Manager;
 import com.system.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,23 +35,37 @@ public class LoginController {
      **/
     @RequestMapping("user_login")
     @ResponseBody
-    public List<Role> managerLogin(@RequestParam("username") String username, @RequestParam("password") String passsword){
+    public String managerLogin(@RequestParam("username") String username, @RequestParam("password") String passsword){
         Manager manager=new Manager();
         manager.setUsername(username);
         manager.setPassword(passsword);
         List<Role> roleList = loginService.managerLogin(manager);
-        List<Role> roleList1=new ArrayList<>();
-        for (Role role: roleList) {
-            Role role1=new Role();
-            role1.setRoleId(role.getRoleId());
-            role1.setName(role.getName());
-            role1.setCreateTime(role.getCreateTime());
-            role1.setEnable(role.getEnable());
-            role1.setEnname(role.getEnname());
-            role1.setRoleType(role.getRoleType());
-            role1.setIscore(role.getIscore());
-            roleList1.add(role1);
+        StringBuilder s = new StringBuilder();
+        s.append("{");
+        Department department = loginService.findDepartment(manager);
+        if(department != null){
+            s.append("\"name\"" +":" + "\""+manager.getUsername()+"\"" +",");
+            s.append("\"departName\"" +":" +"\""+department.getName()+"\"" +",");
         }
-        return roleList1;
+        int i = 0;
+        s.append("\"roles\""+":");
+        s.append("[");
+        for (Role role: roleList) {
+            s.append("{");
+            s.append("\"roleId\""+":" +role.getRoleId() + ",");
+            s.append("\"roleName\"" +":"+ "\""+role.getName()+"\"" +",");
+            s.append("\"enable\"" +":" + role.getEnable() + ",");
+            s.append("\"enName\"" +":" +"\""+ role.getEnname()+"\"" + ",");
+            s.append("\"roleType\""+":"+ role.getRoleType() + ",");
+            s.append("\"iscore\""+":" + role.getIscore() + "");
+            s.append("}");
+            i++;
+            if(i != roleList.size()){
+                s.append(",");
+            }
+        }
+        s.append("]");
+        s.append("}");
+        return s.toString();
     }
 }

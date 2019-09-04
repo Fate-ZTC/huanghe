@@ -121,8 +121,8 @@
             <div class="profile-item">
                 <div class="profile-field">管理端默认查看校区</div>
                 <div class="profile-value">
-                    <input type="radio" id="campus1" name="campusNum" <c:if test="${patrolConfig.campusNum==0}">checked="checked"</c:if> value=0 /><label for="campus1">袁家岗校区</label>
-                        <input type="radio" id="campus2" name="campusNum" <c:if test="${patrolConfig.campusNum==1}">checked="checked"</c:if> value=1 /><label for="campus1">缙云校区</label>
+                    <input type="radio" id="campus1" name="campusNum" <c:if test="${patrolConfig.campusNum==0}">checked="checked"</c:if> value=0 /><label for="campus1">主校区</label>
+<%--                        <input type="radio" id="campus2" name="campusNum" <c:if test="${patrolConfig.campusNum==1}">checked="checked"</c:if> value=1 /><label for="campus1">缙云校区</label>--%>
                   <%-- <input type="radio" name="campusNum" id="campus1"  value="0"/><label for="campus1">南校区</label>
                     <input type="radio" name="campusNum" id="campus2" value="1"/><label for="campus2">北校区</label>--%>
                 </div>

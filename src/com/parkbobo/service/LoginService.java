@@ -2,6 +2,7 @@ package com.parkbobo.service;
 
 import com.system.dao.ManagerDao;
 import com.system.dao.RoleDao;
+import com.system.model.Department;
 import com.system.model.Manager;
 import com.system.model.ManagerRole;
 import com.system.model.Role;
@@ -32,6 +33,8 @@ public class LoginService {
         String password1=sp.encodePassword(password, username);
         List<Manager> list=managerDao.getByHQL("from Manager as m where m.username='"+username+"'and m.password='"+password1+"'");
         Manager manager1=list.get(0);
+        //得到部门的ID
+        Department department = manager1.getDepartment();
         List<Role> roleList = new ArrayList<>();
         //得到角色ID
         Set<Integer> roleIdSet= new HashSet<>();
@@ -44,5 +47,19 @@ public class LoginService {
             roleList.add(roleDao.get(iterator.next()));
         }
         return roleList;
+    }
+
+    public Department findDepartment(Manager manager){
+        String username = manager.getUsername();
+        String password = manager.getPassword();
+        //将密码加密进行比较
+        ShaPasswordEncoder sp = new ShaPasswordEncoder();
+        String password1=sp.encodePassword(password, username);
+        List<Manager> list=managerDao.getByHQL("from Manager as m where m.username='"+username+"'and m.password='"+password1+"'");
+        Manager manager1=list.get(0);
+        //得到部门的ID
+        Department department = manager1.getDepartment();
+        System.out.println(department.getName());
+        return department;
     }
 }

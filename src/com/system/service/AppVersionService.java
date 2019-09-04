@@ -30,10 +30,6 @@ public class AppVersionService
 		return this.appVersionDao.pageQuery(hql, pageSize, page);
 	}
 
-//	public List<AppVersion> getByHql(String hql)
-//	{
-//		return this.appVersionDao.getByHQL(hql);
-//	}
 
 	public PageBean<AppVersion> getByHql(String hql, int pageSize, int page) {
 

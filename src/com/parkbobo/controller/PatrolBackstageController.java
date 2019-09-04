@@ -784,7 +784,7 @@ public class PatrolBackstageController {
                 objs = new Object[headers.length];
                 objs[0] = patrolHelpMessage.getUserCode();
                 objs[1] = patrolHelpMessage.getUserName();
-                objs[2] = patrolHelpMessage.getCampusNum()==1?"缙云校区":"袁家岗校区";
+                objs[2] = patrolHelpMessage.getCampusNum()==0?"主校区":"";
                 objs[3] = patrolHelpMessage.getHelpTime();
                 //数据添加到excel表格
                 dataList.add(objs);
