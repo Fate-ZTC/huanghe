@@ -66,6 +66,7 @@
                 </select>
             </li>
             <li><label>角色<b>*</b></label>
+            <%--<li class="checkbox-li"><label>角色<b>*</b></label>--%>
                 <c:forEach items="${roleList}" var="r">
                     <input name="roles" data-rule="角色:required;" style="width: 15px;height:13px" type="checkbox" class="dfinput" value="${r.roleId}"/>${r.name}
                 </c:forEach>
@@ -86,8 +87,30 @@
 <script type="text/javascript">
     var host ='<%=path%>';
     var _submit = function(){
-        $('#addForm').submit();
+        var checkOne = false;                    //判断是否被选择条件
+        var chboxVal = [];                       //存入被选中项的值
+        var checkBox = $('input[name = roles]'); //获得得到所的复选框
+
+        for (var i = 0; i < checkBox.length; i++) {
+
+            //如果有1个被选中时（jquery1.6以上还可以用if(checkBox[i].prop('checked')) 去判断checkbox是否被选中）
+            if (checkBox[i].checked) {
+                checkOne = true;
+                chboxVal.push(checkBox[i].value)//将被选择的值追加到
+            };
+        };
+
+        if (checkOne) {
+            $('#addForm').submit();
+        } else {
+            alert("对不起：至少要选择一项角色哦!");
+        };
+
+
+        // $('#addForm').submit();
     }
+
+    // $(".checkbox-li input[type='checkbox']").first().prop("checked","checked");
 </script>
 </body>
 
