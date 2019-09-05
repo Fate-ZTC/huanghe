@@ -55,7 +55,7 @@
 						</li>
 						<li>
 							<label class="color-selection-name">巡更区域名称：</label>
-							<input name="regionName" class="region-name" type="text"  maxlength="15" placeholder="请输入1-15位字符"/>
+							<input name="regionName" class="region-name" type="text" maxlength="15" placeholder="请输入1-15位字符"/>
 						</li>
 						<li>
 							<label class="color-selection-name">选择区域颜色：</label>
