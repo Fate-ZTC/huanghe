@@ -796,13 +796,12 @@ public class FirePatrolUserController {
 	@RequestMapping("/getFirePatrolUseStatisticsData")
 	public void getFirePatrolUseStatisticsData(String jobNum,String date,int buildingType,
                                                int page,int pageSize,HttpServletResponse response) {
-
+//		response.setContentType("text/xml; charset=utf-8");
+		response.setHeader("content-type", "text/html;charset=UTF-8");
+//		response.setCharacterEncoding("utf-8");
 	    PrintWriter out = null;
-	    response.setCharacterEncoding("UTF-8");
 	    MessageBean messageBean = new MessageBean();
-
         try {
-
             out = response.getWriter();
 			messageBean.setCode(200);
 			if(jobNum == null || "".equals(jobNum) || buildingType < 0) {
@@ -932,9 +931,11 @@ public class FirePatrolUserController {
 					useStatisticsVO.setFirePatrolUseEquNumVO(firePatrolUseEquNumVO);
 				}
 
+			//--------------------------------
+
             //TODO 统计
 			StringBuffer entitySb = new StringBuffer();
-			entitySb.append("SELECT fpi.*,ffe.NAME,ffeh.location_name,fpe.* ");
+			entitySb.append("SELECT fpi.*,fpi.id as ido,ffe.NAME,ffeh.location_name,fpe.* ");
 			entitySb.append("FROM fire_patrol_info as fpi ");
 			entitySb.append("LEFT Join fire_fight_equipment_history as ffeh on ffeh.old_id=fpi.equipment_id and ffeh.last_update_time BETWEEN '"+startStr+"'"+
 					"AND '"+endStr+"'" +
@@ -949,6 +950,32 @@ public class FirePatrolUserController {
 			List<Map<String,Object>> entitys = firePatrolInfoDao.findForJdbc(entitySb.toString());
 			List<FirePatrolInfo> histories = FirePatrolInfo.toObjectList(entitys);
 			//这里进行组装数据
+
+			for(Map<String,Object> entity:entitys){
+				Integer ido = Integer.valueOf(entity.get("ido").toString());
+
+				sql="SELECT * FROM fire_patrol_img where info_id='"+ido+"'";
+				List<Map<String,Object>> list = firePatrolBuildingInfoDao.findForJdbc(sql);
+				List<String> strings = new ArrayList<String>();
+				for (Map<String,Object> one:list){
+					Object imgUrl = one.get("img_url");
+					String s = String.valueOf(imgUrl);
+					strings.add(s);
+				}
+				entity.put("img",strings);
+//				entity.put("description",)
+				String s="";
+				if(entity.get("exception_types")!=null){
+					Integer fpid = Integer.valueOf(entity.get("exception_types").toString());
+					sql="SELECT * FROM fire_patrol_exception where id='"+fpid+"'";
+					List<Map<String,Object>> list1 = firePatrolBuildingInfoDao.findForJdbc(sql);
+					Object exceptionName = list1.get(0).get("exception_name");
+					s = String.valueOf(exceptionName);
+				}
+				entity.put("exception_name",s);
+
+			}
+
 
 			//查询记录总条数
 			StringBuffer countSb = new StringBuffer();
@@ -966,11 +993,14 @@ public class FirePatrolUserController {
 
 			long count = fireFightEquipmentHistoryDao.getCountForJdbc(countSb.toString());
 
+			//--------------------------------
 
 			useStatisticsVO.setNextPage((page * pageSize >= count) ? false : true);
 			useStatisticsVO.setPage(page);
 			useStatisticsVO.setPageSize(pageSize);
-			useStatisticsVO.setFirePatrolInfoList(histories);
+//			useStatisticsVO.setFirePatrolInfoList(histories);
+
+			useStatisticsVO.setFirePatrolInfoListNew(entitys);
 
 
 			//设置选中类型0 为全部 其他的是大楼type
