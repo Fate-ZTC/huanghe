@@ -932,15 +932,13 @@ public class FirePatrolUserController {
 				}
 
 			//--------------------------------
-
             //TODO 统计
 			StringBuffer entitySb = new StringBuffer();
-			entitySb.append("SELECT fpi.*,fpi.id as ido,ffe.NAME,ffeh.location_name,fpe.* ");
+			entitySb.append("SELECT fpi.*,fpi.id as ido,ffe.NAME,ffeh.location_name as locationName,fpi.user_id as userId,fpi.campus_num as campusNum,fpi.patrol_status as patrolStatus,fpi.exception_types as exceptionTypes,fpi.equipment_id as equipmentId,fpi.is_newest as isNewest,fpi.job_num as jobNum ");
 			entitySb.append("FROM fire_patrol_info as fpi ");
 			entitySb.append("LEFT Join fire_fight_equipment_history as ffeh on ffeh.old_id=fpi.equipment_id and ffeh.last_update_time BETWEEN '"+startStr+"'"+
 					"AND '"+endStr+"'" +
 					"LEFT JOIN fire_fight_equipment as ffe on ffe.id=fpi.equipment_id");
-            entitySb.append(" LEFT JOIN fire_patrol_exception AS fpe ON CAST(fpi.exception_types as int) = fpe.id\t");
 			entitySb.append(" WHERE");
 			entitySb.append(" fpi.job_num = '"+ jobNum + "' ");
 			entitySb.append(" AND fpi.timestamp BETWEEN '" + startStr + "' AND '" + endStr + "'");
@@ -948,12 +946,33 @@ public class FirePatrolUserController {
 			System.out.println(entitySb.toString());
 			//这里进行查询数据
 			List<Map<String,Object>> entitys = firePatrolInfoDao.findForJdbc(entitySb.toString());
-			List<FirePatrolInfo> histories = FirePatrolInfo.toObjectList(entitys);
-			//这里进行组装数据
-
 			for(Map<String,Object> entity:entitys){
-				Integer ido = Integer.valueOf(entity.get("ido").toString());
+				Object exceptionTypes = entity.get("exception_types");
+				List<String> exceptionName = new ArrayList<String>();
+				if (exceptionTypes!=null){
+					String s = String.valueOf(exceptionTypes);
+					if (s.contains(",")){
+						String[] arr=s.split(",");
+						for(String string:arr){
+							Integer integer = Integer.valueOf(string);
+							sql="SELECT * FROM fire_patrol_exception where id='"+integer+"'";
+							List<Map<String,Object>> list1 = firePatrolBuildingInfoDao.findForJdbc(sql);
+							Object o = list1.get(0).get("exception_name");
+							s = String.valueOf(o);
+							exceptionName.add(s);
+						}
+					}else {
+						Integer integer = Integer.valueOf(s);
+						sql="SELECT * FROM fire_patrol_exception where id='"+integer+"'";
+						List<Map<String,Object>> list1 = firePatrolBuildingInfoDao.findForJdbc(sql);
+						Object o = list1.get(0).get("exception_name");
+						s = String.valueOf(o);
+						exceptionName.add(s);
+					}
+				}
+				entity.put("exceptionName",exceptionName);
 
+				Integer ido = Integer.valueOf(entity.get("ido").toString());
 				sql="SELECT * FROM fire_patrol_img where info_id='"+ido+"'";
 				List<Map<String,Object>> list = firePatrolBuildingInfoDao.findForJdbc(sql);
 				List<String> strings = new ArrayList<String>();
@@ -963,18 +982,37 @@ public class FirePatrolUserController {
 					strings.add(s);
 				}
 				entity.put("img",strings);
-//				entity.put("description",)
-				String s="";
-				if(entity.get("exception_types")!=null){
-					Integer fpid = Integer.valueOf(entity.get("exception_types").toString());
-					sql="SELECT * FROM fire_patrol_exception where id='"+fpid+"'";
-					List<Map<String,Object>> list1 = firePatrolBuildingInfoDao.findForJdbc(sql);
-					Object exceptionName = list1.get(0).get("exception_name");
-					s = String.valueOf(exceptionName);
-				}
-				entity.put("exception_name",s);
-
 			}
+
+
+
+//			List<FirePatrolInfo> histories = FirePatrolInfo.toObjectList(entitys);
+			//这里进行组装数据
+
+//			for(Map<String,Object> entity:entitys){
+//				Integer ido = Integer.valueOf(entity.get("ido").toString());
+//
+//				sql="SELECT * FROM fire_patrol_img where info_id='"+ido+"'";
+//				List<Map<String,Object>> list = firePatrolBuildingInfoDao.findForJdbc(sql);
+//				List<String> strings = new ArrayList<String>();
+//				for (Map<String,Object> one:list){
+//					Object imgUrl = one.get("img_url");
+//					String s = String.valueOf(imgUrl);
+//					strings.add(s);
+//				}
+//				entity.put("img",strings);
+//				entity.put("description",)
+//				String s="";
+//				if(entity.get("exception_types")!=null){
+//					Integer fpid = Integer.valueOf(entity.get("exception_types").toString());
+//					sql="SELECT * FROM fire_patrol_exception where id='"+fpid+"'";
+//					List<Map<String,Object>> list1 = firePatrolBuildingInfoDao.findForJdbc(sql);
+//					Object exceptionName = list1.get(0).get("exception_name");
+//					s = String.valueOf(exceptionName);
+//				}
+//				entity.put("exception_name",s);
+
+//			}
 
 
 			//查询记录总条数
