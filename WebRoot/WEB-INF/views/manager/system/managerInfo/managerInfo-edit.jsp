@@ -32,9 +32,9 @@ String path = request.getContextPath();
 	<li><a href="<%=path %>/system/managerInfo_edit">个人资料</a></li>
     </ul>
     </div>
-    
+
     <div class="formbody">
-    
+
     <div class="formtitle"><span>个人资料</span></div>
     <form action="<%=path %>/managerInfo_edit" method="post" id="addForm" data-validator-option="{stopOnError:true, timely:1 ,theme:'yellow_right'}">
     <input type="hidden" name="method" value="edit" />
@@ -44,14 +44,23 @@ String path = request.getContextPath();
     <li><label>QQ<b>*</b></label><input name="qq" value="${manager.qq }" type="text" class="dfinput" data-rule="QQ:required;qq;length[~20]"/></li>
     <li><label>手机<b>*</b></label><input name="mobile" value="${manager.mobile }" type="text" class="dfinput" data-rule="手机:required;mobile;manager.mobile;remote[<%=path %>/managerInfo_checkMobile, id]"/></li>
 
-    <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认保存"/></li>
+    <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认保存" onclick="_submit()"/></li>
     </ul>
     </form>
-    
+
     </div>
 
 
 </body>
+<script type="text/javascript">
+    var _submit = function(){
+        var checkOne = true;                    //判断是否被选择条件
 
+        if (checkOne) {
+            alert("保存成功!");
+            $('#addForm').submit();
+        };
+    }
+</script>
 </html>
 
