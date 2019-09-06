@@ -2,8 +2,10 @@ package com.parkbobo.VO;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.parkbobo.model.FireFightEquipmentHistory;
+import com.parkbobo.model.FirePatrolInfo;
 import com.parkbobo.utils.PageBean;
 
 /**
@@ -18,7 +20,7 @@ public class FirePatrolUseStatisticsVO {
     private FirePatrolUseEquNumVO firePatrolUseEquNumVO;            //保存统计个数
     private PageBean<FireFightEquipmentHistory> pageBean;           //设备数据
     private List<FireFightEquipmentHistory> list;                   //查询的设备
-
+    private List<FirePatrolInfo> firePatrolInfoList;                //巡查记录
     private int buildingType;                                       //当前选中的类型
     private String jobNum;                                          //工号
     private Date date;                                              //时间
@@ -27,7 +29,16 @@ public class FirePatrolUseStatisticsVO {
     private int page;
     private int pageSize;
     private boolean isNextPage;
+    private List<Map<String,Object>> firePatrolInfoListNew;
 
+
+    public List<Map<String, Object>> getFirePatrolInfoListNew() {
+        return firePatrolInfoListNew;
+    }
+
+    public void setFirePatrolInfoListNew(List<Map<String, Object>> firePatrolInfoListNew) {
+        this.firePatrolInfoListNew = firePatrolInfoListNew;
+    }
 
     public FirePatrolUseBarListVO getFirePatrolUseBarListVO() {
         return firePatrolUseBarListVO;
@@ -38,11 +49,19 @@ public class FirePatrolUseStatisticsVO {
     }
 
     public FirePatrolUseEquNumVO getFirePatrolUseEquNumVO() {
-        return firePatrolUseEquNumVO;
+        return  firePatrolUseEquNumVO;
     }
 
     public void setFirePatrolUseEquNumVO(FirePatrolUseEquNumVO firePatrolUseEquNumVO) {
         this.firePatrolUseEquNumVO = firePatrolUseEquNumVO;
+    }
+
+    public List<FirePatrolInfo> getFirePatrolInfoList() {
+        return firePatrolInfoList;
+    }
+
+    public void setFirePatrolInfoList(List<FirePatrolInfo> firePatrolInfoList) {
+        this.firePatrolInfoList = firePatrolInfoList;
     }
 
     public int getBuildingType() {
