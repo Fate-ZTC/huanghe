@@ -33,17 +33,17 @@
 
 	<!-- 静态资源访问 -->
 	<mvc:default-servlet-handler />
-	
+
 	<!-- 设置图片上传大小控制 -->
-	<bean id="multipartResolver"  
-          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
-        <!--1024*1024*5即5M-->  
+	<bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--1024*1024*5即5M-->
         <property name="maxUploadSize" value="100000000"/>
-        <!--resolveLazily属性启用是为了推迟文件解析，以便在UploadAction 中捕获文件大小异常-->  
+        <!--resolveLazily属性启用是为了推迟文件解析，以便在UploadAction 中捕获文件大小异常-->
         <property name="resolveLazily" value="true"/>
 		<property name="defaultEncoding" value="utf-8"/>
-    </bean> 
-	
+    </bean>
+
 
 	<!-- 视图分解器 -->
 	<bean
@@ -52,7 +52,15 @@
 		<property name="suffix" value=".jsp"></property>
 	</bean>
 
- 	<!-- 7.拦截器 --> 
+	<!--<mvc:interceptors>-->
+		<!--<mvc:interceptor>-->
+			<!--<mvc:mapping path="/**"/>-->
+			<!--<bean class="com.system.utils.CORSInterceptor"/>-->
+		<!--</mvc:interceptor>-->
+	<!--</mvc:interceptors>-->
+
+
+ 	<!-- 7.拦截器 -->
 <!--	<mvc:interceptors>-->
 <!--		<mvc:interceptor>-->
 <!-- 			设置拦截器，拦截的（地址）规则  -->

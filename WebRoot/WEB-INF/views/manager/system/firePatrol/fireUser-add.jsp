@@ -39,13 +39,13 @@ $(function(){
     <form action="<%=path %>/firePatrolUser_add" method="post" id="addForm" data-validator-option="{stopOnError:true, timely:1 ,theme:'yellow_right'}">
     <input type="hidden" name="method" value="add" />
     <ul class="forminfo">
-    <li><label>姓名<b>*</b></label><input name="username" type="text" class="dfinput" data-rule="名称:required;length[~100];"/></li>
-    <li><label>密码<b>*</b></label><input name="password" type="password" class="dfinput" value="" /></li>
-    <li><label>工号<b>*</b></label><input name="jobNum" type="text" class="dfinput"/></li>
+    <li><label>姓名<b>*</b></label><input name="username" type="text" class="dfinput" data-rule="名称:required;length[~18];"/></li>
+    <li><label>密码<b>*</b></label><input name="password" type="password" class="dfinput" value="" data-rule="密码:required;length[~20];"/></li>
+    <li><label>工号<b>*</b></label><input name="jobNum" type="text" class="dfinput" data-rule="工号:required;length[~18];"/></li>
     <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认添加"/><span>${msg }</span><span></li>
     </ul>
     </form>
-    
+
     </div>
 
 </body>

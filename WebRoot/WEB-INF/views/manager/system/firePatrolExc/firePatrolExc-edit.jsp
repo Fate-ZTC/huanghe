@@ -40,11 +40,11 @@ $(function(){
     <input type="hidden" name="id" value="${firePatrolException.id}"/>
     <ul class="forminfo">
     <li><label>术语内容<b>*</b></label><input name="exceptionName" value="${firePatrolException.exceptionName}" type="text" class="dfinput" data-rule="名称:required;length[~100];"/></li>
-    <li><label>排序<b>*</b></label><input name="sort" type="text" value="${firePatrolException.sort }" class="dfinput"/></li>
+    <li><label>排序<b>*</b></label><input name="sort" type="text" value="${firePatrolException.sort }" class="dfinput"  maxlength="8" data-rule="排序:required;length[~8];" oninput = "value=value.replace(/[^\d]/g,'')"/></li>
     <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认保存"/></li>
     </ul>
     </form>
-    
+
     </div>
 
 </body>

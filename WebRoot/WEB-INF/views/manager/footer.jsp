@@ -13,7 +13,7 @@ String path = request.getContextPath();
 
 <body>
 	<div class="footer">
-    <i>重庆医科大学巡更系统V1.0</i>
-    </div>    
+    <i>黄河水利职业技术学院巡更巡查系统</i>
+    </div>
 </body>
 </html>
