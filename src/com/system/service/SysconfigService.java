@@ -45,4 +45,12 @@ public class SysconfigService {
 		List<Sysconfig> sysconfigs = this.sysconfigDao.getByProperty("varname", key);
 		return sysconfigs;
 	}
+
+	/**
+	 * 查询所有
+	 * @return
+	 */
+	public List<Sysconfig> getAll(){
+		return this.sysconfigDao.getAll();
+	}
 }

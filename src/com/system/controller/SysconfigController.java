@@ -1,9 +1,6 @@
 package com.system.controller;
 
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +29,7 @@ public class SysconfigController{
 	@RequestMapping("sysconfig_edit")
 	public ModelAndView edit(String method,Map<String, String> configMap,HttpServletRequest request){
 		ModelAndView mv = new ModelAndView();
+		Map<String,Object> retParam = new HashMap<>();
 		if(StringUtil.isNotEmpty(method) && method.equals("edit")){
 			configMap = null;
 			Enumeration<String> paramName = request.getParameterNames();
@@ -48,8 +46,14 @@ public class SysconfigController{
 			}
 			configMap = null;
 			configMap = null;
-			mv.setViewName("redirect:/system/sysconfig_edit?method=editSuccess");
+			mv.setViewName("redirect:/sysconfig_edit?method=editSuccess");
 		}else{
+			List<Sysconfig> sysconfigList = sysconfigService.getAll();
+			for (Sysconfig sysconfig:sysconfigList) {
+				retParam.put(sysconfig.getVarname(),sysconfig.getVarvalue());
+			}
+			mv.addAllObjects(retParam);
+			mv.addObject("method",method);
 			mv.setViewName("manager/system/sysconfig/sysconfig-edit");
 		}
 		return mv;
