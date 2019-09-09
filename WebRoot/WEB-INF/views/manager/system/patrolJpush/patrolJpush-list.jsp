@@ -166,6 +166,12 @@
         }
     }
     function submit() {
+        var checkOne = true;
+        if (checkOne) {
+            alert("提交成功!");
+            $('#addForm').submit();
+        };
+
         var data = personList.filter(item=>item.isJpush === 1)
         var index =  layer.load(1, {
             shade: [0.8,'#000'] //0.1透明度的白色背景
@@ -198,5 +204,6 @@
         }
     }
 </script>
+
 </body>
 </html>
