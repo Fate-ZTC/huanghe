@@ -5,14 +5,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
@@ -48,13 +47,13 @@ public class FirePatrolInfoController {
 	@Resource
 	private FirePatrolExceptionService firePatrolExceptionService;
 	@Resource
-	private FirePatrolImgService firePatrolImgService; 
+	private FirePatrolImgService firePatrolImgService;
 
 	@RequestMapping("firePatrolInfo_list")
 	public ModelAndView list(String equipmentName,String username,Integer patrolStatus,String startTime,String endTime,Integer page,Integer pageSize) throws UnsupportedEncodingException
 	{
 		ModelAndView mv = new ModelAndView();
-		
+
 		String hql = "from  FirePatrolInfo f where 1=1";
 		if(StringUtils.isNotBlank(equipmentName)){
 			hql +=" and f.fireFightEquipment.name like '%"+equipmentName+"%'";
@@ -97,10 +96,10 @@ public class FirePatrolInfoController {
 		mv.setViewName("redirect:/firePatrolInfo_list?method=deleteSuccess");
 		return mv;
 	}
-	
+
 	/**
 	 * 显示所有异常信息
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@RequestMapping("showExcptions")
 	public void showExc(String exceptionTypes,Integer id,HttpServletResponse response) throws IOException{
@@ -120,7 +119,14 @@ public class FirePatrolInfoController {
 			exception += ","+exceptions[i];
 		}
 		exception = exception.substring(1);
-		out.print("{\"status\":\"true\",\"Code\":1,\"exceptions\":\""+exception+"\",\"description\":\""+firePatrolInfo.getDescription()+"\"}"); 
+		Map<String,Object> map = new HashMap<>();
+		map.put("status","true");
+		map.put("Code",1);
+		map.put("exceptions",exception);
+		map.put("description",firePatrolInfo.getDescription());
+		String  param= JSON.toJSONString(map);
+		out.print(param);
+//		out.print("{\"status\":\"true\",\"Code\":1,\"exceptions\":\""+exception+"\",\"description\":\""+firePatrolInfo.getDescription()+"\"}");
 		out.flush();
 		out.close();
 	}
@@ -241,14 +247,14 @@ public class FirePatrolInfoController {
 			}
 		}
 			//防止中文乱码
-			// 第一步，创建一个webbook，对应一个Excel文件    
+			// 第一步，创建一个webbook，对应一个Excel文件
 			HSSFWorkbook wb = new HSSFWorkbook();
-			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet    
+			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
 			HSSFSheet sheet = wb.createSheet(title);
-			// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short    
+			// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
 			HSSFRow row = sheet.createRow((int) 0);
-			// 第四步，创建单元格，并设置值表头 设置表头居中    
-			HSSFCellStyle style = wb.createCellStyle(); 
+			// 第四步，创建单元格，并设置值表头 设置表头居中
+			HSSFCellStyle style = wb.createCellStyle();
 			style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式
 		// 设置表格默认列宽度为20个字节
 
@@ -264,7 +270,7 @@ public class FirePatrolInfoController {
 				cell.setCellValue(headers[i]);
 				cell.setCellStyle(style);
 			}
-			// 第五步，写入实体数据 实际应用中这些数据从数据库得到，    
+			// 第五步，写入实体数据 实际应用中这些数据从数据库得到，
 			for(int i=0;i<dataList.size();i++){
 				if (i<5) {
 					//sheet.autoSizeColumn(i, true);
@@ -289,15 +295,15 @@ public class FirePatrolInfoController {
 				file.mkdirs();
 			}
 			file = new File(path+"temp.xls");
-			HttpHeaders httpHeaders = new HttpHeaders();  
-			//下载显示的文件名，解决中文名称乱码问题  
+			HttpHeaders httpHeaders = new HttpHeaders();
+			//下载显示的文件名，解决中文名称乱码问题
 			String downloadFielName = new String(title.getBytes("UTF-8"),"iso-8859-1");
 			//通知浏览器以attachment（下载方式）打开图片
-			httpHeaders.setContentDispositionFormData("attachment", downloadFielName); 
+			httpHeaders.setContentDispositionFormData("attachment", downloadFielName);
 			//application/octet-stream ： 二进制流数据（最常见的文件下载）。
 			httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			wb.write(file);
 			wb.close();
-			return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),httpHeaders, HttpStatus.CREATED);  
+			return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),httpHeaders, HttpStatus.CREATED);
 	}
 }
