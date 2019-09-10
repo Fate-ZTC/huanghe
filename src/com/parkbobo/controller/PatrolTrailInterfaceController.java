@@ -138,11 +138,35 @@ public class PatrolTrailInterfaceController {
                 List<Object[]> list = map.get(in);
                 data = new StringBuffer("");
                 for (Object[] obj:list){
+                    String substring = obj[2].toString().substring(11, obj[2].toString().length());
+                    String substring1 = substring.substring(0, 2);
+                    Integer integer = Integer.valueOf(substring1);
+                    if (integer>24){
+                        integer=integer-12;
+                    }else {
+
+                        integer = integer + 12;
+                    }
+                    String substring2 = substring.substring(substring.length()-2,substring.length());
+                    String start = integer +":"+ substring2;
+
+
+                    String substring3 = obj[3].toString().substring(11, obj[3].toString().length());
+                    String substring4 = substring3.substring(0, 2);
+                    Integer integer1 = Integer.valueOf(substring4);
+                    if (integer1>24){
+                        integer1=integer1-12;
+                    }else {
+                        integer1=integer1+12;
+                    }
+                    String substring5 = substring3.substring(substring3.length() - 2, substring3.length());
+                    String end = integer1 + ":" + substring5;
+
                     data.append("{")
                         .append("\"id\":\"" + obj[0] + "\",")
                         .append("\"regionName\":\"" + obj[1] +"\",")
-                        .append("\"starttime\":\"" + obj[2].toString().substring(11,obj[2].toString().length()) +"\",")
-                        .append("\"endtime\":\"" + obj[3].toString().substring(11,obj[3].toString().length()) +"\"")
+                        .append("\"starttime\":\"" + start +"\",")
+                        .append("\"endtime\":\"" + end +"\"")
                         .append("},");
                 }
                 child.append("{")

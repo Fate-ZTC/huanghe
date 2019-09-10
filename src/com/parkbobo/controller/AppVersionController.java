@@ -35,16 +35,17 @@ public class AppVersionController {
         response.setContentType("text/html;charset=utf-8");
         List<AppVersion> appVersions = this.appVersionService.getByHql("From AppVersion as a where a.isDel = 0 and a.type ="+type+" order by a.posttime desc");
         AppVersion version = appVersions.get(0);
-
-        Map<String, Object> map=new HashMap<String,Object>();
-        map.put("versionCode",version.getVersioncode());
-        map.put("downUrl",contentPath+"/download?versionCode=" + version.getVersioncode());
-        map.put("versionName",version.getName());
-        map.put("postTime",version.getPosttime().getTime());
-        map.put("content",version.getContent());
-        map.put("needUpdate",version.getNeedUpdate());
-
-        //版本号
+        if(version == null) {
+            return null;
+        }else {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("versionCode", version.getVersioncode());
+            map.put("downUrl", contentPath + "/download?versionCode=" + version.getVersioncode());
+            map.put("versionName", version.getName());
+            map.put("postTime", version.getPosttime().getTime());
+            map.put("content", version.getContent());
+            map.put("needUpdate", version.getNeedUpdate());
+            //版本号
      /*       StringBuilder s = new StringBuilder();
             s.append("{");
             s.append("\"versionCode\":\"" + version.getVersioncode() + "\",");
@@ -55,8 +56,8 @@ public class AppVersionController {
             s.append("\"needUpdate\":\"" + version.getNeedUpdate() + "\"");
             s.append("}");
             return s.toString();*/
-
-     return map;
+            return map;
+        }
         }
 
     //通过版本号来下载APP
