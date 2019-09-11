@@ -141,11 +141,12 @@ public class PatrolTrailInterfaceController {
                     String substring = obj[2].toString().substring(11, obj[2].toString().length());
                     String substring1 = substring.substring(0, 2);
                     Integer integer = Integer.valueOf(substring1);
+                    integer = integer + 12;
                     if (integer>24){
-                        integer=integer-12;
-                    }else {
-
-                        integer = integer + 12;
+                        integer=integer-24;
+                    }
+                    if (integer==24){
+                        integer=0;
                     }
                     String substring2 = substring.substring(substring.length()-2,substring.length());
                     String start = integer +":"+ substring2;
@@ -154,11 +155,14 @@ public class PatrolTrailInterfaceController {
                     String substring3 = obj[3].toString().substring(11, obj[3].toString().length());
                     String substring4 = substring3.substring(0, 2);
                     Integer integer1 = Integer.valueOf(substring4);
+                    integer1=integer1+12;
                     if (integer1>24){
-                        integer1=integer1-12;
-                    }else {
-                        integer1=integer1+12;
+                        integer1=integer1-24;
                     }
+                    if (integer1==24){
+                        integer1=0;
+                    }
+
                     String substring5 = substring3.substring(substring3.length() - 2, substring3.length());
                     String end = integer1 + ":" + substring5;
 
