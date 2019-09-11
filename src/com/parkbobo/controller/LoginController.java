@@ -48,7 +48,7 @@ public class LoginController {
         } catch (Exception e) {
             e.printStackTrace();
             map.put("status",401);
-            map.put("message","户名或密码错误");
+            map.put("message","用户名或密码错误");
             return map;
         }
 
