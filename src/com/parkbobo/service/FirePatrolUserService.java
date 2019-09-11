@@ -20,10 +20,10 @@ import static gnu.inet.encoding.DecompositionMappings.m;
 
 @Service
 public class FirePatrolUserService {
-	
+
 	@Resource(name="firePatrolUserDaoImpl")
 	private FirePatrolUserDao firePatrolUserDao;
-	
+
 	/**
 	 * 登录
 	 */
@@ -31,8 +31,24 @@ public class FirePatrolUserService {
 		if(!(StringUtils.isNotBlank(jobNum)&&StringUtils.isNotBlank(password))){
 			return null;
 		}
-		FirePatrolUser patrolUser = this.firePatrolUserDao.getUniqueByPropertys(new String[]{"jobNum","password"}, new Object[]{jobNum,password});
-		return patrolUser;
+//		FirePatrolUser patrolUser = this.firePatrolUserDao.getUniqueByPropertys(new String[]{"jobNum","password"}, new Object[]{jobNum,password});
+		String hql="from FirePatrolUser as a where a.jobNum='"+jobNum+"' and a.password='"+password+"'";
+		List<FirePatrolUser> byPropertys = this.firePatrolUserDao.getByHQL(hql);
+		if (byPropertys.size()>0){
+			hql="from FirePatrolUser as a where a.jobNum='"+jobNum+"' and a.password='"+password+"' and a.isDel='0'";
+			List<FirePatrolUser> byPropertys1 = this.firePatrolUserDao.getByHQL(hql);
+			if(byPropertys1.size()>0){
+				FirePatrolUser patrolUser = byPropertys1.get(0);
+				return patrolUser;
+			}else {
+				FirePatrolUser patrolUser = byPropertys.get(0);
+				return patrolUser;
+			}
+		}else {
+			return null;
+		}
+
+
 	}
 	/**
 	 * 获取所有用户信息
@@ -43,17 +59,15 @@ public class FirePatrolUserService {
 	}
 	/**
 	 * 分页查询
-	 * @param username 用户名
-	 * @param jobNum 工号
 	 * @param page 页码
 	 * @param pageSize 每页条数
 	 * @return
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
 	public PageBean<FirePatrolUser> getUsers(String hql,Integer pageSize,Integer page) throws UnsupportedEncodingException{
 		return this.firePatrolUserDao.pageQuery(hql, pageSize, page);
 	}
-	
+
 	public int countUsers(String username,String jobNum) throws UnsupportedEncodingException{
 		String hql = "from FirePatrolUser where idDel = 0";
 		if(StringUtils.isNotBlank(username)){
@@ -71,7 +85,7 @@ public class FirePatrolUserService {
 		this.firePatrolUserDao.delete(id);
 	}
 	/**
-	 * 新增用户 
+	 * 新增用户
 	 * @return  0 工号已存在  1成功   2未知错误
 	 */
 	public int addUser(FirePatrolUser patrolUser){
@@ -131,11 +145,11 @@ public class FirePatrolUserService {
 		}
 		return null;
 	}
-	
+
 	public List<FirePatrolUser> getAll(){
 		return this.firePatrolUserDao.getAll();
 	}
-		
+
 	public void update(FirePatrolUser patrolUser) {
 		this.firePatrolUserDao.merge(patrolUser);
 	}

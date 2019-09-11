@@ -50,7 +50,7 @@ public class PatrolUserManagerController {
 	/**
 	 * 巡查人员
 	 * @return
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping("patrolUser_list")
 	public ModelAndView list(PatrolUser patrolUser,Integer page,Integer pageSize) throws UnsupportedEncodingException
@@ -82,7 +82,14 @@ public class PatrolUserManagerController {
 		//添加
 		if(StringUtil.isNotEmpty(method) && method.equals("add"))
 		{
-			PatrolUser byJobNum = this.patrolUserService.getByJobNum(patrolUser.getJobNum());
+//			PatrolUser byJobNum = this.patrolUserService.getByJobNum(patrolUser.getJobNum());
+			String hql="from PatrolUser as a where a.jobNum='"+patrolUser.getJobNum()+"' and a.isDel='0'";
+			List<PatrolUser> byHQL = this.patrolUserService.getByHQL(hql);
+			PatrolUser byJobNum =null;
+			if (byHQL.size()>0){
+				byJobNum = byHQL.get(0);
+			}
+
 			if(byJobNum!=null){
 				mv.setViewName("manager/system/patrolUser/patrolUser-add");
 				mv.addObject("msg","工号已存在,请更换");
@@ -93,7 +100,24 @@ public class PatrolUserManagerController {
 			//patrolUser.setCampusNum(1);
 			patrolUser.setIsDel((short)0);
 			patrolUser.setLastUpdateTime(date);
-			patrolUserService.addUser(patrolUser);
+
+			PatrolUser byJobNum1 = this.patrolUserService.getByJobNum(patrolUser.getJobNum());
+			if (byJobNum1!=null){
+//				String sql="UPDATE patrol_user SET username='"+patrolUser.getUsername()+"',password='"+patrolUser.getPassword()+"',is_del='0' WHERE job_num='"+patrolUser.getJobNum()+"'";
+				hql="from PatrolUser as a where a.jobNum='"+patrolUser.getJobNum()+"'";
+				List<PatrolUser> byHQL1 = this.patrolUserService.getByHQL(hql);
+				PatrolUser patrolUser1 = byHQL1.get(0);
+				patrolUser1.setCreatetime(date);
+				patrolUser1.setIsDel((short)0);
+				patrolUser1.setPassword(patrolUser.getPassword());
+				patrolUser1.setUsername(patrolUser.getUsername());
+
+				patrolUserService.update(patrolUser1);
+			}else {
+
+				patrolUserService.addUser(patrolUser);
+			}
+
 			mv.setViewName("redirect:/patrolUser_list?method=addSuccess");
 		}
 		//跳转到添加页面
@@ -195,14 +219,14 @@ public class PatrolUserManagerController {
 			}
 		}
 			//防止中文乱码
-			// 第一步，创建一个webbook，对应一个Excel文件    
+			// 第一步，创建一个webbook，对应一个Excel文件
 			HSSFWorkbook wb = new HSSFWorkbook();
-			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet    
+			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
 			HSSFSheet sheet = wb.createSheet(title);
-			// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short    
+			// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
 			HSSFRow row = sheet.createRow((int) 0);
-			// 第四步，创建单元格，并设置值表头 设置表头居中    
-			HSSFCellStyle style = wb.createCellStyle(); 
+			// 第四步，创建单元格，并设置值表头 设置表头居中
+			HSSFCellStyle style = wb.createCellStyle();
 			style.setAlignment(HorizontalAlignment.CENTER); // 创建一个居中格式
 
 			// 设置表格默认列宽度为20个字节
@@ -221,7 +245,7 @@ public class PatrolUserManagerController {
 				cell.setCellValue(headers[i]);
 				cell.setCellStyle(style);
 			}
-			// 第五步，写入实体数据 实际应用中这些数据从数据库得到，    
+			// 第五步，写入实体数据 实际应用中这些数据从数据库得到，
 			for(int i=0;i<dataList.size();i++){
 				if (i<5) {
 					//sheet.autoSizeColumn(i, true);
@@ -246,15 +270,15 @@ public class PatrolUserManagerController {
 				file.mkdirs();
 			}
 			file = new File(path+"temp.xls");
-			HttpHeaders httpHeaders = new HttpHeaders();  
-			//下载显示的文件名，解决中文名称乱码问题  
+			HttpHeaders httpHeaders = new HttpHeaders();
+			//下载显示的文件名，解决中文名称乱码问题
 			String downloadFielName = new String(title.getBytes("UTF-8"),"iso-8859-1");
 			//通知浏览器以attachment（下载方式）打开图片
-			httpHeaders.setContentDispositionFormData("attachment", downloadFielName); 
+			httpHeaders.setContentDispositionFormData("attachment", downloadFielName);
 			//application/octet-stream ： 二进制流数据（最常见的文件下载）。
 			httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			wb.write(file);
 			wb.close();
-			return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),httpHeaders, HttpStatus.CREATED);  
+			return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),httpHeaders, HttpStatus.CREATED);
 	}
 }
