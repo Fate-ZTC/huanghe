@@ -60,7 +60,7 @@
     <li><a href="<%=path %>/firePatrolInfo_list">巡查记录</a></li>
     </ul>
     </div>
-    
+
     <div class="rightinfo">
     <form action="<%=path %>/firePatrolInfo_list" method="post" id="searchForm">
     <ul class="seachform">
@@ -97,7 +97,7 @@
 	</ul>
 	</form>
     <div class="tools">
-    
+
     	<ul class="toolbar">
     	<sec:authorize ifAnyGranted="firePatrolInfo_delete">
         <li onclick="bulkDelete('<%=path %>/firePatrolInfo_delete','0');"><span><img src="<%=path %>/page/images/t03.png" /></span>批量删除</li>
@@ -109,10 +109,10 @@
         <li onclick="forWardUrlParam('<%=path %>/firePatrolInfo_excelOut','0');"><span><img src="<%=path %>/page/images/t04.png" /></span>导出</li>
         </sec:authorize>
         </ul>
-    
+
     </div>
-    
-    
+
+
     <table class="tablelist">
     	<thead>
     	<tr>
@@ -135,19 +135,19 @@
         <td><fmt:formatDate value="${d.timestamp}" pattern="yyyy-MM-dd HH:mm"/></td>
         <td>${d.patrolStatus==1?"设备正常":"设备异常"}</td>
         <td>
-        	<a href="javascript:void(0);" onclick="showImgs(${d.id})" class="tablelink">查看现场照片</a> | 
+        	<a href="javascript:void(0);" onclick="showImgs(${d.id})" class="tablelink">查看现场照片</a> |
         <c:if test="${d.patrolStatus!=1 }">
         	<a href="javascript:void(0);" onclick="excepDeta('${d.fireFightEquipment.name}','${d.exceptionTypes}',${d.id})" class="tablelink">查看异常描述</a> |
         </c:if>
         	<sec:authorize ifAnyGranted="firePatrolInfo_delete">
-        	<a href="javascript:void(0);" onclick="bulkDelete('<%=path %>/firePatrolInfo_delete','${d.id}');" class="tablelink"> 删除</a> 
+        	<a href="javascript:void(0);" onclick="bulkDelete('<%=path %>/firePatrolInfo_delete','${d.id}');" class="tablelink"> 删除</a>
         	</sec:authorize>
         </td>
-        </tr> 
+        </tr>
         </c:forEach>
         </tbody>
     </table>
-    
+
    	<!-- 分页开始 -->
     <div class="pagin">
     	<div class="message">共<i class="blue">${firePatrolInfoPage.allRow}</i>条记录，当前显示第&nbsp;<i class="blue"> ${firePatrolInfoPage.currentPage}/${firePatrolInfoPage.totalPage }&nbsp;</i>页</div>
@@ -177,7 +177,7 @@
 			  }
 			};
 			laydate(start_time);
-			
+
 			//结束时间
 			var end_time = {
 			  elem: '#end-time',
@@ -214,8 +214,9 @@
  		if(data.exceptions === data.description) {
             content = '<ul class="excul"><li>'+data.exceptions+'</li>';
         }else {
-            content = '<ul class="excul"><li>'+data.exceptions+'</li>'+
-                '<li>'+data.description+'</li></ul>';
+            content = '<ul class="excul"><li>'+data.description+'</li></ul>';
+            // content = '<ul class="excul"><li>'+data.exceptions+'</li>'+
+            //     '<li>'+data.description+'</li></ul>';
         }
 
    		if(data.status=='true') {

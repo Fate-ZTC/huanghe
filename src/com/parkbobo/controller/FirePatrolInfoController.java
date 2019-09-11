@@ -107,7 +107,7 @@ public class FirePatrolInfoController {
 		PrintWriter out = response.getWriter();
 		FirePatrolInfo firePatrolInfo = this.firePatrolInfoService.get(id);
 		String[] exceptions = null;
-		if(exceptionTypes.length() > 0){
+		if(exceptionTypes.length() > 0&&exceptionTypes!=null&&!exceptionTypes.equals("")){
 			String[] strs = exceptionTypes.split(",");
 			exceptions = new String[strs.length];
 			for (int i=0; i< strs.length; i++) {
@@ -115,10 +115,13 @@ public class FirePatrolInfoController {
 			}
 		}
 		String exception = "";
-		for (int i = 0; i < exceptions.length; i++) {
-			exception += ","+exceptions[i];
+
+		if(exceptionTypes!=null&&!exceptionTypes.equals("")){
+			for (int i = 0; i < exceptions.length; i++) {
+				exception += ","+exceptions[i];
+			}
+			exception = exception.substring(1);
 		}
-		exception = exception.substring(1);
 		Map<String,Object> map = new HashMap<>();
 		map.put("status","true");
 		map.put("Code",1);
