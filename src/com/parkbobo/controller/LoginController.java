@@ -41,9 +41,18 @@ public class LoginController {
         Manager manager=new Manager();
         manager.setUsername(username);
         manager.setPassword(passsword);
-        List<Role> roleList = loginService.managerLogin(manager);
-
+        List<Role> roleList = null;
         Map<String, Object> map=new HashMap<String,Object>();
+        try {
+            roleList = loginService.managerLogin(manager);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("status",401);
+            map.put("message","用户名或密码错误");
+            return map;
+        }
+
+
         Department department = loginService.findDepartment(manager);
         if(department != null){
             map.put("name",manager.getUsername());

@@ -129,9 +129,10 @@ public class AppManagerController {
         }
         String[] idArr = ids.split(",");
         for(int i = 0;i < idArr.length;i++){
-            int id = Integer.parseInt(idArr[i]);
-            String s = String.valueOf(id);
-            AppVersion byId = appVersionService.getById(s);
+//            int id = Integer.parseInt(idArr[i]);
+            String s1 = idArr[i];
+//            String s = String.valueOf(id);
+            AppVersion byId = appVersionService.getById(s1);
             byId.setIsDel(1);
             appVersionService.update(byId);
         }

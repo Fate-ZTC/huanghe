@@ -46,7 +46,7 @@ public class PatrolUserService {
 	public PageBean<PatrolUser> getUsers(String hql,Integer pageSize,Integer page){
 		return this.patrolUserDao.pageQuery(hql, pageSize, page);
 	}
-	
+
 	public int countUsers(String username,String jobNum) throws UnsupportedEncodingException{
 		String hql = "from PatrolUser where idDel = 0";
 		if(StringUtils.isNotBlank(username)){
@@ -64,7 +64,7 @@ public class PatrolUserService {
 		this.patrolUserDao.delete(id);
 	}
 	/**
-	 * 新增用户 
+	 * 新增用户
 	 * @return  0 工号已存在  1成功   2未知错误
 	 */
 	public int addUser(PatrolUser patrolUser){
@@ -109,11 +109,11 @@ public class PatrolUserService {
 	public PatrolUser getByJobNum(String jobNum){
 		return this.patrolUserDao.getUniqueByProperty("jobNum", jobNum);
 	}
-	
+
 	public List<PatrolUser> getAll(String hql){
 		return this.patrolUserDao.getByHQL(hql);
 	}
-		
+
 	public void update(PatrolUser patrolUser) {
 		this.patrolUserDao.update(patrolUser);
 	}
@@ -142,5 +142,5 @@ public class PatrolUserService {
 	public List<PatrolUser> getByHQL(String hql){
 		return this.patrolUserDao.getByHQL(hql);
 	}
-	
+
 }
