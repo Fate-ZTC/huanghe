@@ -15,7 +15,7 @@ if(cookies != null){
 				username = json.getString("username");
 				password = json.getString("password");
 			}catch(Exception e){
-				
+
 			}
 		}
 	}
@@ -31,48 +31,62 @@ if(cookies != null){
 <script type="text/javascript" src="<%=path %>/page/js/jquery.js"></script>
 <script src="<%=path %>/page/js/cloud.js" type="text/javascript"></script>
 <script type="text/javascript" src="<%=path %>/page/layer/layer.js"></script>
+	<script type="text/javascript" src="<%=path%>/page/js/base64.min.js"></script>
 <script type="text/javascript">
 $(function(){
     $('.loginbox').css({'position':'absolute','left':($(window).width()-692)/2});
-	$(window).resize(function(){  
+	$(window).resize(function(){
     	$('.loginbox').css({'position':'absolute','left':($(window).width()-692)/2});
     });
 	 $("#captcha").bind("click", function() {
 		var timenow = new Date().getTime();
 		$("#captcha").attr("src","captcha?w=112&h=44&f=36&d=" + timenow);
 	});
-}); 
+});
 var message = '${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message }';
 if(message != '' && message != 'null'){
 	layer.msg(message, function(){});
 }
-</script> 
+</script>
 
 </head>
 <body style="background-color:#1c77ac; background-image:url(page/images/light.png); background-repeat:no-repeat; background-position:center top; overflow:hidden;">
     <div id="mainBody">
       <div id="cloud1" class="cloud"></div>
       <div id="cloud2" class="cloud"></div>
-    </div>  
+    </div>
     <div class="loginbody">
     <span class="systemlogo" style="background:url(page/images/school-logo.png) no-repeat center;"></span>
-    <form action="<%=path %>/j_spring_security_check" method="post" autocomplete="off"> 
+    <form action="<%=path %>/j_spring_security_check" method="post" autocomplete="off" id="loginform">
     <div class="loginbox loginbox3">
     <ul>
     	<li>
-	    	<input name="username" type="text" class="loginuser" title="请输入用户名" value="<%=username %>" placeholder="请输入用户名" autocomplete="off"/></li>
-	    <li><input name="loginkey" type="password" class="loginpwd" title="请输入密码" placeholder="请输入密码" value="<%=password %>" autocomplete="off"/></li>
+			<input id="username" type="text" class="loginuser" title="请输入用户名" value="<%=username %>" placeholder="请输入用户名" autocomplete="off"/>
+			<input name="username" type="hidden"/></li>
+	    <li>
+			<input id="loginkey"  type="password" class="loginpwd" title="请输入密码" placeholder="请输入密码" value="<%=password %>" autocomplete="off"/>
+			<input name="loginkey" type="hidden"/></li>
 	    <li class="yzm">
 	    	<span><input name="validateCode" type="text" title="请输入验证码" placeholder="请输入验证码"  autocomplete="off"/></span>
 	    	<img src="captcha?w=112&h=44&f=36" style="float:right;border: 1px solid #A6CAFF;cursor: pointer;" title="看不清?换一张" alt="看不清?，换一张" id="captcha"/>
 	    </li>
-    	<li><input type="submit" class="loginbtn" value="登录" /><label><input name="remember" type="checkbox" checked="checked" />记住密码</label></li>
+    	<li><input type="submit" class="loginbtn" value="登录" onclick="_submit()"/><label><input name="remember" type="checkbox" checked="checked" />记住密码</label></li>
     </ul>
     </div>
     </form>
-    
+
     </div>
-    
+	<script>
+		function _submit(){
+			var username = $("#username").val();
+			$("#username").next().val(Base64.encode(username));
+
+			var loginkey = $("#loginkey").val();
+			$("#loginkey").next().val(Base64.encode(loginkey));
+
+			$("#loginform").submit();
+		}
+	</script>
 </body>
 
 </html>
