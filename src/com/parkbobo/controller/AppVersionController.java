@@ -27,23 +27,28 @@ public class AppVersionController {
     private AppVersionMobileService appVersionService;
     @RequestMapping("update")
     @ResponseBody
-    public String update(@RequestParam("type") String type, HttpServletRequest request, HttpServletResponse response){
+    public String update(@RequestParam("type") String type, HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         //主机ip+端口
         String contentPath = "http://"+request.getServerName()+":"+request.getServerPort()+"/"+request.getServletContext().getContextPath();
         response.setContentType("text/html;charset=utf-8");
         List<AppVersion> appVersions = this.appVersionService.getByHql("From AppVersion as a where a.isDel = 0 and a.type ="+type+" order by a.posttime desc");
-        AppVersion version = appVersions.get(0);
-        //版本号
+        if(appVersions.size() > 0) {
+            //版本号
+            AppVersion version = appVersions.get(0);
             StringBuilder s = new StringBuilder();
             s.append("{");
             s.append("\"versionCode\":\"" + version.getVersioncode() + "\",");
-            s.append("\"downUrl\":\"" +  contentPath+"/download?versionCode=" + version.getVersioncode() +"\",");
+            s.append("\"downUrl\":\"" + contentPath + "/download?versionCode=" + version.getVersioncode() + "\",");
             s.append("\"versionName\":\"" + version.getName() + "\",");
             s.append("\"postTime\":\"" + version.getPosttime().getTime() + "\",");
             s.append("\"content\":\"" + version.getContent() + "\",");
             s.append("\"needUpdate\":\"" + version.getNeedUpdate() + "\"");
             s.append("}");
             return s.toString();
+        }
+        else {
+            return "当前无可用更新".getBytes("utf-8").toString();
+        }
         }
 
     //通过版本号来下载APP
