@@ -15,7 +15,7 @@
 	<http pattern="/user_login" security="none"/>
 	<http pattern="/update" security="none"/>
 	<http pattern="/download" security="none"/>
-	<http pattern="helpPhone" security="none"/>
+	<http pattern="/helpPhone" security="none"/>
 	<!--1、当把<http>的use-expressions设置为true时，会把<intercept-url>的access当成包含了Spring EL表达式解析。
 			表达式应该返回boolean，定义访问是否应该被允许，比如：
 			<http use-expressions="true">
