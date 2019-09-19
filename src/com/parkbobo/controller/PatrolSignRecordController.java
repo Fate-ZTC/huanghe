@@ -46,35 +46,42 @@ public class PatrolSignRecordController {
 //        String hql = "from  PatrolSignRecord  where 1=1";
         String sql="SELECT s.record_id FROM patrol_sign_record as s left JOIN patrol_user_region as u on s.sign_time=u.end_time WHERE u.abnormal_count!=0";
         List<Map<String,Object>> list = firePatrolBuildingInfoDao.findForJdbc(sql);
-        String str="";
-        for (Map<String,Object> map:list){
-            Object recordId = map.get("record_id");
-            String s = String.valueOf(recordId);
-            Integer integer = Integer.valueOf(s);
-            str+=integer+",";
-        }
-        str=str.substring(0,str.length()-1);
-        System.out.println(str);
+        PageBean<PatrolSignRecord> patrolSignRecordPage=new PageBean<PatrolSignRecord>();
+        patrolSignRecordPage.setAllRow(0);
+//        patrolSignRecordPage.setCurrentPage(0);
+        if(list.size()>0){
+            String str="";
+            for (Map<String,Object> map:list){
+                Object recordId = map.get("record_id");
+                String s = String.valueOf(recordId);
+                Integer integer = Integer.valueOf(s);
+                str+=integer+",";
+            }
+            str=str.substring(0,str.length()-1);
+            System.out.println(str);
 
-        String hql = "from  PatrolSignRecord  where recordId in ("+str+") ";
+            String hql = "from  PatrolSignRecord  where recordId in ("+str+") ";
 //        String hql = "from  PatrolSignRecord  where 1=1 ";
-        if(StringUtils.isNotBlank(jobNum)){
-            hql +=" and jobNum like '%"+jobNum+"%'";
+            if(StringUtils.isNotBlank(jobNum)){
+                hql +=" and jobNum like '%"+jobNum+"%'";
+            }
+            if(StringUtils.isNotBlank(name)){
+                hql += " and username like '%" + name +"%'";
+            }
+            if(patrol != null&&patrol!=-1){
+                hql += " and signType =" + patrol;
+            }
+            if(StringUtils.isNotBlank(startTime)){
+                hql += " and signTime > '" + startTime+"'";
+            }
+            if(StringUtils.isNotBlank(endTime)){
+                hql += " and signTime < '" + endTime+"'";
+            }
+            hql += " order by signTime desc";
+            patrolSignRecordPage = patrolSignRecordService.pageQuery(hql,pageSize==null?10:pageSize,page==null?1:page);
+
         }
-        if(StringUtils.isNotBlank(name)){
-            hql += " and username like '%" + name +"%'";
-        }
-        if(patrol != null&&patrol!=-1){
-            hql += " and signType =" + patrol;
-        }
-        if(StringUtils.isNotBlank(startTime)){
-            hql += " and signTime > '" + startTime+"'";
-        }
-        if(StringUtils.isNotBlank(endTime)){
-            hql += " and signTime < '" + endTime+"'";
-        }
-        hql += " order by signTime desc";
-        PageBean<PatrolSignRecord> patrolSignRecordPage = patrolSignRecordService.pageQuery(hql,pageSize==null?10:pageSize,page==null?1:page);
+        mv.addObject("patrolSignRecordPage", patrolSignRecordPage);
         mv.addObject("jobNum",jobNum);
         mv.addObject("startTime",startTime);
         mv.addObject("endTime",endTime);
@@ -83,7 +90,6 @@ public class PatrolSignRecordController {
         mv.addObject("page",page);
         mv.addObject("pageSize",pageSize);
         mv.addObject("method",method);
-        mv.addObject("patrolSignRecordPage", patrolSignRecordPage);
         mv.setViewName("manager/system/patrolSignRecord/patrolSignRecord-list");
         return mv;
     }
