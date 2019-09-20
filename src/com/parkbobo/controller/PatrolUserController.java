@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import com.parkbobo.utils.*;
+import com.system.service.SysconfigService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,6 +74,9 @@ public class PatrolUserController {
 
 	@Resource
 	private PatrolRegionHistoryService patrolRegionHistoryService;
+
+	@Resource
+	private SysconfigService sysconfigService;
 
 	public static final String APPKEY = Configuration.getInstance().getValue("AppKey");
 	public static final String SECRET = Configuration.getInstance().getValue("Secret");
@@ -1426,6 +1430,29 @@ public class PatrolUserController {
         out.close();
     }
 
+	}
+	/**
+	 * 获取求救电话
+	 * @return
+	 */
+	@RequestMapping("/helpPhone")
+	public void helpPhone(HttpServletResponse response){
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = null;
+		MessageBean messageBean = new MessageBean();
+		try {
+			out = response.getWriter();
+			messageBean.setData(sysconfigService.getVarnameToSys("phone"));
+			messageBean.setCode(200);
+			messageBean.setStatus(true);
+			messageBean.setMessage("success");
+			out.write(JSON.toJSONString(messageBean));
+		}catch (Exception e){
+			e.printStackTrace();
+		}finally{
+			out.flush();
+			out.close();
+		}
 	}
 
 

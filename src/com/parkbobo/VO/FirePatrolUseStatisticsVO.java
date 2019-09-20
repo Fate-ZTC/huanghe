@@ -2,6 +2,7 @@ package com.parkbobo.VO;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.parkbobo.model.FireFightEquipmentHistory;
 import com.parkbobo.model.FirePatrolInfo;
@@ -28,7 +29,16 @@ public class FirePatrolUseStatisticsVO {
     private int page;
     private int pageSize;
     private boolean isNextPage;
+    private List<Map<String,Object>> firePatrolInfoListNew;
 
+
+    public List<Map<String, Object>> getFirePatrolInfoListNew() {
+        return firePatrolInfoListNew;
+    }
+
+    public void setFirePatrolInfoListNew(List<Map<String, Object>> firePatrolInfoListNew) {
+        this.firePatrolInfoListNew = firePatrolInfoListNew;
+    }
 
     public FirePatrolUseBarListVO getFirePatrolUseBarListVO() {
         return firePatrolUseBarListVO;

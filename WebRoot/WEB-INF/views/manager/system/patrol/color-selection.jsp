@@ -55,7 +55,7 @@
 						</li>
 						<li>
 							<label class="color-selection-name">巡更区域名称：</label>
-							<input name="regionName" class="region-name" type="text" />
+							<input name="regionName" class="region-name" type="text" maxlength="15" placeholder="请输入1-15位字符"/>
 						</li>
 						<li>
 							<label class="color-selection-name">选择区域颜色：</label>
@@ -63,7 +63,7 @@
 						</li>
 					</form>
 				</ul>
-				
+
 				<div class="add-xungeng-btn-box">
 					<button type="reset" onclick="goToRegionList()">取消</button>
 					<button onclick="submitRegion()" class="submit-btn">提交并配置巡更范围</button>
@@ -71,7 +71,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<script>
 		$(".bomb-close").click(function(){
 			$(".background-bomb").fadeOut(300);

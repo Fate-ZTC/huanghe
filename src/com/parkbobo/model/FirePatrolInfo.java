@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 public class FirePatrolInfo implements Serializable{
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 7623324663655191769L;
 	/**
@@ -92,7 +92,7 @@ public class FirePatrolInfo implements Serializable{
 	/***
 	 * 异常图片
 	 **/
-	private List<String> imgUrl;
+	private String imgUrl;
 
 	/***
 	 * 位置
@@ -214,11 +214,11 @@ public class FirePatrolInfo implements Serializable{
 	}
 
 	@Transient
-	public List<String> getImgUrl() {
+	public String getImgUrl() {
 		return imgUrl;
 	}
 
-	public void setImgUrl(List<String> imgUrl) {
+	public void setImgUrl(String imgUrl) {
 		this.imgUrl = imgUrl;
 	}
 
@@ -240,7 +240,7 @@ public class FirePatrolInfo implements Serializable{
 		this.locationName = locationName;
 	}
 
-
+	//--------------------------------
 
 	/**
 	 * 用于转换对象
@@ -302,8 +302,14 @@ public class FirePatrolInfo implements Serializable{
 		firePatrolInfo.setLocationName(map.get("location_name").toString());
 		firePatrolInfo.setDescription(map.get("description").toString());
 		//得到异常ID,获取图片和异常详情
-		Integer fpid = Integer.valueOf(map.get("id(1)").toString());
-		FirePatrolManagerController firePatrolManagerController = new FirePatrolManagerController();
+//		Object o = map.get("exception_types");
+//		String s = String.valueOf(o);
+//		Integer fpid = Integer.valueOf(s);
+//		Integer fpid = Integer.valueOf(map.get("exception_types").toString());
+//        System.out.println(fpid);
+//        Integer id = Integer.valueOf(map.get("ido").toString());
+//        System.out.println(id);
+//		FirePatrolManagerController firePatrolManagerController = new FirePatrolManagerController();
 		return firePatrolInfo;
 	}
 

@@ -35,18 +35,18 @@ if(method=='editSuccess'){
     <span>位置：</span>
     <ul class="placeul">
     <li><a href="#">系统管理</a></li>
-    <li><a href="<%=path %>/system/sysconfig_edit">系统配置</a></li>
+    <li><a href="<%=path %>/sysconfig_edit">系统配置</a></li>
     </ul>
     </div>
     <div class="formbody">
      
     
-    <form action="<%=path %>/system/sysconfig_edit" method="post" id="addForm" data-validator-option="{stopOnError:true, timely:1 ,theme:'yellow_right'}">
+    <form action="<%=path %>/sysconfig_edit" method="post" id="addForm" data-validator-option="{stopOnError:true, timely:1 ,theme:'yellow_right'}">
     <input type="hidden" name="method" value="edit" />
     <!-- 管理系统Start -->
     <div class="formtitle"><span>管理系统配置</span></div>
     <ul class="forminfo">
-	    <li><label>管理系统Logo<b>*</b></label>
+	    <%--<li><label>管理系统Logo<b>*</b></label>
 	    <div class="uploadLogo-box">
 	    	<div class="img-list" style="margin-bottom: 10px">
 	    		<div class="upload-btn uploadAdminLogo" style="width: 310px;height: 80px;">
@@ -63,7 +63,8 @@ if(method=='editSuccess'){
 	    <input name="adminLogo" value="${sysconfigMap['adminLogo']}" type="hidden" class="adminLogo"/>
 	    </li>
 	    <li><label>管理系统名称<b>*</b></label><input name="adminTitle" value="${sysconfigMap['adminTitle']}" type="text" class="dfinput" data-rule="管理系统名称:required;"/></li>
-	    <li><label>日志保留天数<b>*</b></label><input name="clearLogsTime" value="${sysconfigMap['clearLogsTime']}" type="text" class="dfinput" data-rule="日志保留天数:required;integer;"/></li>
+	    <li><label>日志保留天数<b>*</b></label><input name="clearLogsTime" value="${sysconfigMap['clearLogsTime']}" type="text" class="dfinput" data-rule="日志保留天数:required;integer;"/></li>--%>
+			<label>电话配置<b>*</b></label><input name="phone" value="${phone}" type="text" class="dfinput" data-rule="电话:required;length[~20];"/></li>
     </ul>
     <!-- 管理系统END -->
     
@@ -74,6 +75,15 @@ if(method=='editSuccess'){
     </form>
     </div>
 	<script type="text/javascript">
+    var method = '${method }';
+    if(method=='addSuccess'){
+        layer.msg('添加成功', {icon: 1});
+    }else if(method=='editSuccess'){
+        layer.msg('编辑成功', {icon: 1});
+    }else if(method=='deleteSuccess'){
+        layer.msg('删除成功', {icon: 1});
+    }else{
+    }
 	var host = '<%=path %>';
 	var loadding = null;
 	function showLoadding(){
@@ -85,7 +95,7 @@ if(method=='editSuccess'){
 		layer.close(loadding);
 	}
 	$(".uploadAdminLogo").upload({
-        action: host + "/system/upload",
+        action: host + "/upload",
         fileName: "attached",
         params: {"dir":"image","w":"310","h":"80"},
         dataType:'JSON',

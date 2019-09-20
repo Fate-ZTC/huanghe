@@ -1,5 +1,6 @@
 package com.parkbobo.controller;
 
+import com.parkbobo.dao.FirePatrolBuildingInfoDao;
 import com.parkbobo.model.PatrolSignRecord;
 import com.parkbobo.service.PatrolSignRecordService;
 import com.parkbobo.utils.PageBean;
@@ -27,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 巡更签到记录后台管理
@@ -35,11 +37,27 @@ import java.util.List;
 public class PatrolSignRecordController {
     @Resource
     private PatrolSignRecordService patrolSignRecordService;
+    @Resource
+    private FirePatrolBuildingInfoDao firePatrolBuildingInfoDao;
 
     @RequestMapping("patrolSignRecord_list")
     public ModelAndView list(String method,String jobNum,String name,Integer patrol,String startTime,String endTime,Integer pageSize,Integer page){
         ModelAndView mv = new ModelAndView();
-        String hql = "from  PatrolSignRecord  where 1=1";
+//        String hql = "from  PatrolSignRecord  where 1=1";
+        String sql="SELECT s.record_id FROM patrol_sign_record as s left JOIN patrol_user_region as u on s.sign_time=u.end_time WHERE u.abnormal_count!=0";
+        List<Map<String,Object>> list = firePatrolBuildingInfoDao.findForJdbc(sql);
+        String str="";
+        for (Map<String,Object> map:list){
+            Object recordId = map.get("record_id");
+            String s = String.valueOf(recordId);
+            Integer integer = Integer.valueOf(s);
+            str+=integer+",";
+        }
+        str=str.substring(0,str.length()-1);
+        System.out.println(str);
+
+        String hql = "from  PatrolSignRecord  where recordId in ("+str+") ";
+//        String hql = "from  PatrolSignRecord  where 1=1 ";
         if(StringUtils.isNotBlank(jobNum)){
             hql +=" and jobNum like '%"+jobNum+"%'";
         }

@@ -99,9 +99,6 @@ $(function(){
 	        <sec:authorize ifAnyGranted="optLogs_list,optLogs_delete">
 	        <li><cite></cite><a href="<%=path %>/optLogs_list" target="rightFrame">系统日志</a><i></i></li>
 	        </sec:authorize>
-	        <sec:authorize ifAnyGranted="sysconfig_edit">
-	        <li><cite></cite><a href="<%=path %>/sysconfig_edit" target="rightFrame">系统配置</a><i></i></li>
-	        </sec:authorize>
 	        </ul>    
 	    </dd>
 	    <!-- 系统管理END -->
@@ -173,7 +170,9 @@ $(function(){
 			<sec:authorize ifAnyGranted="patrolJpush_list">
 				<li><cite></cite><a href="<%=path %>/patrolJpush_list" target="rightFrame">推送配置</a><i></i></li>
 			</sec:authorize>
-
+			<sec:authorize ifAnyGranted="sysconfig_edit">
+				<li><cite></cite><a href="<%=path %>/sysconfig_edit" target="rightFrame">电话配置</a><i></i></li>
+			</sec:authorize>
 			<sec:authorize ifAnyGranted="patrolJpush_record,patrolJpushRecord_delete,patrolJpushRecord_excelOut">
 				<li><cite></cite><a href="<%=path %>/patrolJpush_record" target="rightFrame">移动救援记录</a><i></i></li>
 			</sec:authorize>

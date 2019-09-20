@@ -70,10 +70,10 @@
 							    </ol>
 							</div>
 					    </div>
-					    
+
 				    </div>
 				</li>
-				
+
 				<li>
 					<label class="inspection-record-tit float-L">异常描述</label>
 					<div class="inspection-record-result-input-box float-L">
@@ -94,7 +94,7 @@
 				</li>
 			</ul>
 		</div>
-		
+
 		<script src="<%=basePath%>page/js/jquery.gallery.min.js"></script>
 		<script>
 			//初始化图片查看器

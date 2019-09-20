@@ -12,7 +12,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName AppVersionController
@@ -27,27 +29,34 @@ public class AppVersionController {
     private AppVersionMobileService appVersionService;
     @RequestMapping("update")
     @ResponseBody
-    public String update(@RequestParam("type") String type, HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+    public Map<String, Object> update(@RequestParam("type") String type, HttpServletRequest request, HttpServletResponse response){
         //主机ip+端口
         String contentPath = "http://"+request.getServerName()+":"+request.getServerPort()+"/"+request.getServletContext().getContextPath();
         response.setContentType("text/html;charset=utf-8");
         List<AppVersion> appVersions = this.appVersionService.getByHql("From AppVersion as a where a.isDel = 0 and a.type ="+type+" order by a.posttime desc");
-        if(appVersions.size() > 0) {
+        AppVersion version = appVersions.get(0);
+        if(version == null) {
+            return null;
+        }else {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("versionCode", version.getVersioncode());
+            map.put("downUrl", contentPath + "/download?versionCode=" + version.getVersioncode());
+            map.put("versionName", version.getName());
+            map.put("postTime", version.getPosttime().getTime());
+            map.put("content", version.getContent());
+            map.put("needUpdate", version.getNeedUpdate());
             //版本号
-            AppVersion version = appVersions.get(0);
-            StringBuilder s = new StringBuilder();
+     /*       StringBuilder s = new StringBuilder();
             s.append("{");
             s.append("\"versionCode\":\"" + version.getVersioncode() + "\",");
-            s.append("\"downUrl\":\"" + contentPath + "/download?versionCode=" + version.getVersioncode() + "\",");
+            s.append("\"downUrl\":\"" +  contentPath+"/download?versionCode=" + version.getVersioncode() +"\",");
             s.append("\"versionName\":\"" + version.getName() + "\",");
             s.append("\"postTime\":\"" + version.getPosttime().getTime() + "\",");
             s.append("\"content\":\"" + version.getContent() + "\",");
             s.append("\"needUpdate\":\"" + version.getNeedUpdate() + "\"");
             s.append("}");
-            return s.toString();
-        }
-        else {
-            return "当前无可用更新".getBytes("utf-8").toString();
+            return s.toString();*/
+            return map;
         }
         }
 
