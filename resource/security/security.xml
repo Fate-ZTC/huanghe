@@ -66,8 +66,7 @@
 	<b:bean id="simpleUrlAuthenticationFailureHandler"
 		class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
 		<!-- 登录失败后的页面 -->
-		<b:property name="defaultFailureUrl" value="/main_index"/>
-		<!--<b:property name="defaultFailureUrl" value="/managerLogin?login_error=loginError"/>-->
+		<b:property name="defaultFailureUrl" value="/managerLogin?login_error=loginError"/>
 	</b:bean>
 	
 	<!--一个自定义的filter，必须包含authenticationManager,accessDecisionManager,securityMetadataSource

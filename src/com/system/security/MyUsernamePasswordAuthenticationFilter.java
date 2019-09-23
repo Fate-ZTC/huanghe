@@ -96,7 +96,7 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(manager.getUsername(), password);
 		HttpSession session = request.getSession();
 		session.setAttribute(USERNAME, manager.getUsername());
-		manager.setUserId(42);
+		//manager.setUserId(42);
 		session.setAttribute("loginUser", manager);
 		session.setAttribute("systemConfig", sysconfigService.getConfig());
 		setDetails(request, authRequest);
