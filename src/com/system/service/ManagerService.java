@@ -24,6 +24,8 @@ public class ManagerService {
 	private OptLogsService optLogsService;
 	@Resource(name= "managerRoleDaoImpl")
 	private ManagerRoleDao managerRoleDao;
+	@Resource(name = "tokenService")
+	private TokenService tokenService;
 	public Manager updateUserInfo(Manager manager) {
 		Manager u = managerDao.get(manager.getUserId());
 		u.setRealname(manager.getRealname());
@@ -136,6 +138,11 @@ public class ManagerService {
 	public void unlock(Integer id, Manager loginManager) {
 		managerDao.localUpdateOneField(id, "status", 0);
 		optLogsService.addLogo("用户管理", loginManager, "解锁用户,用户ID：" + id);
+	}
+
+	//调用中控得到用户信息
+	public Manager getByToken(String useranme, String password) {
+		return null;
 	}
 
 }

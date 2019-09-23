@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import com.system.model.*;
+import com.system.service.TokenService;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
@@ -28,6 +29,8 @@ import com.system.service.ManagerService;
 public class MyUserDetailService implements UserDetailsService {
     private static final Logger logger = Logger.getLogger(MyUserDetailService.class);
     private ManagerService managerService;
+    @Resource(name = "tokenService")
+    private TokenService tokenService;
     public ManagerService getManagerService() {
         return managerService;
     }
@@ -41,20 +44,15 @@ public class MyUserDetailService implements UserDetailsService {
         if (logger.isDebugEnabled()) {
             logger.debug("loadUserByUsername(String) - start"); //$NON-NLS-1$
         }
-        Manager manager = managerService.getUniqueByProperty("username", username);
+        //调用中控接口得到用户信息
+        Manager manager = tokenService.getManagerInfo(TokenService.getResponseResult());
         Collection<GrantedAuthority> auths = obtionGrantedAuthorities(manager);
-        boolean enables = false;//账号是否激活
+        boolean enables = true;//账号是否激活
         boolean accountNonExpired = true;//用户账号过期
         boolean credentialsNonExpired = true;//用户凭证过期
-        boolean accountNonLocked =false;//账号是否未锁定
-        if(manager.getIsAuth() == 1) {
-            enables = true;
-        }
-        if(manager.getStatus() == 0) {
-            accountNonLocked = true;
-        }
+        boolean accountNonLocked =true;//账号是否未锁定
         //封装成spring security的user
-        User user = new User(manager.getUsername(),manager.getPassword(), enables, accountNonExpired, credentialsNonExpired, accountNonLocked, auths);
+        User user = new User(manager.getUsername(),"123456", enables, accountNonExpired, credentialsNonExpired, accountNonLocked, auths);
         return user;
     }
     //取得用户的权限

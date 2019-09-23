@@ -69,13 +69,13 @@ public class HttpRequest {
 
 	    /**
 	     * 向指定 URL 发送POST方法的请求
-	     * 
+	     *
 	     * @param url
 	     *            发送请求的 URL
 	     * @param param
 	     *            请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
 	     * @return 所代表远程资源的响应结果
-	     * @throws UnsupportedEncodingException 
+	     * @throws UnsupportedEncodingException
 	     */
 	    public static String sendPost(String url, String param) throws UnsupportedEncodingException {
 	        PrintWriter out = null;
@@ -94,7 +94,7 @@ public class HttpRequest {
 				conn.setRequestProperty("Content-Type", "application/json");
 				conn.setRequestProperty("contentType", "utf-8");
 				conn.setRequestProperty("Accept-Charset", "utf-8");
-				OutputStream os = conn.getOutputStream();   
+				OutputStream os = conn.getOutputStream();
 				os.write(param.getBytes("utf-8"));
 				os.close();
 				int code = conn.getResponseCode();
@@ -128,14 +128,14 @@ public class HttpRequest {
 	                ex.printStackTrace();
 	            }
 	        }
-	        
+
 	        return result;
 	    }  
-	    
-	    
+
+
 	    /**
 	     * 向指定 URL 发送POST方法的请求
-	     * 
+	     *
 	     * @param url
 	     *            发送请求的 URL
 	     * @param param
@@ -191,7 +191,66 @@ public class HttpRequest {
 	            }
 	        }
 	        return result;
-	    }
+	}
+
+	/**
+	 * @Author ztc
+	 * @Description 通过Token获得用户信息
+	 * @Date 10:58 2019/9/23
+	 * @Param
+	 * @return
+	 **/
+	public static String getInfoByToken(String url ,String token, String type) {
+		String result = "";
+		BufferedReader in = null;
+		try {
+			String urlNameString = url;
+			URL realUrl = new URL(urlNameString);
+			// 打开和URL之间的连接
+			URLConnection connection = realUrl.openConnection();
+			// 设置通用的请求属性
+			connection.setRequestProperty("accept", "*/*");
+			connection.setRequestProperty("Accept-Charset", "UTF-8");
+			connection.setRequestProperty("contentType", "utf-8");
+			connection.setRequestProperty("connection", "Keep-Alive");
+			connection.setRequestProperty("user-agent",
+					"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+			connection.setRequestProperty("authorization", type + " " + token);
+			connection.setConnectTimeout(5000);					//设置超时时间
+
+			//connection.set
+			// 建立实际的连接
+			connection.connect();
+			// 获取所有响应头字段
+			Map<String, List<String>> map = connection.getHeaderFields();
+			// 遍历所有的响应头字段
+			for (String key : map.keySet()) {
+				//System.out.println(key + "--->" + map.get(key));
+			}
+			// 定义 BufferedReader输入流来读取URL的响应
+			InputStreamReader isr = new InputStreamReader(connection.getInputStream(),"UTF-8");
+			in = new BufferedReader(isr);
+			String line;
+			while ((line = in.readLine()) != null) {
+				result += line;
+			}
+		} catch (Exception e) {
+			System.out.println("发送GET请求出现异常！" + e);
+			e.printStackTrace();
+		}
+		// 使用finally块来关闭输入流
+		finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return result;
+	}
+
 	    
 }
 

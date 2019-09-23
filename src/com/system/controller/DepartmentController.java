@@ -1,9 +1,15 @@
 package com.system.controller;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import com.parkbobo.dao.FirePatrolInfoDao;
+import com.parkbobo.model.FirePatrolUser;
+import com.system.dao.ManagerDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,8 +27,10 @@ import com.system.utils.StringUtil;
  */
 @Controller
 public class DepartmentController {
+	@Resource
+	private FirePatrolInfoDao firePatrolInfoDao;
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -1620751832599338243L;
 	@Resource
@@ -45,6 +53,21 @@ public class DepartmentController {
 		departmentPage = this.departmentService.loadPage(hql,pageSize==null?12:pageSize, page==null?1:page);
 		mv.addObject("departmentPage", departmentPage);
 		mv.setViewName("manager/system/department/department-list");
+		return mv;
+	}
+	@RequestMapping("department_listNew")
+	public ModelAndView listNew(Department department,Integer page,Integer pageSize)
+	{
+		ModelAndView mv = new ModelAndView();
+		String hql = "from Department as d where 1=1";
+		if(department != null && StringUtil.isNotEmpty(department.getName()))
+		{
+			hql+=" and d.name like '%" + department.getName() + "%'";
+		}
+		hql += " order by d.orderid";
+		departmentPage = this.departmentService.loadPage(hql,pageSize==null?12:pageSize, page==null?1:page);
+		mv.addObject("departmentPage", departmentPage);
+		mv.setViewName("manager/system/department/department-listNew");
 		return mv;
 	}
 	@RequestMapping("department_add")
@@ -96,8 +119,15 @@ public class DepartmentController {
 	{
 		ModelAndView mv = new ModelAndView();
 		Manager user = (Manager) session.getAttribute("loginUser");
-		this.departmentService.bulkDelete(ids, user);
-		mv.setViewName("redirect:/department_list?method=deleteSuccess");
+//		List<Manager> list=managerDao.getByHQL("from Manager as m where m.department='"+ids+"'");
+		String sql="SELECT * FROM lq_manager where departmentid in ("+ids+")";
+		List<Map<String,Object>> entitys = firePatrolInfoDao.findForJdbc(sql);
+		if(entitys.size()<1){
+			this.departmentService.bulkDelete(ids, user);
+			mv.setViewName("redirect:/department_list?method=deleteSuccess");
+		}else {
+			mv.setViewName("redirect:/department_listNew?method=deleteSuccess");
+		}
 		return mv;
 	}
 

@@ -1,5 +1,6 @@
 package com.system.security;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -8,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.system.model.ResponseResult;
+import com.system.service.TokenService;
 import org.apache.log4j.Logger;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +27,7 @@ import com.system.utils.DESHelper;
 import com.system.utils.RequestUtils;
 import com.system.utils.StringUtil;
 import com.system.utils.WebUtils;
+import sun.misc.BASE64Decoder;
 
 
 public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
@@ -32,18 +36,23 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 	public static final String PASSWORD = "loginkey";//密码
 	public static final String REMEMBER = "remember";//记住密码
 	public static final String VALIDATE_CODE = "validateCode";//验证码
-	@Resource(name = "managerService")	
+	@Resource(name = "managerService")
 	private ManagerService managerService;
 	@Resource(name="optLogsService")
 	private OptLogsService optLogsService;
 	@Resource
 	private SysconfigService sysconfigService;
+	@Resource(name = "tokenService")
+	private TokenService tokenService;
 	public ManagerService getManagerService() {
 		return managerService;
 	}
 	public void setManagerService(ManagerService managerService) {
 		this.managerService = managerService;
 	}
+
+	final BASE64Decoder decoder = new BASE64Decoder();
+
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 		if (!request.getMethod().equals("POST")) {
@@ -55,6 +64,15 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 		checkValidateCode(request);
 		String username = obtainUsername(request).trim();
 		String password = obtainPassword(request).trim();
+
+//		try {
+//			password =new String(decoder.decodeBuffer(password), "UTF-8");
+//			username =new String(decoder.decodeBuffer(username), "UTF-8");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+
+
 		ShaPasswordEncoder sp = new ShaPasswordEncoder();
 		boolean remember = obtainRemember(request);
 		//根据username查询出用户信息，第一次查询
@@ -63,21 +81,22 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 			manager = managerService.getUniqueByProperty("email", username);
 		}
 		else{
-			manager = managerService.getUniqueByProperty("username", username);
-		}
-		if(manager == null||!sp.encodePassword(password, manager.getUsername()).equals(manager.getPassword())){
-			if (logger.isDebugEnabled()) {
-				logger.debug("用户名或密码错误！"); //$NON-NLS-1$
+			ResponseResult responseResult = tokenService.getToken(username, password);
+			if(responseResult != null){
+				manager.setUsername(username);
+				manager.setPassword(password);
 			}
-			throw new AuthenticationServiceException("用户名或密码错误！");
 		}
-		//更新登录信息：登录时间，登录IP，登录次数
-		String [] propertyNames = {"lastLoginIp","lastLoginTime","loginCount"};
-		Object [] values = {RequestUtils.getDefaultInstance().getRemoteAddr(request),new Date(),manager.getLoginCount()+1};
-		managerService.localUpdateOneFields(manager.getUserId(), propertyNames, values);
+		if(manager == null){
+			if (logger.isDebugEnabled()) {
+				logger.debug("用户不存在！"); //$NON-NLS-1$
+			}
+			throw new AuthenticationServiceException("用户不存在！");
+		}
 		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(manager.getUsername(), password);
 		HttpSession session = request.getSession();
 		session.setAttribute(USERNAME, manager.getUsername());
+		manager.setUserId(42);
 		session.setAttribute("loginUser", manager);
 		session.setAttribute("systemConfig", sysconfigService.getConfig());
 		setDetails(request, authRequest);
@@ -90,21 +109,21 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 		optLogsService.addLogo("登录", manager, "登录到系统");
 		return this.getAuthenticationManager().authenticate(authRequest);
 	}
-	protected void checkValidateCode(HttpServletRequest request) { 
+	protected void checkValidateCode(HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		
-	    String sessionValidateCode = obtainSessionValidateCode(session); 
+
+	    String sessionValidateCode = obtainSessionValidateCode(session);
 	    //让上一次的验证码失效
 	    session.setAttribute(VALIDATE_CODE, null);
-	    String validateCodeParameter = obtainValidateCodeParameter(request);  
-	    if (StringUtil.isEmpty(validateCodeParameter) || !sessionValidateCode.equalsIgnoreCase(validateCodeParameter)) {  
+	    String validateCodeParameter = obtainValidateCodeParameter(request);
+	    if (StringUtil.isEmpty(validateCodeParameter) || !sessionValidateCode.equalsIgnoreCase(validateCodeParameter)) {
 	    	if (logger.isDebugEnabled()) {
-				logger.debug("验证码错误！"); 
+				logger.debug("验证码错误！");
 			}
-	        throw new AuthenticationServiceException("验证码错误！");  
-	    }  
+	        throw new AuthenticationServiceException("验证码错误！");
+	    }
 	}
-	
+
 	private String obtainValidateCodeParameter(HttpServletRequest request) {
 		Object obj = request.getParameter(VALIDATE_CODE);
 		return null == obj ? "" : obj.toString();
@@ -114,17 +133,29 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 		Object obj = session.getAttribute(VALIDATE_CODE);
 		return null == obj ? "" : obj.toString();
 	}
-	
+
 	@Override
 	protected String obtainUsername(HttpServletRequest request) {
 		Object obj = request.getParameter(USERNAME);
-		return null == obj ? "" : obj.toString();
+		String s = String.valueOf(obj);
+		try {
+			s =new String(decoder.decodeBuffer(s), "UTF-8");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null == s ? "" : s;
 	}
 
 	@Override
 	protected String obtainPassword(HttpServletRequest request) {
 		Object obj = request.getParameter(PASSWORD);
-		return null == obj ? "" : obj.toString();
+		String s = String.valueOf(obj);
+		try {
+			s =new String(decoder.decodeBuffer(s), "UTF-8");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null == s ? "" : s;
 	}
 	protected boolean obtainRemember(HttpServletRequest request) {
 		Object obj = request.getParameter(REMEMBER);
