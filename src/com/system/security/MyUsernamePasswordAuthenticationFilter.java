@@ -80,10 +80,8 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 		}
 		else{
 			ResponseResult responseResult = tokenService.getToken(username, password);
-			if(responseResult != null){
-				manager.setUsername(username);
-				manager.setPassword(password);
-			}
+			//得到用户信息
+			manager = tokenService.getManagerInfo(responseResult);
 		}
 		if(manager == null){
 			if (logger.isDebugEnabled()) {

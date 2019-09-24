@@ -105,27 +105,29 @@ public class TokenService {
         JSONArray jsonArray = jsonObject.getJSONArray("rules");
         Integer userId = jsonObject.getInteger("userId");
         Manager manager = new Manager();
-        manager.setUserId(100);
+        manager.setUserId(userId);
         manager.setUsername(username);
         Set<ManagerRole> managerRoles = new HashSet<>();
         for (int i = 0; i < jsonArray.size(); i++) {
             String content = jsonArray.getJSONObject(i).getString("content");
             String name = jsonArray.getJSONObject(i).getString("name");
-            Integer ruleId = jsonArray.getJSONObject(i).getInteger("ruleId");
             Role role = new Role();
-            role.setRoleId(ruleId);
             role.setName(name);
             role.setEnname(content);
             role.setCreateTime(new Date());
             role.setEnable(1);
             role.setRoleType(1);
             role.setIscore(1);
+            //将中控角色信息同步到本地角色表
+            if(roleDao.getUniqueByProperty("enname", content) != null) {
+                roleDao.add(role);
+            }
             ManagerRole managerRole = new ManagerRole();
             managerRole.setRole(role);
             managerRole.setManager(manager);
+            ManagerRoleId managerRoleId = new ManagerRoleId(role.getRoleId(),manager.getUserId());
             managerRoles.add(managerRole);
-            //将中控角色信息同步到本地角色表
-            roleDao.add(role);
+
         }
         manager.setManagerRoles(managerRoles);
         return manager;
