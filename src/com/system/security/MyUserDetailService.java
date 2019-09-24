@@ -2,10 +2,12 @@ package com.system.security;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
+import com.system.dao.RoleResourcesDao;
 import com.system.model.*;
 import com.system.service.TokenService;
 import org.apache.log4j.Logger;
@@ -31,6 +33,8 @@ public class MyUserDetailService implements UserDetailsService {
     private ManagerService managerService;
     @Resource(name = "tokenService")
     private TokenService tokenService;
+    @Resource(name = "roleResourcesDaoImpl")
+    private RoleResourcesDao roleResourcesDao;
     public ManagerService getManagerService() {
         return managerService;
     }
@@ -70,6 +74,19 @@ public class MyUserDetailService implements UserDetailsService {
         Role role = null;
         for (ManagerRole managerRole : managerRoles) {
             role = managerRole.getRole();
+            //当前用户是超级管理员，将超级管理员的权限给该用户
+            if(role.getEnname().equals("admin")) {
+                //先查询以前超级管理员的权限
+                Set<RoleResources> roleResources = new HashSet<>();
+                RoleResources roleResources1 = new RoleResources();
+                roleResources1.setId(new RoleResourcesId(1,138));
+                Resources resources = new Resources();
+                resources.setResourcesId(19);
+                resources.setEnname("managerInfo_edit");
+                roleResources1.setResources(resources);
+                roleResources.add(roleResources1);
+                role.setRoleResourceses(roleResources);
+            }
             if(role != null && role.getEnable() == 1)
             {
                 Set<RoleResources> roleResourcees  = role.getRoleResourceses();
