@@ -72,8 +72,6 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 //			e.printStackTrace();
 //		}
 
-
-		ShaPasswordEncoder sp = new ShaPasswordEncoder();
 		boolean remember = obtainRemember(request);
 		//根据username查询出用户信息，第一次查询
 		Manager manager = new Manager();
@@ -96,7 +94,7 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(manager.getUsername(), password);
 		HttpSession session = request.getSession();
 		session.setAttribute(USERNAME, manager.getUsername());
-		//manager.setUserId(42);
+		manager.setUserId(100);
 		session.setAttribute("loginUser", manager);
 		session.setAttribute("systemConfig", sysconfigService.getConfig());
 		setDetails(request, authRequest);

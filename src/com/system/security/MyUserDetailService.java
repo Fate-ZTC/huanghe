@@ -50,7 +50,7 @@ public class MyUserDetailService implements UserDetailsService {
         boolean enables = true;//账号是否激活
         boolean accountNonExpired = true;//用户账号过期
         boolean credentialsNonExpired = true;//用户凭证过期
-        boolean accountNonLocked =true;//账号是否未锁定
+        boolean accountNonLocked = true;//账号是否未锁定
         //封装成spring security的user
         User user = new User(manager.getUsername(),"123456", enables, accountNonExpired, credentialsNonExpired, accountNonLocked, auths);
         return user;

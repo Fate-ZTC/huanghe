@@ -105,7 +105,7 @@ public class TokenService {
         JSONArray jsonArray = jsonObject.getJSONArray("rules");
         Integer userId = jsonObject.getInteger("userId");
         Manager manager = new Manager();
-        manager.setUserId(65);
+        manager.setUserId(100);
         manager.setUsername(username);
         Set<ManagerRole> managerRoles = new HashSet<>();
         for (int i = 0; i < jsonArray.size(); i++) {
