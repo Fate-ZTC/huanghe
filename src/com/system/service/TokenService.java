@@ -127,9 +127,8 @@ public class TokenService {
                 }
             }
             Role role1 = roleDao.getUniqueByProperty("enname", content);
-            if(role1.getEnname().equals("admin")){
-                role1.setRoleResourceses(getRoles(role1).getRoleResourceses());
-            }
+            //得到角色对应的资源
+            role1.setRoleResourceses(getRoles(role1).getRoleResourceses());
             ManagerRole managerRole = new ManagerRole();
             managerRole.setManager(manager);
             managerRole.setRole(role1);
@@ -139,31 +138,16 @@ public class TokenService {
         return manager;
     }
 
-    //同步超级管理员权限信息
+    //同步权限信息
     public Role getRoles(Role role) {
         //得到之前admin的权限
-        Set<RoleResources> roleResourcess = new HashSet<RoleResources>();
-        List<RoleResources> roleResources = roleResourcesDao.getAll();
-        List<RoleResources> roleResources2 = new ArrayList<>();
-        for (int i = 0; i < roleResources.size(); i++) {
-            RoleResources resources = roleResources.get(i);
-            if(resources.getId().getRoleId() == 1){
-                roleResources2.add(resources);
-            }
+        List<RoleResources> roleResources = roleResourcesDao.getByHQL("from RoleResources as r where r.id.roleId = " + role.getRoleId());
+        Set<RoleResources> roleResourcesSet = new HashSet<>();
+        for (int i = 0; i < roleResources.size(); i++){
+            roleResourcesSet.add(roleResources.get(i));
         }
-        for (int i = 0; i < roleResources2.size(); i++) {
-            //资源对象
-            Resources resource = resourcesDao.get(roleResources2.get(i).getId().getResourcesId());
-            Role role1 = roleDao.get(roleResources2.get(i).getId().getRoleId());
-            RoleResources roleResources1 = new RoleResources();
-            roleResources1.setResources(resource);
-            roleResources1.setRole(role1);
-            roleResourcess.add(roleResources1);
-        }
-        Role role1 = new Role();
-        role1 = role;
-        role1.setRoleResourceses(roleResourcess);
-        return role1;
+        role.setRoleResourceses(roleResourcesSet);
+        return role;
     }
 
     //得到中控的角色信息

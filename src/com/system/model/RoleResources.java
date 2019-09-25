@@ -60,7 +60,7 @@ public class RoleResources  implements java.io.Serializable {
     @EmbeddedId
     
     @AttributeOverrides( {
-        @AttributeOverride(name="roleId", column=@Column(name="role_id", nullable=false) ), 
+        @AttributeOverride(name="roleId", column=@Column(name="role_id", nullable=false) ),
         @AttributeOverride(name="resourcesId", column=@Column(name="resources_id", nullable=false) ) } )
 
     public RoleResourcesId getId() {
