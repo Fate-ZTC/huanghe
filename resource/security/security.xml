@@ -84,9 +84,9 @@
 		<authentication-provider user-service-ref="myUserDetailService">
 			<!--如果用户的密码采用加密的话 -->
 			<!--<password-encoder hash="md5" />-->
-			<password-encoder hash="sha">
+			<!--<password-encoder hash="sha">
 				<salt-source user-property="username"/>
-			</password-encoder> 
+			</password-encoder> -->
 		</authentication-provider>
 	</authentication-manager>
 	<!--在这个类中，你就可以从数据库中读入用户的密码，角色信息，是否锁定，账号是否过期等 -->

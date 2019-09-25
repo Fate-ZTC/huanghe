@@ -56,7 +56,7 @@ public class MyUserDetailService implements UserDetailsService {
         boolean credentialsNonExpired = true;//用户凭证过期
         boolean accountNonLocked = true;//账号是否未锁定
         //封装成spring security的user
-        User user = new User(manager.getUsername(),"123456", enables, accountNonExpired, credentialsNonExpired, accountNonLocked, auths);
+        User user = new User(manager.getUsername(), manager.getPassword(), enables, accountNonExpired, credentialsNonExpired, accountNonLocked, auths);
         return user;
     }
     //取得用户的权限
@@ -74,19 +74,6 @@ public class MyUserDetailService implements UserDetailsService {
         Role role = null;
         for (ManagerRole managerRole : managerRoles) {
             role = managerRole.getRole();
-            //当前用户是超级管理员，将超级管理员的权限给该用户
-            if(role.getEnname().equals("admin")) {
-                //先查询以前超级管理员的权限
-                Set<RoleResources> roleResources = new HashSet<>();
-                RoleResources roleResources1 = new RoleResources();
-                roleResources1.setId(new RoleResourcesId(1,138));
-                Resources resources = new Resources();
-                resources.setResourcesId(19);
-                resources.setEnname("managerInfo_edit");
-                roleResources1.setResources(resources);
-                roleResources.add(roleResources1);
-                role.setRoleResourceses(roleResources);
-            }
             if(role != null && role.getEnable() == 1)
             {
                 Set<RoleResources> roleResourcees  = role.getRoleResourceses();

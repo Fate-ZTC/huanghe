@@ -89,10 +89,9 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 			}
 			throw new AuthenticationServiceException("用户不存在！");
 		}
-		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(manager.getUsername(), password);
+		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(manager.getUsername(), manager.getPassword());
 		HttpSession session = request.getSession();
 		session.setAttribute(USERNAME, manager.getUsername());
-		manager.setUserId(100);
 		session.setAttribute("loginUser", manager);
 		session.setAttribute("systemConfig", sysconfigService.getConfig());
 		setDetails(request, authRequest);
