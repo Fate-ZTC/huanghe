@@ -32,7 +32,7 @@ public class LoginFromCCR {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("username", username);
         modelAndView.addObject("loginkey", loginkey);
-        modelAndView.setViewName("forward:/j_spring_security_check");
+        modelAndView.setViewName("redirect:/j_spring_security_check");
         return modelAndView;
     }
 }

@@ -54,7 +54,7 @@ public class TokenService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String result = HttpRequest.sendGet(properties.getProperty("oauthUrl"),
+        String result = HttpRequest.sendGet(properties.getProperty("oauthUrl") + "/oauth/token",
                     "username=" + username + "&" +
                             "password=" + password + "&" +
                             "client_id=" + properties.getProperty("client_id") + "&" +
@@ -82,7 +82,7 @@ public class TokenService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String result = HttpRequest.sendGet(properties.getProperty("oauthUrl"),
+        String result = HttpRequest.sendGet(properties.getProperty("oauthUrl") + "/oauth/token",
                         "refresh_token=" + responseResult.getRefresh_token() + "&" +
                         "client_id=" + properties.getProperty("client_id") + "&" +
                         "client_secret=" + properties.getProperty("client_secret") + "&" +
@@ -100,9 +100,17 @@ public class TokenService {
 
     //根据Token获得用户信息
     public Manager getManagerInfo(ResponseResult responseResult) {
+        //读取配置文件
+        Properties properties = new Properties();
+        InputStream inputStream = this.getClass().getResourceAsStream("/server.properties");
+        try {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String token = responseResult.getAccess_token();
         String type = responseResult.getToken_type();
-        String result = HttpRequest.getInfoByToken("https://testgis.you07.com/cmccr-server/center/user/oauth", token, type);
+        String result = HttpRequest.getInfoByToken(properties.getProperty("oauthUrl") + "/center/user/oauth", token, type);
         Result result1 = JSONObject.parseObject(result, Result.class);
         JSONObject jsonObject = (JSONObject) result1.getData();
         String password = jsonObject.getString("passWord");
@@ -152,9 +160,17 @@ public class TokenService {
 
     //得到中控的角色信息
     public  List<Role> getRoleFormCCR(ResponseResult responseResult) {
+        //读取配置文件
+        Properties properties = new Properties();
+        InputStream inputStream = this.getClass().getResourceAsStream("/server.properties");
+        try {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String token = responseResult.getAccess_token();
         String type = responseResult.getToken_type();
-        String result = HttpRequest.getRolesFormCCR("https://testgis.you07.com/cmccr-server/center/user/rule", token, type, "page=0&pageSize=100");
+        String result = HttpRequest.getRolesFormCCR(properties.getProperty("oauthUrl") + "/center/user/rule", token, type, "page=0&pageSize=100");
         Result result1 = JSONObject.parseObject(result, Result.class);
         JSONObject jsonObject = (JSONObject) result1.getData();
         JSONArray array = jsonObject.getJSONArray("content");
