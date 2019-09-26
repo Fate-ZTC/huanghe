@@ -80,16 +80,20 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 			manager = managerService.getUniqueByProperty("email", username);
 		}
 		else{
-			ResponseResult responseResult = tokenService.getToken(username, password);
-			//得到用户信息
-			manager = tokenService.getManagerInfo(responseResult);
-		}
-		if(manager == null){
+			try {
+				ResponseResult responseResult = tokenService.getToken(username, password);
+				//得到用户信息
+				manager = tokenService.getManagerInfo(responseResult);
+			} catch (Exception e) {
+				throw new AuthenticationServiceException("用户不存在！");
+			}
+		}if(manager == null) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("用户不存在！"); //$NON-NLS-1$
 			}
 			throw new AuthenticationServiceException("用户不存在！");
 		}
+
 		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(manager.getUsername(), manager.getPassword());
 		HttpSession session = request.getSession();
 		session.setAttribute(USERNAME, manager.getUsername());
