@@ -266,7 +266,7 @@ public class HttpRequest {
 			connection.setRequestProperty("connection", "Keep-Alive");
 			connection.setRequestProperty("user-agent",
 					"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-			connection.setRequestProperty("authorization", type + " " + token);
+			connection.setRequestProperty("authorization", "Bearer" + " " + token);
 			connection.setConnectTimeout(5000);					//设置超时时间
 
 			//connection.set
@@ -302,6 +302,5 @@ public class HttpRequest {
 		return result;
 	}
 
-	    
 }
 

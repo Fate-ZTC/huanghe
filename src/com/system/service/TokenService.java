@@ -129,18 +129,20 @@ public class TokenService {
                 List<Role> roles = getRoleFormCCR(TokenService.getResponseResult());
                 for (Role role1 : roles) {
                     String enname = role1.getEnname();
-                    if (roleDao.getUniqueByProperty("enname", enname) == null) {
-                        roleDao.add(role1);
+                    if (!roleDao.existsByProperty("enname", enname)) {
+                        roleDao.merge(role1);
                     }
                 }
             }
             Role role1 = roleDao.getUniqueByProperty("enname", content);
-            //得到角色对应的资源
-            role1.setRoleResourceses(getRoles(role1).getRoleResourceses());
-            ManagerRole managerRole = new ManagerRole();
-            managerRole.setManager(manager);
-            managerRole.setRole(role1);
-            managerRoles.add(managerRole);
+            if(role1 != null) {
+                //得到角色对应的资源
+                role1.setRoleResourceses(getRoles(role1).getRoleResourceses());
+                ManagerRole managerRole = new ManagerRole();
+                managerRole.setManager(manager);
+                managerRole.setRole(role1);
+                managerRoles.add(managerRole);
+            }
         }
         manager.setManagerRoles(managerRoles);
         return manager;
@@ -189,6 +191,5 @@ public class TokenService {
         }
        return roles;
     }
-
 
 }
