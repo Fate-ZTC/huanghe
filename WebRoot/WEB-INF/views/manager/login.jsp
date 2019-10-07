@@ -79,10 +79,12 @@ if(message != '' && message != 'null'){
 	<script>
 		function _submit(){
 			var username = $("#username").val();
-			$("#username").next().val(Base64.encode(username));
+			// $("#username").next().val(Base64.encode(username));
+			$("#username").next().val(username);
+
 
 			var loginkey = $("#loginkey").val();
-			$("#loginkey").next().val(Base64.encode(loginkey));
+			$("#loginkey").next().val(loginkey);
 
 			$("#loginform").submit();
 		}

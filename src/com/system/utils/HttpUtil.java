@@ -10,11 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -79,8 +75,8 @@ public class HttpUtil {
             HttpClient client = new DefaultHttpClient();
             // 实例化HTTP方法
             HttpPost request = new HttpPost();
-            //request.addHeader("Content-type","application/json; charset=utf-8");
-            //request.setHeader("Accept", "application/json");
+            request.addHeader("Content-type","application/x-www-form-urlencoded");
+            request.setHeader("Accept", "application/json");
             request.setURI(new URI(url));
 
             //设置参数
@@ -93,6 +89,7 @@ public class HttpUtil {
             request.setEntity(new UrlEncodedFormEntity(nvps,HTTP.UTF_8));
 
             HttpResponse response = client.execute(request);
+            request.releaseConnection();
             int code = response.getStatusLine().getStatusCode();
             if(code == 200){	//请求成功
                 in = new BufferedReader(new InputStreamReader(response.getEntity()
@@ -107,7 +104,27 @@ public class HttpUtil {
 
                 return sb.toString();
             }
-            else{	//
+            else if(code == 302) {
+                Header header = response.getFirstHeader("location"); // 跳转的目标地址是在 HTTP-HEAD上
+                String newuri = header.getValue(); // 这就是跳转后的地址，再向这个地址发出新申请
+                HttpPost httpPost = new HttpPost(new URI(newuri));
+                httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+                response = client.execute(httpPost);
+                int code1 = response.getStatusLine().getStatusCode();
+                if(code1 == 200){	//请求成功
+                    in = new BufferedReader(new InputStreamReader(response.getEntity()
+                            .getContent(),"utf-8"));
+                    StringBuffer sb = new StringBuffer("");
+                    String line = "";
+                    String NL = System.getProperty("line.separator");
+                    while ((line = in.readLine()) != null) {
+                        sb.append(line + NL);
+                    }
+                    in.close();
+                    return sb.toString();
+                }
+            }
+            else{
                 System.out.println("状态码：" + code);
                 return null;
             }
@@ -116,7 +133,9 @@ public class HttpUtil {
             e.printStackTrace();
             return null;
         }
+        return null;
     }
+
 
     public static String getInfoByToken(String url, String token) {
         try {

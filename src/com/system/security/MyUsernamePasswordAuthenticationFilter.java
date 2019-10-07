@@ -1,6 +1,7 @@
 package com.system.security;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -52,7 +53,7 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 		this.managerService = managerService;
 	}
 
-	final BASE64Decoder decoder = new BASE64Decoder();
+	//final BASE64Decoder decoder = new BASE64Decoder();
 
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -66,12 +67,12 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 		String username = obtainUsername(request).trim();
 		String password = obtainPassword(request).trim();
 
-//		try {
-//			password =new String(decoder.decodeBuffer(password), "UTF-8");
-//			username =new String(decoder.decodeBuffer(username), "UTF-8");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		/*try {
+			password =new String(decoder.decodeBuffer(password), "UTF-8");
+			username =new String(decoder.decodeBuffer(username), "UTF-8");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}*/
 
 		boolean remember = obtainRemember(request);
 		//根据username查询出用户信息，第一次查询
@@ -138,11 +139,11 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 	protected String obtainUsername(HttpServletRequest request) {
 		Object obj = request.getParameter(USERNAME);
 		String s = String.valueOf(obj);
-		try {
+		/*try {
 			s =new String(decoder.decodeBuffer(s), "UTF-8");
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		return null == s ? "" : s;
 	}
 
@@ -150,11 +151,11 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 	protected String obtainPassword(HttpServletRequest request) {
 		Object obj = request.getParameter(PASSWORD);
 		String s = String.valueOf(obj);
-		try {
+		/*try {
 			s =new String(decoder.decodeBuffer(s), "UTF-8");
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		return null == s ? "" : s;
 	}
 	protected boolean obtainRemember(HttpServletRequest request) {
