@@ -62,7 +62,7 @@ public class MyUsernamePasswordAuthenticationFilter extends UsernamePasswordAuth
 			}
 			throw new AuthenticationServiceException("不支持的提交方式: " + request.getMethod());
 		}
-		checkValidateCode(request);
+		//checkValidateCode(request);
 		String username = obtainUsername(request).trim();
 		String password = obtainPassword(request).trim();
 

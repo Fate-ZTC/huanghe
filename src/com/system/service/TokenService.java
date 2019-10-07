@@ -9,6 +9,7 @@ import com.system.dao.RoleResourcesDao;
 import com.system.dao.impl.ResourcesDaoImpl;
 import com.system.dao.impl.RoleDaoImpl;
 import com.system.model.*;
+import com.system.utils.HttpUtil;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Component;
 
@@ -109,8 +110,7 @@ public class TokenService {
             e.printStackTrace();
         }
         String token = responseResult.getAccess_token();
-        String type = responseResult.getToken_type();
-        String result = HttpRequest.getInfoByToken(properties.getProperty("oauthUrl") + "/center/user/oauth", token, type);
+        String result = HttpUtil.getInfoByToken(properties.getProperty("oauthUrl") + "/center/user/oauth", token);
         Result result1 = JSONObject.parseObject(result, Result.class);
         JSONObject jsonObject = (JSONObject) result1.getData();
         String password = jsonObject.getString("passWord");
